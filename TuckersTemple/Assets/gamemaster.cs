@@ -2,20 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class gamemaster : MonoBehaviour {
     // first number how many sets of arrays
     // second number is how many elements per array 
     // so far holding ints, need to make tiles.
     public int[,] array2D = new int[,] { { 0, 0 } };
+
+	public GameObject tile;
+
+
+
 	// Use this for initialization
 	void Start () {
-		
+		Instantiate (tile, new Vector3(0,0,0), Quaternion.identity);
+		print ("Tile instantiated");
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
+	/*
     public class tile
     {
         public bool isGoal;
@@ -34,5 +42,5 @@ public class gamemaster : MonoBehaviour {
             hasCharas = charas;
              directions = paths;
         }
-    }
+    }*/
 }
