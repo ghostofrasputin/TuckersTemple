@@ -11,6 +11,19 @@ public class gamemaster : MonoBehaviour {
 
 	public GameObject tile;
 
+	private GameObject touchTarget;
+
+	private Vector3 objCenter;
+	private Vector3 touchPos;
+	private Vector3 offset;
+	private Vector3 newObjCenter;
+
+	RaycastHit hit;
+
+	private bool isDrag    = false;
+	private bool isLatched = false;
+	private bool isVert    = false;
+	private float netDrag  = 0f;
 
 
 	// Use this for initialization
