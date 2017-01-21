@@ -1,5 +1,5 @@
 .gitignore
-TuckersTemple\Library\*
+TuckersTemple/Library/
 /Temp/
 /Obj/
 /Build/
