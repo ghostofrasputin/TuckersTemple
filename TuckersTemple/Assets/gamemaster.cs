@@ -4,91 +4,71 @@ using UnityEngine;
 
 
 public class gamemaster : MonoBehaviour {
-    // first number how many sets of arrays
-    // second number is how many elements per array 
-    // so far holding ints, need to make tiles.
-    public int[,] array2D = new int[,] { { 0, 0 } };
+	// public fields:
+	public float slideSpeed = .02f;
 
-	public GameObject tile;
-
-	private GameObject touchTarget;
-
-	private Vector3 objCenter;
-	private Vector3 touchPos;
-	private Vector3 offset;
-	private Vector3 newObjCenter;
-
+	// private fields:
 	RaycastHit hit;
-
-	private bool isDrag    = false;
-	private bool isLatched = false;
-	private bool isVert    = false;
-	private float netDrag  = 0f;
+	private GameObject touchTarget;
+	private bool isDrag    = false; //tracks if valid object is hit for drag
+	private bool isVert    = false; //Extablishes initial movement axis of swipe
+	private bool isLatched = false; //locks movement axis to initial direction of swipe
 
 
 	// Use this for initialization
 	void Start () {
-		Instantiate (tile, new Vector3(0,0,0), Quaternion.identity);
-		print ("Tile instantiated");
+
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		if (Input.touchCount > 0)
-         {
-             Touch touch = Input.touches[0];
- 
-             switch (touch.phase)
-             {
-                 case TouchPhase.Began:
-	 
-	                     isLatched = false;
-	 
-	                     Ray ray = Camera.main.ScreenPointToRay(touch.position);
-	 
-	                     if (Physics.Raycast(ray, out hit))
-		                     {
-		                         touchTarget = hit.collider.gameObject;
-		                         objCenter = touchTarget.transform.position;
-		                         touchPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-		                         offset = touchPos - objCenter;
-		                         isDrag = true;
-		                     }
-	                     break;
-	 
-                 case TouchPhase.Moved:
-	                     if (isDrag)
-		                     {
-		                         touchPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-		                         newObjCenter = touchPos - offset;
-		 
-		                         if (!isLatched && offset != Vector3.zero)
-			                         {
-			                             isVert = Mathf.Abs(offset.y) > Mathf.Abs(offset.x);
-			                             isLatched = true;
-			                         }
-		                         if (isVert)
-			                         {
-			                             newObjCenter.x = 0;
-			                         }
-		                         else
-			                         {
-			                             newObjCenter.y = 0;
-			                         }
-		                         touchTarget.transform.position = new Vector3(newObjCenter.x, newObjCenter.y, objCenter.z);
-		                     }
-	                     break;
-	 
-                 case TouchPhase.Ended:
-	                     isDrag = false;
-	                     isLatched = false;
-	                     isVert = false;
-	                     break;
-	 
-                 default:
-	                     break;
-	 
-             }
-         }
+		{
+			Touch touch = Input.touches[0];
+
+			switch (touch.phase)
+			{
+			case TouchPhase.Began:
+				Ray ray = Camera.main.ScreenPointToRay(touch.position);
+				if (Physics.Raycast(ray, out hit))
+				{
+					touchTarget = hit.collider.gameObject;
+					isDrag = true;
+				}
+				break;
+
+			case TouchPhase.Moved:
+				if (isDrag)
+				{
+					Vector3 delta = touch.deltaPosition;
+					if (!isLatched)
+					{
+						isVert = Mathf.Abs(delta.y) > Mathf.Abs(delta.x);
+						isLatched = true;
+					}
+					if (isVert)
+					{
+						delta.x = 0;
+					}
+					else
+					{
+						delta.y = 0;
+					}
+
+					touchTarget.transform.Translate(delta.x * slideSpeed, delta.y * slideSpeed, 0);
+				}
+				break;
+
+			case TouchPhase.Ended:
+				isDrag = false;
+				isLatched = false;
+				isVert = false;
+				break;
+
+			default:
+				break;
+
+			}
+		}
 	}
 }
