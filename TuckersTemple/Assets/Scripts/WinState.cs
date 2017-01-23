@@ -35,7 +35,6 @@ public class WinState : MonoBehaviour {
 
 			// again for possible future task
 			// restart = true;
-			break;
 		}
 			
 	}
