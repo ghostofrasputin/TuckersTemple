@@ -190,7 +190,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee22b21252ac247bda81cb245f5e721e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slideSpeed: 1
+  slideSpeed: 0.02
   Tile: {fileID: 1984444076187268, guid: f0796545b8968a144a006cfeb8de9aeb, type: 2}
-  numRows: 2
-  numCols: 2
+  numRows: 3
+  numCols: 3

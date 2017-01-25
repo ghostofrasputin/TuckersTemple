@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4319723454816300}
   - component: {fileID: 212022274222474074}
   - component: {fileID: 65108157240775778}
+  - component: {fileID: 114301527679809938}
   m_Layer: 0
   m_Name: testSprite
   m_TagString: Untagged
@@ -53,6 +54,17 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.16, y: 0.16, z: 0.2}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114301527679809938
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1984444076187268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec9308c03dc3c4bb693d4edf4cc65d21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &212022274222474074
 SpriteRenderer:
   m_ObjectHideFlags: 1

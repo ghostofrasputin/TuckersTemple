@@ -8,7 +8,12 @@ public class GameMaster : MonoBehaviour
     // public fields:
     public float slideSpeed = .02f;
 
+
     // private fields:
+    private const int N = 0;
+    private const int E = 1;
+    private const int S = 2;
+    private const int W = 3;
     RaycastHit hit;
     private GameObject touchTarget;
     private bool isDrag = false; //tracks if valid object is hit for drag
@@ -61,16 +66,13 @@ public class GameMaster : MonoBehaviour
             //called when mouse his held down(moved)
             if (Input.GetMouseButton(0))
             {
-                //calculate the offset vector
-                Vector2 offset = new Vector2(Input.mousePosition.x - lastPos.x, Input.mousePosition.y - lastPos.y);
-                HandleTouch(10, Input.mousePosition, TouchPhase.Moved, offset);
-                //store the last position for next tick
-                lastPos = Input.mousePosition;
+
             }
             //called when mouse is lifted up(ended)
             if (Input.GetMouseButtonUp(0))
             {
-                HandleTouch(10, Input.mousePosition, TouchPhase.Ended, Vector2.zero);
+                Vector2 offset = new Vector2(Input.mousePosition.x - lastPos.x, Input.mousePosition.y - lastPos.y);
+                HandleTouch(10, Input.mousePosition, TouchPhase.Ended, offset);
                 //reset the total offset
                 totalOffset = 0;
             }
@@ -79,7 +81,7 @@ public class GameMaster : MonoBehaviour
         {
             //use the first touch registered
             Touch touch = Input.touches[0];
-            HandleTouch(touch.fingerId, Camera.main.ScreenToWorldPoint(touch.position), touch.phase, touch.deltaPosition);
+            HandleTouch(touch.fingerId, touch.position, touch.phase, touch.deltaPosition);
         }
     }
 
@@ -99,104 +101,125 @@ public class GameMaster : MonoBehaviour
                 if (Physics.Raycast(ray, out hit))
                 {
                     touchTarget = hit.collider.gameObject;
-                    isDrag = true;
                 }
                 break;
 
             case TouchPhase.Moved:
-                moveObject(touchTarget, deltaPosition);
                 break;
 
             case TouchPhase.Ended:
-
-                isDrag = false;
-                isLatched = false;
-                isVert = false;
+                findTouchVector(touchTarget, deltaPosition);
                 break;
 
             default:
+
                 break;
 
         }
     }
 
-    private void moveObject(GameObject obj, Vector2 delta)
+    //takes in row, col, and offset, and then then tells the correct tiles to move
+    private void moveGrid(int row, int col, int dir)
     {
-        print("before: " + delta);
-        delta = Camera.main.ScreenToWorldPoint(delta);
-        print("after: " + delta);
-        if (isDrag)
+        Vector2 offset = new Vector2(0, 0);
+        GameObject temp;
+        //calculate normal offset vector and move the tiles
+        switch (dir)
         {
-            if (!isLatched && delta != Vector2.zero)
-            {
-                isVert = Mathf.Abs(delta.y) > Mathf.Abs(delta.x);
-                isLatched = true;
-            }
-            if (isVert)
-            {
-                delta.x = 0;
-                delta.y *= slideSpeed;
-            }
-            else
-            {
-                delta.y = 0;
-                delta.x *= slideSpeed;
-            }
-            totalOffset += (delta.x + delta.y) * slideSpeed;
-            if(totalOffset > tileSize)
-            {
-                if(delta.x > 0)
+            case N:
+                offset.y = tileSize;
+                //Update grid
+                temp = tileGrid[col][numRows - 1];
+                for (int r = numRows - 1; r > 0; r--)
                 {
-                    delta.x -= totalOffset - tileSize;
+                    tileGrid[col][r] = tileGrid[col][r-1];
+                    tileGrid[col][r-1].GetComponent<Tile>().SlideTo(offset);
                 }
-                else
+                tileGrid[col][0] = temp;
+                tileGrid[col][0].GetComponent<Tile>().WrapPosition(new Vector2(tileSize * col,0));
+                tileGrid[col][0].GetComponent<Tile>().SlideTo(offset);
+                break;
+            case S:
+                offset.y = -tileSize;
+                temp = tileGrid[col][0];
+                for (int r = 0; r < numRows - 1; r++)
                 {
-                    delta.y -= totalOffset - tileSize;
+                    tileGrid[col][r] = tileGrid[col][r + 1];
+                    tileGrid[col][r].GetComponent<Tile>().SlideTo(offset);
                 }
-                totalOffset = tileSize;
-            }
-            if(totalOffset < -tileSize)
-            {
-                if (delta.x < 0)
+                tileGrid[col][numRows - 1] = temp;
+                tileGrid[col][numRows - 1].GetComponent<Tile>().WrapPosition(new Vector2(tileSize * col, (numRows-1)*tileSize));
+                tileGrid[col][numRows - 1].GetComponent<Tile>().SlideTo(offset);
+                break;
+            case E:
+                offset.x = tileSize;
+                //Update grid
+                temp = tileGrid[numCols - 1][row];
+                for (int c = numCols - 1; c > 0; c--)
                 {
-                    delta.x += totalOffset - tileSize;
+                    tileGrid[c][row] = tileGrid[c - 1][row];
+                    tileGrid[c - 1][row].GetComponent<Tile>().SlideTo(offset);
                 }
-                else
+                tileGrid[0][row] = temp;
+                tileGrid[0][row].GetComponent<Tile>().WrapPosition(new Vector2(0, tileSize * row));
+                tileGrid[0][row].GetComponent<Tile>().SlideTo(offset);
+                break;
+            case W:
+                offset.x = -tileSize;
+                temp = tileGrid[0][row];
+                for (int c = 0; c < numCols - 1; c++)
                 {
-                    delta.y += totalOffset - tileSize;
+                    tileGrid[c][row] = tileGrid[c+1][row];
+                    tileGrid[c][row].GetComponent<Tile>().SlideTo(offset);
                 }
-                totalOffset = -tileSize;
-            }
-
-
-
-            obj.transform.Translate(delta.x, delta.y, 0);
-           
-            
-            //Old offset code, didn't really work
-            /*
-            //add the change to total offset
-            print("offset " + totalOffset);
-            print("tilesize " + tileSize);
-            totalOffset += (delta.x + delta.y) * slideSpeed;
-            float relativeTileSize = tileSize;
-            //if the offset is too large
-            if (totalOffset > relativeTileSize || totalOffset < -relativeTileSize)
-            {
-                delta.x = 0;
-                delta.y = 0;
-                //float slideDifference = 0;
-                if (totalOffset > 0)
-                {
-                    //slideDifference = totalOffset - tileSize;
-                    totalOffset = relativeTileSize;
-                }
-                else
-                {
-                    totalOffset = -relativeTileSize;
-                }
-            }*/
+                tileGrid[numCols - 1][row] = temp;
+                tileGrid[numCols - 1][row].GetComponent<Tile>().WrapPosition(new Vector2((numCols - 1) * tileSize, tileSize * row));
+                tileGrid[numCols - 1][row].GetComponent<Tile>().SlideTo(offset);
+                break;
         }
+
     }
-    
+
+    private void findTouchVector(GameObject obj, Vector2 delta)
+    {
+        isVert = Mathf.Abs(delta.y) > Mathf.Abs(delta.x);
+        int dir = -1;
+        if (isVert)
+        {
+            dir = N;
+            if(delta.y < 0)
+            {
+                dir = S;
+            }
+        }
+        else
+        {
+            dir = E;
+            if(delta.x < 0)
+            {
+                dir = W;
+            }
+        }
+
+        int row = -1;
+        int col = -1;
+
+        //get row, col from obj
+        for (int c = 0; c < numCols; c++)
+        {
+            for (int r = 0; r < numRows; r++)
+            {
+                if(tileGrid[c][r].Equals(obj))
+                {
+                    row = r;
+                    col = c;
+                }
+            }
+        }
+        
+
+
+        moveGrid(row, col, dir);
+    }
+
 }
