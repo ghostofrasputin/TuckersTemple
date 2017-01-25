@@ -8,10 +8,37 @@ public class Tile : MonoBehaviour {
     private float speed = 0.5f;
     private Vector2 wrapPos;
     private bool wrap = false;
+    public GameObject Wall;
 
 	// Use this for initialization
 	void Start () {
         goalPos = transform.position;
+        GameObject wall;
+        for(int i = 0; i < 4; i++)
+        {
+            if(Random.value > 0.5)
+            {
+                wall = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+                wall.transform.localScale = new Vector3(.01f,.05f,.1f);
+                switch (i)
+                {
+                    case 0:
+                        wall.transform.Rotate(new Vector3(0, 0, 90));
+                        wall.transform.Translate(new Vector3(0, GetComponent<Renderer>().bounds.size.x/2, 0));
+                        break;
+                    case 1:
+                        wall.transform.Translate(new Vector3(GetComponent<Renderer>().bounds.size.x / 2, 0, 0));
+                        break;
+                    case 2:
+                        wall.transform.Rotate(new Vector3(0, 0, 90));
+                        wall.transform.Translate(new Vector3(0, -GetComponent<Renderer>().bounds.size.x / 2, 0));
+                        break;
+                    case 3:
+                        wall.transform.Translate(new Vector3(-GetComponent<Renderer>().bounds.size.x / 2, 0, 0));
+                        break;
+                }
+            }
+        }
 	}
 	
 	// Update is called once per frame
@@ -44,5 +71,10 @@ public class Tile : MonoBehaviour {
     {
         wrap = true;
         wrapPos = pos;
+    }
+    //legacy, remove later thanks
+    public int wallInDir(int dir)
+    {
+        return 0;
     }
 }

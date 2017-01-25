@@ -26,6 +26,12 @@ public class GameMaster : MonoBehaviour
     public int numRows = 2; //number of tiles to size
     public int numCols = 2;
     private GameObject[][] tileGrid; // the holder for all the tiles
+    public GameObject Character;
+    private GameObject roy;
+    private bool canInputMove = true;
+    private bool charsWalking = false;
+    private bool tilesSliding = false;
+    private List<GameObject> actors = new List<GameObject>();
 
      void Start()
     {
@@ -45,6 +51,8 @@ public class GameMaster : MonoBehaviour
                 tileGrid[c][r] = Instantiate(Tile, new Vector3(c*tileSize,r*tileSize,0), Quaternion.identity);
             }
         }
+        roy = Instantiate(Character, new Vector3(tileGrid[0][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
+        actors.Add(roy);
     }
 
     // Update is called once per frame
@@ -54,34 +62,47 @@ public class GameMaster : MonoBehaviour
         //or uses mouse input if exists and converts it into fake touch input
 
         // Simulate touch events from mouse events with dummy ID out of range
-        if (Input.touchCount == 0)
+        if (canInputMove)
         {
-            //Calls when mouse is first pressed(begin)
-            if (Input.GetMouseButtonDown(0))
+            if (Input.touchCount == 0)
             {
-                HandleTouch(10, Input.mousePosition, TouchPhase.Began, new Vector2(0,0));
-                //store the last position for next tick
-                lastPos = Input.mousePosition;
-            }
-            //called when mouse his held down(moved)
-            if (Input.GetMouseButton(0))
-            {
+                //Calls when mouse is first pressed(begin)
+                if (Input.GetMouseButtonDown(0))
+                {
+                    HandleTouch(10, Input.mousePosition, TouchPhase.Began, new Vector2(0, 0));
+                    //store the last position for next tick
+                    lastPos = Input.mousePosition;
+                }
+                //called when mouse his held down(moved)
+                if (Input.GetMouseButton(0))
+                {
 
+                }
+                //called when mouse is lifted up(ended)
+                if (Input.GetMouseButtonUp(0))
+                {
+                    Vector2 offset = new Vector2(Input.mousePosition.x - lastPos.x, Input.mousePosition.y - lastPos.y);
+                    HandleTouch(10, Input.mousePosition, TouchPhase.Ended, offset);
+                    //reset the total offset
+                    totalOffset = 0;
+                }
             }
-            //called when mouse is lifted up(ended)
-            if (Input.GetMouseButtonUp(0))
+            else
             {
-                Vector2 offset = new Vector2(Input.mousePosition.x - lastPos.x, Input.mousePosition.y - lastPos.y);
-                HandleTouch(10, Input.mousePosition, TouchPhase.Ended, offset);
-                //reset the total offset
-                totalOffset = 0;
+                //use the first touch registered
+                Touch touch = Input.touches[0];
+                HandleTouch(touch.fingerId, touch.position, touch.phase, touch.deltaPosition);
             }
         }
         else
         {
-            //use the first touch registered
-            Touch touch = Input.touches[0];
-            HandleTouch(touch.fingerId, touch.position, touch.phase, touch.deltaPosition);
+            //check if tiles are done moving
+            if (!tilesSliding && !charsWalking)
+            {
+                charsWalking = true;
+                //tell all characters to walk
+
+            }   
         }
     }
 
@@ -119,8 +140,10 @@ public class GameMaster : MonoBehaviour
     }
 
     //takes in row, col, and offset, and then then tells the correct tiles to move
-    private void moveGrid(int row, int col, int dir)
+    private void moveGrid(int col, int row, int dir)
     {
+        canInputMove = false;
+        tilesSliding = true;
         Vector2 offset = new Vector2(0, 0);
         GameObject temp;
         //calculate normal offset vector and move the tiles
@@ -177,7 +200,6 @@ public class GameMaster : MonoBehaviour
                 tileGrid[numCols - 1][row].GetComponent<Tile>().SlideTo(offset);
                 break;
         }
-
     }
 
     private void findTouchVector(GameObject obj, Vector2 delta)
@@ -216,10 +238,21 @@ public class GameMaster : MonoBehaviour
                 }
             }
         }
-        
-
-
-        moveGrid(row, col, dir);
+        moveGrid(col, row, dir);
     }
 
+    public GameObject getTile(int col, int row)
+    {
+        return tileGrid[col][row];
+    }
+
+    public void doneSliding()
+    {
+        tilesSliding = false;
+    }
+    public void doneWalking()
+    {
+        charsWalking = false;
+        canInputMove = true;
+    }
 }
