@@ -62,7 +62,7 @@ public class NavAlg : MonoBehaviour {
 	}
 
 	//takes in col, row, and direction
-	private bool validMove(int col,int row, int dir) {
+	private bool validMove(int col, int row, int dir) {
 		
 		//isWall gets the int(0 or 1) for a wall in the direction the actor is facing
 		//at its current tile
