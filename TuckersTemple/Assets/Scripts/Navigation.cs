@@ -1,17 +1,16 @@
 ﻿/*
- * Tucker's Temple
- * Andrew Cousins
- * Last edit: 1/18/17
- * 
  * Navigation.cs
- * contains functions to determine what an actor's next move should be
+ * 
+ * contains functions to determine what an actor's next move should be.
+ * This could be put in GameMaster, but its not.
+ * ACTUALLY it should probably be in Character.cs - Expect that to happen at some point maybe?
 */
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NavAlg : MonoBehaviour {
+public class Navigation : MonoBehaviour {
 
 	//macros for directional variables
 	const int N = 0; 
@@ -21,7 +20,6 @@ public class NavAlg : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
 	}
 	
 	// Update is called once per frame
@@ -69,7 +67,9 @@ public class NavAlg : MonoBehaviour {
 
 		//TODO: set isWall to the proper getter
 		int isWall = 0;
-		//isWall = grid[c][r].dirs[d]; <-- old code from prototype
+        //isWall = grid[c][r].dirs[d]; <-- old code from prototype
+
+        isWall = GetComponentInParent<GameMaster>().getTile(col, row).GetComponent<Tile>().wallInDir(dir);
 
 		if (isWall == 0) { //0 means no wall
 			
@@ -106,14 +106,15 @@ public class NavAlg : MonoBehaviour {
 			dir += 2;
 
 			//normalize dir
-			if (dir >= 4) dir -= 4; 
+			if (dir >= 4) dir -= 4;
 
-			//now row, col, and dir have been updated to be as if an actor is trying to
-			//move from destination tile to origin tile, to check if there is a wall in that tile
-			//isWall = grid[c][r].dirs[d]; TODO: add in proper code here, this is legacy code
+            //now row, col, and dir have been updated to be as if an actor is trying to
+            //move from destination tile to origin tile, to check if there is a wall in that tile
+            //isWall = grid[c][r].dirs[d]; TODO: add in proper code here, this is legacy code
+            isWall = GetComponentInParent<GameMaster>().getTile(col, row).GetComponent<Tile>().wallInDir(dir);
 
-			//0 means no wall, so we have a valid move.
-			if (isWall == 0) {
+            //0 means no wall, so we have a valid move.
+            if (isWall == 0) {
 				return true;
 			}
 			return false;

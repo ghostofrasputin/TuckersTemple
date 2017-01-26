@@ -103,7 +103,6 @@ GameObject:
   - component: {fileID: 1056394622}
   - component: {fileID: 1056394621}
   - component: {fileID: 1056394620}
-  - component: {fileID: 1056394625}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -173,24 +172,68 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1056394619}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 1.5, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1056394625
+--- !u!1 &1994970885
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1994970887}
+  - component: {fileID: 1994970886}
+  - component: {fileID: 1994970888}
+  m_Layer: 0
+  m_Name: GameMaster
+  m_TagString: GameController
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1994970886
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1056394619}
+  m_GameObject: {fileID: 1994970885}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee22b21252ac247bda81cb245f5e721e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slideSpeed: 1
+  slideSpeed: 0.02
   Tile: {fileID: 1984444076187268, guid: f0796545b8968a144a006cfeb8de9aeb, type: 2}
-  numRows: 2
-  numCols: 2
+  tileSize: 0
+  numRows: 3
+  numCols: 3
+  Character: {fileID: 1458747699917940, guid: fc72ad163fa54e44abbe9bc7e49dee01, type: 2}
+  outerWall: {fileID: 1316927426102678, guid: 741d44e80db8e764ab2278f9f42bfefd, type: 2}
+--- !u!4 &1994970887
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1994970885}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1994970888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1994970885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33725518b13d73243961bf9088a0d9cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -13,8 +13,8 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
+  - Wall
+  - Tile
   - 
   - 
   - 
@@ -40,4 +40,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Tile
+    uniqueID: 4190071995
+    locked: 0
+  - name: Wall
+    uniqueID: 2138031989
+    locked: 0
+  - name: Actor
+    uniqueID: 620718437
     locked: 0
