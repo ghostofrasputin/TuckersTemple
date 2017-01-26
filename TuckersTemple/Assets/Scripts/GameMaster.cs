@@ -1,4 +1,10 @@
-﻿using System.Collections;
+﻿/*
+ * GameMaster.cs
+ * 
+ * This script does like everything.  Be careful.
+ */
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,16 +28,18 @@ public class GameMaster : MonoBehaviour
     private Vector2 lastPos = new Vector2(0,0); //holds the last position for mouse input to calculate deltaPosition
     private float totalOffset = 0; //holds total offset for a move, to keep it locked to 1 tile away
     public GameObject Tile; //The tile prefab to spawn in
-    private float tileSize; //the size of the tile prefab(should be square)
+    public float tileSize; //the size of the tile prefab(should be square)
     public int numRows = 2; //number of tiles to size
     public int numCols = 2;
     private GameObject[][] tileGrid; // the holder for all the tiles
     public GameObject Character;
-    private GameObject roy;
+    private GameObject roy; //Roy is private, he just likes it that way
     private bool canInputMove = true;
     private bool charsWalking = false;
     private bool tilesSliding = false;
+    //This should hold all the actors in the scene, so we can iterate through it to tell them to walk(the plank, ARRRR)
     private List<GameObject> actors = new List<GameObject>();
+    public GameObject outerWall;
 
      void Start()
     {
@@ -53,6 +61,11 @@ public class GameMaster : MonoBehaviour
         }
         roy = Instantiate(Character, new Vector3(tileGrid[0][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
         actors.Add(roy);
+
+        //Add in outer walls to the grid
+        outerWall = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
+        outerWall.transform.localScale = new Vector3( (numCols + 1) * tileSize , (numRows + 1) * tileSize, 0);
+        outerWall.transform.position = new Vector3((numCols + 1) * tileSize / 4, (numRows + 1) * tileSize / 4, 0);
     }
 
     // Update is called once per frame
@@ -96,12 +109,15 @@ public class GameMaster : MonoBehaviour
         }
         else
         {
-            //check if tiles are done moving
+            //check if tiles are done moving and characters aren't walking
             if (!tilesSliding && !charsWalking)
             {
                 charsWalking = true;
                 //tell all characters to walk
-
+                foreach(GameObject actor in actors)
+                {
+                    actor.GetComponent<Character>().walk();
+                }
             }   
         }
     }
@@ -142,16 +158,32 @@ public class GameMaster : MonoBehaviour
     //takes in row, col, and offset, and then then tells the correct tiles to move
     private void moveGrid(int col, int row, int dir)
     {
+        //Set some bools to stop players from entering another move while animations run
         canInputMove = false;
         tilesSliding = true;
+        //calculate normal offset vector and move the tiles
         Vector2 offset = new Vector2(0, 0);
         GameObject temp;
-        //calculate normal offset vector and move the tiles
         switch (dir)
         {
+            /*
+             * What follows is a bunch of suprisingly straightforward 2D array logic.  It will be explained once here instead of in each loop individually
+             * offset = tileSize //Set the offset vector to the appropriate direction based on dir(which we know from the switch)
+             * temp = tilegrid //Save one of the tiles to a temp variable, so we don't lose it when shifting things
+             * for() //Iterate through the designated column or row.  Some of these are negative because thats the direction we have to go
+             *          //note that we stop or start a little early
+             * tilegrid = tilegrid //replace the current index with the next index, in whatever direction we are moving
+             * tilegrid...SlideTo //tell a tile to slide to its new position
+             * }
+             * tilegrid = temp // return temp to its new position
+             * tileGrid...WrapPosition //That temp tile needs to wrap around to the other side, so this is what does it.  Note the positional vector, and how it uses no offsets
+             *                          //This is because we are bad programmers, so currently the world's (0,0) needs to be the bottom left of the tile grid
+             * tileGrid...SlideTo //Tell that last tile to slide
+             * //We did it!  If you have any questions, ask Andrew or Elliot, but they probably don't understand it any more than was written here.
+             * //We sacrificied a few animals to make the numbers work, so don't change them unless you know what you're doing!
+             */
             case N:
                 offset.y = tileSize;
-                //Update grid
                 temp = tileGrid[col][numRows - 1];
                 for (int r = numRows - 1; r > 0; r--)
                 {
@@ -176,7 +208,6 @@ public class GameMaster : MonoBehaviour
                 break;
             case E:
                 offset.x = tileSize;
-                //Update grid
                 temp = tileGrid[numCols - 1][row];
                 for (int c = numCols - 1; c > 0; c--)
                 {
@@ -202,10 +233,14 @@ public class GameMaster : MonoBehaviour
         }
     }
 
+    //After a swipe is finished, this is called with the touched object and the total delta of the swipe
+    //It uses that information to decide which row or col needs to move, and in what direction.
     private void findTouchVector(GameObject obj, Vector2 delta)
     {
+        //check which direction had the greater offset
         isVert = Mathf.Abs(delta.y) > Mathf.Abs(delta.x);
         int dir = -1;
+        //check if it is vertical or horizontal, then if it is positive or negative
         if (isVert)
         {
             dir = N;
@@ -227,6 +262,8 @@ public class GameMaster : MonoBehaviour
         int col = -1;
 
         //get row, col from obj
+        //Loop through the tiles until you find the right one
+        //This can probably be optimized
         for (int c = 0; c < numCols; c++)
         {
             for (int r = 0; r < numRows; r++)
@@ -235,21 +272,48 @@ public class GameMaster : MonoBehaviour
                 {
                     row = r;
                     col = c;
+                    //We shoudl really return here
                 }
             }
         }
+        //Tell the grid to move with the information we now have!
         moveGrid(col, row, dir);
     }
 
+    /*
+     * getTile returns a reference to the specified tile
+     * Params: col - the tile's column
+     *         row - the tile's row
+     * Prereq: col,row are not out of bounds
+     */
     public GameObject getTile(int col, int row)
     {
         return tileGrid[col][row];
     }
+    /*
+     * getTile returns a reference to the specified tile
+     * Params: pos - a vector2 of where the tile is on the grid
+     * Prereq: pos is not out of bounds
+     */
+    public GameObject getTile(Vector2 pos)
+    {
+        //These +0.01f are sacrifices to the devil, don't adjust them or
+        //The floating point math gods will smite you from the earth
+        int col = Mathf.FloorToInt((pos.x + 0.01f) / tileSize);
+        int row = Mathf.FloorToInt((pos.y + 0.01f) / tileSize);
+        return tileGrid[col][row];
+    }
 
+    //This is called by tiles when they are done with their slide animation, so characters can start walking
+    //It may eventually need to count how many tiles are done and wait for them all.
     public void doneSliding()
     {
+
         tilesSliding = false;
     }
+    //This is called by actors when they are done moving, and lets the player swipe a new move
+    //It may need to eventually count how many actors are done, and wait for them all
+    //Especially if some actors take longer to walk than others.
     public void doneWalking()
     {
         charsWalking = false;

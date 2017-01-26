@@ -1,10 +1,9 @@
 ﻿/*
- * Tucker's Temple
- * Andrew Cousins
- * Last edit: 1/18/17
- * 
  * Navigation.cs
- * contains functions to determine what an actor's next move should be
+ * 
+ * contains functions to determine what an actor's next move should be.
+ * This could be put in GameMaster, but its not.
+ * ACTUALLY it should probably be in Character.cs - Expect that to happen at some point maybe?
 */
 
 using System.Collections;
