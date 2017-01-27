@@ -116,7 +116,7 @@ public class GameMaster : MonoBehaviour
                 //tell all characters to walk
                 foreach(GameObject actor in actors)
                 {
-                    actor.GetComponent<Character>().walk();
+                    actor.GetComponent<Actor>().walk();
                 }
             }   
         }
