@@ -28,6 +28,7 @@ public class GameMaster : MonoBehaviour
     private Vector2 lastPos = new Vector2(0,0); //holds the last position for mouse input to calculate deltaPosition
     private float totalOffset = 0; //holds total offset for a move, to keep it locked to 1 tile away
     public GameObject Tile; //The tile prefab to spawn in
+    public GameObject Trap; // The trap prefab to spawn.
     public float tileSize; //the size of the tile prefab(should be square)
     public int numRows = 2; //number of tiles to size
     public int numCols = 2;
@@ -55,8 +56,15 @@ public class GameMaster : MonoBehaviour
             //iterate through rows
             for(int r = 0; r < numRows; r++)
             {
-                //instantiate a tile at the proper grid position
-                tileGrid[c][r] = Instantiate(Tile, new Vector3(c*tileSize,r*tileSize,0), Quaternion.identity);
+                // randomly instantiate a regular tile or a trap and add it to the array. the starting tile is always regular.
+                if ((c == 0 && r == 0) || UnityEngine.Random.Range(0, 4) < 3)
+                {
+                    tileGrid[c][r] = Instantiate(Tile, new Vector3(c * tileSize, r * tileSize, 0), Quaternion.identity);
+                }
+                else
+                {
+                    tileGrid[c][r] = Instantiate(Trap, new Vector3(c * tileSize, r * tileSize, 0), Quaternion.identity);
+                }
             }
         }
         roy = Instantiate(Character, new Vector3(tileGrid[0][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
