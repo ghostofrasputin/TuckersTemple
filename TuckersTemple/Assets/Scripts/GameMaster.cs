@@ -6,13 +6,14 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 
 public class GameMaster : MonoBehaviour
 {
     // public fields:
-    public float slideSpeed = .02f;
+   public float slideSpeed = .02f;
 	public GameObject outerWall;
 	public GameObject Tile; //The tile prefab to spawn in
 	public GameObject Character;
@@ -41,7 +42,6 @@ public class GameMaster : MonoBehaviour
     //This should hold all the actors in the scene, so we can iterate through it to tell them to walk(the plank, ARRRR)
     private List<GameObject> actors = new List<GameObject>();
     
-
      void Start()
      {
 		//get the size of the tile (1.6)
@@ -134,9 +134,9 @@ public class GameMaster : MonoBehaviour
     {
         switch (touchPhase)
         {
-		case TouchPhase.Began:
-				Ray ray = Camera.main.ScreenPointToRay (touchPosition);
-				touchTarget = null;
+           case TouchPhase.Began:
+               Ray ray = Camera.main.ScreenPointToRay (touchPosition);
+               touchTarget = null;
                 if (Physics.Raycast(ray, out hit))
                 {
                     touchTarget = hit.collider.gameObject;
@@ -271,10 +271,10 @@ public class GameMaster : MonoBehaviour
             {
                 if(tileGrid[c][r].Equals(obj))
                 {
-                    row = r;
-                    col = c;
-					isSelected = true;
-					break;
+                 row = r;
+                 col = c;
+                 isSelected = true;
+                 break;
                 }
             }
         }
@@ -324,4 +324,13 @@ public class GameMaster : MonoBehaviour
         charsWalking = false;
         canInputMove = true;
     }
+	
+	// this will load the current level scene 
+	// as of right now, levels are being generated, so
+	// it reload the level, but the tiles will be different
+	public void reset()
+	{
+		Scene scene = SceneManager.GetActiveScene();
+		SceneManager.LoadScene(scene.name);
+	}
 }
