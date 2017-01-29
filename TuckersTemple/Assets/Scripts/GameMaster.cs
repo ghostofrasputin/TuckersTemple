@@ -13,37 +13,38 @@ public class GameMaster : MonoBehaviour
 {
     // public fields:
     public float slideSpeed = .02f;
-
+	public GameObject outerWall;
+	public GameObject Tile; //The tile prefab to spawn in
+	public GameObject Character;
+	public float tileSize; //the size of the tile prefab(should be square)
+	public int numRows = 2; //number of tiles to size
+	public int numCols = 2;
 
     // private fields:
     private const int N = 0;
     private const int E = 1;
     private const int S = 2;
     private const int W = 3;
-    RaycastHit hit;
+    private RaycastHit hit;
     private GameObject touchTarget;
     private bool isDrag = false; //tracks if valid object is hit for drag
     private bool isVert = false; //Extablishes initial movement axis of swipe
     private bool isLatched = false; //locks movement axis to initial direction of swipe
+	private bool isSelected = false;
     private Vector2 lastPos = new Vector2(0,0); //holds the last position for mouse input to calculate deltaPosition
     private float totalOffset = 0; //holds total offset for a move, to keep it locked to 1 tile away
-    public GameObject Tile; //The tile prefab to spawn in
-    public float tileSize; //the size of the tile prefab(should be square)
-    public int numRows = 2; //number of tiles to size
-    public int numCols = 2;
     private GameObject[][] tileGrid; // the holder for all the tiles
-    public GameObject Character;
     private GameObject roy; //Roy is private, he just likes it that way
     private bool canInputMove = true;
     private bool charsWalking = false;
     private bool tilesSliding = false;
     //This should hold all the actors in the scene, so we can iterate through it to tell them to walk(the plank, ARRRR)
     private List<GameObject> actors = new List<GameObject>();
-    public GameObject outerWall;
+    
 
      void Start()
-    {
-        //get the size of the tile
+     {
+		//get the size of the tile (1.6)
         tileSize = Tile.GetComponent<Renderer>().bounds.size.x;
         //initialize the first array
         tileGrid = new GameObject[numCols][];
@@ -129,12 +130,13 @@ public class GameMaster : MonoBehaviour
      * touchPhase is either Began, Moved, or Ended
      * deltaPosition is a vector of the difference in position since last tick
      */
-    private void HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase, Vector2 deltaPosition )
+    private void HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase, Vector2 deltaPosition)
     {
         switch (touchPhase)
         {
-            case TouchPhase.Began:
-                Ray ray = Camera.main.ScreenPointToRay(touchPosition);
+		case TouchPhase.Began:
+				Ray ray = Camera.main.ScreenPointToRay (touchPosition);
+				touchTarget = null;
                 if (Physics.Raycast(ray, out hit))
                 {
                     touchTarget = hit.collider.gameObject;
@@ -149,9 +151,7 @@ public class GameMaster : MonoBehaviour
                 break;
 
             default:
-
                 break;
-
         }
     }
 
@@ -264,6 +264,7 @@ public class GameMaster : MonoBehaviour
         //get row, col from obj
         //Loop through the tiles until you find the right one
         //This can probably be optimized
+		isSelected = false;
         for (int c = 0; c < numCols; c++)
         {
             for (int r = 0; r < numRows; r++)
@@ -272,13 +273,18 @@ public class GameMaster : MonoBehaviour
                 {
                     row = r;
                     col = c;
-                    //We shoudl really return here
+					isSelected = true;
+					break;
                 }
             }
         }
         //Tell the grid to move with the information we now have!
-        moveGrid(col, row, dir);
-    }
+		// only if a tile is selected
+		if (isSelected == true) 
+		{
+			moveGrid(col, row, dir);
+		}
+	}
 
     /*
      * getTile returns a reference to the specified tile
@@ -308,7 +314,6 @@ public class GameMaster : MonoBehaviour
     //It may eventually need to count how many tiles are done and wait for them all.
     public void doneSliding()
     {
-
         tilesSliding = false;
     }
     //This is called by actors when they are done moving, and lets the player swipe a new move

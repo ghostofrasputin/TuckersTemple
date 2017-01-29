@@ -10,22 +10,25 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour {
 
+	// public fields:
+	public GameObject Wall;
+
+	// private fields:
+	private float speed = 0.05f;
+	private bool wrap = false;
     private Vector2 goalPos;
-    private float speed = 0.05f;
-    private Vector2 wrapPos;
-    private bool wrap = false;
-    public GameObject Wall;
+	private Vector2 wrapPos;
     private GameMaster gm;
 
 	// Use this for initialization
 	void Start () {
         //find and save the GameMaster
         gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameMaster>();
-
         goalPos = transform.position;
         GameObject wall;
         for(int i = 0; i < 4; i++)
         {
+			// walls are randomized
             if(Random.value > 0.5)
             {
                 wall = Instantiate(Wall, transform.position, Quaternion.identity, transform);
@@ -38,18 +41,22 @@ public class Tile : MonoBehaviour {
                 {
                     case 0:
                         //Translate is a local axis, so doing Rotate AFTER Translate is important!
-                        wall.transform.Translate(new Vector3(0, GetComponent<Renderer>().bounds.size.x/2 - offset, 0));
+						// top side wall;
+						wall.transform.Translate(new Vector3(0, GetComponent<Renderer>().bounds.size.x/2 - offset, 0));
                         wall.transform.Rotate(new Vector3(0, 0, 90));
                         break;
                     case 1:
+						// right side wall:
                         wall.transform.Translate(new Vector3(GetComponent<Renderer>().bounds.size.x / 2 - offset, 0, 0));
                         break;
                     case 2:
+						// bottom side wall:
                         wall.transform.Translate(new Vector3(0, offset - GetComponent<Renderer>().bounds.size.x / 2, 0));
                         wall.transform.Rotate(new Vector3(0, 0, 90));
                         break;
                     case 3:
-                        wall.transform.Translate(new Vector3(offset - GetComponent<Renderer>().bounds.size.x / 2, 0, 0));
+						// left side wall:
+						wall.transform.Translate(new Vector3(offset - GetComponent<Renderer>().bounds.size.x / 2, 0, 0));
                         break;
                 }
             }
