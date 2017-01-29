@@ -207,6 +207,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slideSpeed: 0.02
   Tile: {fileID: 1984444076187268, guid: f0796545b8968a144a006cfeb8de9aeb, type: 2}
+  Trap: {fileID: 1984444076187268, guid: b66fcace84bad704ba1277eb99bcf807, type: 2}
   tileSize: 0
   numRows: 3
   numCols: 3
