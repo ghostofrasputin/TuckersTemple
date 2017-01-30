@@ -560,6 +560,7 @@ MonoBehaviour:
   outerWall: {fileID: 1316927426102678, guid: 741d44e80db8e764ab2278f9f42bfefd, type: 2}
   Tile: {fileID: 1984444076187268, guid: f0796545b8968a144a006cfeb8de9aeb, type: 2}
   Character: {fileID: 1458747699917940, guid: fc72ad163fa54e44abbe9bc7e49dee01, type: 2}
+  Trap: {fileID: 1984444076187268, guid: b66fcace84bad704ba1277eb99bcf807, type: 2}
   tileSize: 0
   numRows: 3
   numCols: 3

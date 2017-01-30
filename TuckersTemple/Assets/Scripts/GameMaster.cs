@@ -13,10 +13,11 @@ using UnityEngine;
 public class GameMaster : MonoBehaviour
 {
     // public fields:
-   public float slideSpeed = .02f;
+    public float slideSpeed = .02f;
 	public GameObject outerWall;
 	public GameObject Tile; //The tile prefab to spawn in
 	public GameObject Character;
+	public GameObject Trap;
 	//public GameObject Enemy;
 	public float tileSize; //the size of the tile prefab(should be square)
 	public int numRows = 2; //number of tiles to size
@@ -58,8 +59,16 @@ public class GameMaster : MonoBehaviour
             //iterate through rows
             for(int r = 0; r < numRows; r++)
             {
-                //instantiate a tile at the proper grid position
-                tileGrid[c][r] = Instantiate(Tile, new Vector3(c*tileSize,r*tileSize,0), Quaternion.identity);
+                // create tiles and traps
+				if ((c == 0 && r == 0) || UnityEngine.Random.Range (0, 4) < 3) {
+					//instantiate a tile at the proper grid position
+					tileGrid [c] [r] = Instantiate (Tile, new Vector3 (c * tileSize, r * tileSize, 0), Quaternion.identity);
+				} 
+				else 
+				{
+					//instantiate a tile at the proper grid position
+					tileGrid [c] [r] = Instantiate (Trap, new Vector3 (c * tileSize, r * tileSize, 0), Quaternion.identity);
+				}
             }
         }
         roy = Instantiate(Character, new Vector3(tileGrid[0][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
@@ -330,9 +339,15 @@ public class GameMaster : MonoBehaviour
         canInputMove = true;
     }
 	
+	// remove an actor once they're dead
+	public void deleteActor(GameObject actor)
+	{
+		actors.Remove (actor);
+	}
+	
 	// this will load the current level scene 
 	// as of right now, levels are being generated, so
-	// it reload the level, but the tiles will be different
+	// it reloads the level, but the tiles will be different
 	public void reset()
 	{
 		Scene scene = SceneManager.GetActiveScene();
