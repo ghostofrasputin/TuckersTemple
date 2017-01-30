@@ -17,6 +17,7 @@ public class GameMaster : MonoBehaviour
 	public GameObject outerWall;
 	public GameObject Tile; //The tile prefab to spawn in
 	public GameObject Character;
+	//public GameObject Enemy;
 	public float tileSize; //the size of the tile prefab(should be square)
 	public int numRows = 2; //number of tiles to size
 	public int numCols = 2;
@@ -36,6 +37,7 @@ public class GameMaster : MonoBehaviour
     private float totalOffset = 0; //holds total offset for a move, to keep it locked to 1 tile away
     private GameObject[][] tileGrid; // the holder for all the tiles
     private GameObject roy; //Roy is private, he just likes it that way
+	private GameObject enemy; // enemies also keep private affairs, right?
     private bool canInputMove = true;
     private bool charsWalking = false;
     private bool tilesSliding = false;
@@ -62,6 +64,9 @@ public class GameMaster : MonoBehaviour
         }
         roy = Instantiate(Character, new Vector3(tileGrid[0][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
         actors.Add(roy);
+
+		enemy = Instantiate(Character, new Vector3(tileGrid[2][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
+		actors.Add(enemy);
 
         //Add in outer walls to the grid
         outerWall = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
