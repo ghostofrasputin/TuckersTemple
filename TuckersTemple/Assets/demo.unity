@@ -561,6 +561,7 @@ MonoBehaviour:
   Tile: {fileID: 1984444076187268, guid: f0796545b8968a144a006cfeb8de9aeb, type: 2}
   Character: {fileID: 1458747699917940, guid: fc72ad163fa54e44abbe9bc7e49dee01, type: 2}
   Trap: {fileID: 1984444076187268, guid: b66fcace84bad704ba1277eb99bcf807, type: 2}
+  Enemy: {fileID: 1003016979914284, guid: 3c49d983ec1534939b5984010f697b05, type: 2}
   tileSize: 0
   numRows: 3
   numCols: 3

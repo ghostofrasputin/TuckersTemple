@@ -18,7 +18,7 @@ public class GameMaster : MonoBehaviour
 	public GameObject Tile; //The tile prefab to spawn in
 	public GameObject Character;
 	public GameObject Trap;
-	//public GameObject Enemy;
+	public GameObject Enemy;
 	public float tileSize; //the size of the tile prefab(should be square)
 	public int numRows = 2; //number of tiles to size
 	public int numCols = 2;
@@ -74,7 +74,7 @@ public class GameMaster : MonoBehaviour
         roy = Instantiate(Character, new Vector3(tileGrid[0][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
         actors.Add(roy);
 
-		enemy = Instantiate(Character, new Vector3(tileGrid[2][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
+		enemy = Instantiate(Enemy, new Vector3(tileGrid[2][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
 		actors.Add(enemy);
 
         //Add in outer walls to the grid
