@@ -18,8 +18,9 @@ public class GameMaster : MonoBehaviour
 	public GameObject Tile; //The tile prefab to spawn in
 	public GameObject Character;
 	public GameObject Trap;
-	//public GameObject Enemy;
-	public float tileSize; //the size of the tile prefab(should be square)
+    public Canvas winScreen;
+    //public GameObject Enemy;
+    public float tileSize; //the size of the tile prefab(should be square)
 	public int numRows = 2; //number of tiles to size
 	public int numCols = 2;
 
@@ -81,6 +82,7 @@ public class GameMaster : MonoBehaviour
         outerWall = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
         outerWall.transform.localScale = new Vector3( (numCols + 1) * tileSize , (numRows + 1) * tileSize, 0);
         outerWall.transform.position = new Vector3((numCols + 1) * tileSize / 4, (numRows + 1) * tileSize / 4, 0);
+
     }
 
     // Update is called once per frame
@@ -353,4 +355,21 @@ public class GameMaster : MonoBehaviour
 		Scene scene = SceneManager.GetActiveScene();
 		SceneManager.LoadScene(scene.name);
 	}
+
+    //Called when the level is won
+    //Displays win screen
+    public void levelWin()
+    {
+        winScreen.GetComponent<CanvasGroup>().alpha = 1;
+        winScreen.GetComponent<CanvasGroup>().interactable = true;
+        winScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
+    }
+
+    public void nextLevel()
+    {
+        winScreen.GetComponent<CanvasGroup>().alpha = 0;
+        winScreen.GetComponent<CanvasGroup>().interactable = false;
+        winScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
+        reset();
+    }
 }
