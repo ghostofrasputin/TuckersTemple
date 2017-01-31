@@ -38,7 +38,7 @@ public class GameMaster : MonoBehaviour
     private float totalOffset = 0; //holds total offset for a move, to keep it locked to 1 tile away
     private GameObject[][] tileGrid; // the holder for all the tiles
     private GameObject roy; //Roy is private, he just likes it that way
-	private GameObject enemy; // enemies also keep private affairs, right?
+	private GameObject enemy; 
     private bool canInputMove = true;
     private bool charsWalking = false;
     private bool tilesSliding = false;
@@ -74,7 +74,7 @@ public class GameMaster : MonoBehaviour
         roy = Instantiate(Character, new Vector3(tileGrid[0][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
         actors.Add(roy);
 
-		enemy = Instantiate(Enemy, new Vector3(tileGrid[2][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
+		enemy = Instantiate(Enemy, new Vector3(tileGrid[1][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
 		actors.Add(enemy);
 
         //Add in outer walls to the grid
@@ -132,6 +132,7 @@ public class GameMaster : MonoBehaviour
                 foreach(GameObject actor in actors)
                 {
                     actor.GetComponent<Actor>().walk();
+					actor.GetComponent<Enemy>().walk();
                 }
             }   
         }
@@ -344,6 +345,7 @@ public class GameMaster : MonoBehaviour
 	{
 		actors.Remove (actor);
 	}
+
 	
 	// this will load the current level scene 
 	// as of right now, levels are being generated, so
