@@ -38,7 +38,7 @@ public class GameMaster : MonoBehaviour
     private float totalOffset = 0; //holds total offset for a move, to keep it locked to 1 tile away
     private GameObject[][] tileGrid; // the holder for all the tiles
     private GameObject roy; //Roy is private, he just likes it that way
-	private GameObject enemy; // enemies also keep private affairs, right?
+	//private GameObject enemy; // enemies also keep private affairs, right?
     private bool canInputMove = true;
     private bool charsWalking = false;
     private bool tilesSliding = false;
@@ -59,23 +59,18 @@ public class GameMaster : MonoBehaviour
             //iterate through rows
             for(int r = 0; r < numRows; r++)
             {
-                // create tiles and traps
-				if ((c == 0 && r == 0) || UnityEngine.Random.Range (0, 4) < 3) {
+
 					//instantiate a tile at the proper grid position
 					tileGrid [c] [r] = Instantiate (Tile, new Vector3 (c * tileSize, r * tileSize, 0), Quaternion.identity);
-				} 
-				else 
-				{
-					//instantiate a tile at the proper grid position
-					tileGrid [c] [r] = Instantiate (Trap, new Vector3 (c * tileSize, r * tileSize, 0), Quaternion.identity);
-				}
+
             }
         }
+        Instantiate(Trap, new Vector3(tileGrid[2][2].transform.position.x, tileGrid[2][2].transform.position.y, tileGrid[2][2].transform.position.z), Quaternion.identity,tileGrid[2][2].transform);
         roy = Instantiate(Character, new Vector3(tileGrid[0][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
         actors.Add(roy);
 
-		enemy = Instantiate(Character, new Vector3(tileGrid[2][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
-		actors.Add(enemy);
+		//enemy = Instantiate(Character, new Vector3(tileGrid[2][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
+		//actors.Add(enemy);
 
         //Add in outer walls to the grid
         outerWall = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
