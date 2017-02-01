@@ -1,20 +1,38 @@
 {
- 	“level”: {
-		“name”: “level1”,
-		“rows”: 3,
-		“cols”: 3,
-		“tiles”: [
-			[“x”,”I1”,”x”],
-			[“T3”,”x”,”L3”],
-			[“L0”,”T2”,”I0”]
+	"level1": {
+		"name": "level1",
+		"rows": 3,
+		"cols": 3,
+		"tiles": [
+			["x","I1","x"],
+			["T3","x","L3"],
+			["L0","T2","I0"]
 		],
-		“actors”: {
-			“roy”: [2, 0, 3],
-			“shadow”: [1, 2, 3],
-		“shadow”: [1, 1, 1] 
+		"actors": {
+			"roy": [2,0,3],
+			"shadow": [1,2,3],
+			"shadow": [1,1,1]
+		},
+		"static": {
+			"goal": [0,2]
 		}
-		“static”: {
-			“goal”: [0, 2]
+	},
+	"level2": {
+			"name": "level2",
+			"rows": 3,
+			"cols": 3,
+			"tiles": [
+				["x","I1","x"],
+				["T3","x","L3"],
+				["L0","T2","I0"]
+			],
+			"actors": {
+				"roy": [2,0,3],
+				"shadow": [1,2,3],
+				"shadow": [1,1,1]
+			},
+			"static": {
+				"goal": [0,2]
+			}
 		}
-	}
 }
