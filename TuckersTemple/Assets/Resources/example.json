@@ -10,8 +10,8 @@
 		],
 		"actors": {
 			"roy": [2,0,3],
-			"shadow": [1,2,3],
-			"shadow": [1,1,1]
+			"shadow1": [1,2,3],
+			"shadow2": [1,1,1]
 		},
 		"static": {
 			"goal": [0,2]
@@ -28,8 +28,8 @@
 			],
 			"actors": {
 				"roy": [2,0,3],
-				"shadow": [1,2,3],
-				"shadow": [1,1,1]
+				"shadow1": [1,2,3],
+				"shadow2": [1,1,1]
 			},
 			"static": {
 				"goal": [0,2]
