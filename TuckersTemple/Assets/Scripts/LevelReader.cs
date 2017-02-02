@@ -106,8 +106,8 @@ public class LevelReader : MonoBehaviour {
 		}
 
 		// DEBUGGING:
-		printLevelsList();
-		printLevel(1);
+		//printLevelsList();
+		//printLevel(1);
 	}
 
 	// let's GameMaster receive 
