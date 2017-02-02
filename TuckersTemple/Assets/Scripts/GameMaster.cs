@@ -132,7 +132,7 @@ public class GameMaster : MonoBehaviour
                 foreach(GameObject actor in actors)
                 {
                     actor.GetComponent<Actor>().walk();
-					actor.GetComponent<Enemy>().walk();
+					//actor.GetComponent<Enemy>().walk();
                 }
             }   
         }
