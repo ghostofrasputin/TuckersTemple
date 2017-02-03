@@ -22,6 +22,7 @@ public class GameMaster : MonoBehaviour
 	public float tileSize; //the size of the tile prefab(should be square)
 	public int numRows = 2; //number of tiles to size
 	public int numCols = 2;
+	public Canvas winScreen;
 
     // private fields:
     private const int N = 0;
@@ -352,5 +353,22 @@ public class GameMaster : MonoBehaviour
 	{
 		Scene scene = SceneManager.GetActiveScene();
 		SceneManager.LoadScene(scene.name);
+	}
+
+	//Called when the level is won
+	//Displays win screen
+	public void levelWin()
+	{
+		winScreen.GetComponent<CanvasGroup>().alpha = 1;
+		winScreen.GetComponent<CanvasGroup>().interactable = true;
+		winScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
+	}
+
+	public void nextLevel()
+	{
+		winScreen.GetComponent<CanvasGroup>().alpha = 0;
+		winScreen.GetComponent<CanvasGroup>().interactable = false;
+		winScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
+		reset();
 	}
 }
