@@ -45,6 +45,9 @@ public class GameMaster : MonoBehaviour
     private bool tilesSliding = false;
     //This should hold all the actors in the scene, so we can iterate through it to tell them to walk(the plank, ARRRR)
     private List<GameObject> actors = new List<GameObject>();
+    // playtest metrics
+    private int moves = 0;
+    private double time = 0;
     
      void Start()
      {
@@ -87,6 +90,7 @@ public class GameMaster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        time += Time.deltaTime;
         //This code either uses touch input if it exists,
         //or uses mouse input if exists and converts it into fake touch input
 
@@ -135,6 +139,7 @@ public class GameMaster : MonoBehaviour
                     actor.GetComponent<Actor>().walk();
 		    // actor.GetComponent<Enemy>().walk();
                 }
+                moves++;
             }   
         }
     }
@@ -363,6 +368,9 @@ public class GameMaster : MonoBehaviour
 		winScreen.GetComponent<CanvasGroup>().alpha = 1;
 		winScreen.GetComponent<CanvasGroup>().interactable = true;
 		winScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
+        print("Level won in " + moves + "moves in " + time + "seconds.");
+        moves = 0;
+        time = 0;
 	}
 
 	public void nextLevel()
