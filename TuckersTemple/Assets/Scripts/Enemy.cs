@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+﻿/*
+=======
 /*
+>>>>>>> master
  * Enemy.cs
  * 
  * Is attached to the Enemy prefab
@@ -30,11 +34,19 @@ public class Enemy : Actor {
 	/*void Start() {
 		//find and save the GameMaster
 		gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameMaster>();
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
 		// extract initial direction from lvl file
 		direction = 0; 
 		goalPos = transform.position;
 		isWalking = false;
 	}
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
 	// Actor Update
 	void Update() {
 		// check for characters turn to walk
@@ -59,19 +71,35 @@ public class Enemy : Actor {
 				transform.position = Vector2.MoveTowards(transform.position, goalPos, speed);
 			}
 		}
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
 		// check enemy and trap collisions:
 		// if (collision with enemy || trap) {
 		// 	 	// play death sprite/animation
 		//		Destroy(GameObject)
 		//}
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
 		// Check goal collision
 		//if (goalCollision) {
 		//	win
 		//}
 	}
+<<<<<<< HEAD
+
 	// walk to new tile
 	public void walk(){
 		int directionToWalk = findNextMove(direction);
+
+=======
+	// walk to new tile
+	public void walk(){
+		int directionToWalk = findNextMove(direction);
+>>>>>>> master
 		//decide where to move and call WalkTo based on directionToWalk
 		float walkDistance = gm.tileSize;
 		switch (directionToWalk)
@@ -102,19 +130,35 @@ public class Enemy : Actor {
 			WalkTo(new Vector2(-walkDistance, 0));
 			break;
 		}
+<<<<<<< HEAD
+
 	}
+
+=======
+	}
+>>>>>>> master
 	//Tells the character the offset to walk to
 	public void WalkTo(Vector2 pos)
 	{
 		goalPos = new Vector2(pos.x + transform.position.x, pos.y + transform.position.y);
 		isWalking = true;
 	}
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
 	//take in direction for actor to move
 	//returns 0,1,2,3 for which direction they should move
 	//returns -1 if no valid move found
 	private int findNextMove(int dir)
 	{
+<<<<<<< HEAD
+
 		//order to try in is straight->right->left->back
+
+=======
+		//order to try in is straight->right->left->back
+>>>>>>> master
 		//this is the modifies to the directions something can face
 		int[] dirMods = { 0, 1, -1, 2 };
 		//directions are 0,1,2,3, with 0 being up and going clockwise.
@@ -122,6 +166,10 @@ public class Enemy : Actor {
 		{
 			//make a current direction by adding the direction modifier to the direction
 			int currDir = dir + dirMods[i];
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
 			//Normalize currDir within 0 to 3
 			if (currDir > 3)
 			{
@@ -143,6 +191,10 @@ public class Enemy : Actor {
              //Arg3 - distance, we don't want further than tile size
              //Arg4 - The layer mask, currently walls so thats all we shoot at
              //
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
 			// using RAYCAAAAST! for enemy collision
 			//if (raycastEnemy
 			//if raycast doesn't return anything, then there isn't anything there!
@@ -160,3 +212,7 @@ public class Enemy : Actor {
 		return -1;
 	}*/
 }
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
