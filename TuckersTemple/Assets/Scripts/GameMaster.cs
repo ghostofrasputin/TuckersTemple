@@ -14,6 +14,16 @@ public class GameMaster : MonoBehaviour
 {
     // public fields:
     public float slideSpeed = .02f;
+<<<<<<< HEAD
+	public GameObject outerWall;
+	public GameObject Tile; //The tile prefab to spawn in
+	public GameObject Character;
+	public GameObject Trap;
+	public GameObject Enemy;
+	public float tileSize; //the size of the tile prefab(should be square)
+	public int numRows = 2; //number of tiles to size
+	public int numCols = 2;
+=======
     public GameObject outerWall;
     public GameObject Tile; //The tile prefab to spawn in
     public GameObject Character;
@@ -23,6 +33,7 @@ public class GameMaster : MonoBehaviour
     public int numRows = 2; //number of tiles to size
     public int numCols = 2;
     public Canvas winScreen;
+>>>>>>> master
 
     // private fields:
     private const int N = 0;
@@ -39,8 +50,12 @@ public class GameMaster : MonoBehaviour
     private float totalOffset = 0; //holds total offset for a move, to keep it locked to 1 tile away
     private GameObject[][] tileGrid; // the holder for all the tiles
     private GameObject roy; //Roy is private, he just likes it that way
+<<<<<<< HEAD
+	private GameObject enemy; 
+=======
     private GameObject goal;
 	//private GameObject enemy; // enemies also keep private affairs, right?
+>>>>>>> master
     private bool canInputMove = true;
     private bool charsWalking = false;
     private bool tilesSliding = false;
@@ -72,8 +87,13 @@ public class GameMaster : MonoBehaviour
         actors.Add(roy);
         goal = Instantiate(Goal, new Vector3(tileGrid[1][1].transform.position.x, tileGrid[1][1].transform.position.y, tileGrid[1][1].transform.position.z), Quaternion.identity, tileGrid[1][1].transform);
 
+<<<<<<< HEAD
+		enemy = Instantiate(Enemy, new Vector3(tileGrid[1][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
+		actors.Add(enemy);
+=======
 		//enemy = Instantiate(Character, new Vector3(tileGrid[2][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
 		//actors.Add(enemy);
+>>>>>>> master
 
         //Add in outer walls to the grid
         outerWall = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
@@ -130,7 +150,11 @@ public class GameMaster : MonoBehaviour
                 foreach(GameObject actor in actors)
                 {
                     actor.GetComponent<Actor>().walk();
+<<<<<<< HEAD
+					//actor.GetComponent<Enemy>().walk();
+=======
 		    // actor.GetComponent<Enemy>().walk();
+>>>>>>> master
                 }
             }   
         }
@@ -343,6 +367,7 @@ public class GameMaster : MonoBehaviour
 	{
 		actors.Remove (actor);
 	}
+
 	
 	// this will load the current level scene 
 	// as of right now, levels are being generated, so

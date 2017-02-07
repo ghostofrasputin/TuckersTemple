@@ -5,9 +5,12 @@ TagManager:
   serializedVersion: 2
   tags:
   - Trap
+<<<<<<< HEAD
+=======
   - Goal
   - Wall
   - OuterWall
+>>>>>>> master
   - Enemy
   layers:
   - Default
