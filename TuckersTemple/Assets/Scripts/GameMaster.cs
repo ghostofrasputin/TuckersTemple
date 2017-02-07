@@ -14,15 +14,15 @@ public class GameMaster : MonoBehaviour
 {
     // public fields:
     public float slideSpeed = .02f;
-	public GameObject outerWall;
-	public GameObject Tile; //The tile prefab to spawn in
-	public GameObject Character;
-	public GameObject Trap;
-    public GameObject Goal;
-	//public GameObject Enemy;
-	public float tileSize; //the size of the tile prefab(should be square)
-	public int numRows = 2; //number of tiles to size
-	public int numCols = 2;
+    public GameObject outerWall;
+    public GameObject Tile; //The tile prefab to spawn in
+    public GameObject Character;
+    public GameObject Trap;
+    public GameObject Enemy;
+    public float tileSize; //the size of the tile prefab(should be square)
+    public int numRows = 2; //number of tiles to size
+    public int numCols = 2;
+    public Canvas winScreen;
 
     // private fields:
     private const int N = 0;
@@ -34,7 +34,7 @@ public class GameMaster : MonoBehaviour
     private bool isDrag = false; //tracks if valid object is hit for drag
     private bool isVert = false; //Extablishes initial movement axis of swipe
     private bool isLatched = false; //locks movement axis to initial direction of swipe
-	private bool isSelected = false;
+    private bool isSelected = false;
     private Vector2 lastPos = new Vector2(0,0); //holds the last position for mouse input to calculate deltaPosition
     private float totalOffset = 0; //holds total offset for a move, to keep it locked to 1 tile away
     private GameObject[][] tileGrid; // the holder for all the tiles
@@ -130,6 +130,7 @@ public class GameMaster : MonoBehaviour
                 foreach(GameObject actor in actors)
                 {
                     actor.GetComponent<Actor>().walk();
+		    // actor.GetComponent<Enemy>().walk();
                 }
             }   
         }
@@ -350,5 +351,22 @@ public class GameMaster : MonoBehaviour
 	{
 		Scene scene = SceneManager.GetActiveScene();
 		SceneManager.LoadScene(scene.name);
+	}
+
+	//Called when the level is won
+	//Displays win screen
+	public void levelWin()
+	{
+		winScreen.GetComponent<CanvasGroup>().alpha = 1;
+		winScreen.GetComponent<CanvasGroup>().interactable = true;
+		winScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
+	}
+
+	public void nextLevel()
+	{
+		winScreen.GetComponent<CanvasGroup>().alpha = 0;
+		winScreen.GetComponent<CanvasGroup>().interactable = false;
+		winScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
+		reset();
 	}
 }
