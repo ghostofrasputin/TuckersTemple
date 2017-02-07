@@ -72,10 +72,10 @@ public class GameMaster : MonoBehaviour
             }
         }
         Instantiate(Trap, new Vector3(tileGrid[2][2].transform.position.x, tileGrid[2][2].transform.position.y, tileGrid[2][2].transform.position.z), Quaternion.identity,tileGrid[2][2].transform);
-        roy = Instantiate(Character, new Vector3(tileGrid[0][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
+        roy = spawnActor(Character, 0, 0);
         actors.Add(roy);
         goal = Instantiate(Goal, new Vector3(tileGrid[1][1].transform.position.x, tileGrid[1][1].transform.position.y, tileGrid[1][1].transform.position.z), Quaternion.identity, tileGrid[1][1].transform);
-		enemy = Instantiate(Enemy, new Vector3(tileGrid[1][0].transform.position.x, tileGrid[0][0].transform.position.y, tileGrid[0][0].transform.position.z), Quaternion.identity, tileGrid[0][0].transform);
+        enemy = spawnActor(Enemy, 1, 0);
 		actors.Add(enemy);
 
         //Add in outer walls to the grid
@@ -87,7 +87,7 @@ public class GameMaster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        time += Time.deltaTime;
+        // time += Time.deltaTime;
         //This code either uses touch input if it exists,
         //or uses mouse input if exists and converts it into fake touch input
 
@@ -343,6 +343,11 @@ public class GameMaster : MonoBehaviour
         canInputMove = true;
     }
 	
+    public GameObject spawnActor(GameObject actor, int x, int y, int direction = 0)
+    {
+        return Instantiate(actor, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y, tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
+    }
+
 	// remove an actor once they're dead
 	public void deleteActor(GameObject actor)
 	{

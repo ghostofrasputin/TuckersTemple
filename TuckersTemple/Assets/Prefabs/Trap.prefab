@@ -20,7 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4319723454816300}
   - component: {fileID: 212022274222474074}
-  - component: {fileID: 114301527679809938}
   - component: {fileID: 61739709404215586}
   m_Layer: 8
   m_Name: Trap
@@ -37,7 +36,7 @@ Transform:
   m_GameObject: {fileID: 1984444076187268}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -56,18 +55,6 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 0.05, y: 0.05}
---- !u!114 &114301527679809938
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1984444076187268}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec9308c03dc3c4bb693d4edf4cc65d21, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Wall: {fileID: 1518398402186632, guid: e9cbbdfb7d6f1394f9e3d53b1f39e554, type: 2}
 --- !u!212 &212022274222474074
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -97,7 +84,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -104895301
+  m_SortingLayerID: 1286930939
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 5e6dbad715cb2bc428668d73af117c44, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
