@@ -19,49 +19,6 @@ public class Tile : MonoBehaviour {
     private Vector2 goalPos;
 	private Vector2 wrapPos;
     private GameMaster gm;
-
-	// Use this for initialization
-	void Start () {
-        //find and save the GameMaster
-        gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameMaster>();
-        goalPos = transform.position;
-        GameObject wall;
-        for(int i = 0; i < 4; i++)
-        {
-			// walls are randomized
-            if(Random.value > 0.5)
-            {
-                wall = Instantiate(Wall, transform.position, Quaternion.identity, transform);
-                wall.transform.localScale = new Vector3(.01f,.05f,.1f);
-
-                //This is mostly a visual thing, so its easy to see which wall belongs to which tile
-                float offset = wall.GetComponent<Renderer>().bounds.size.x;
-
-                switch (i)
-                {
-                    case 0:
-                        //Translate is a local axis, so doing Rotate AFTER Translate is important!
-						// top side wall;
-						wall.transform.Translate(new Vector3(0, GetComponent<Renderer>().bounds.size.x/2 - offset, 0));
-                        wall.transform.Rotate(new Vector3(0, 0, 90));
-                        break;
-                    case 1:
-						// right side wall:
-                        wall.transform.Translate(new Vector3(GetComponent<Renderer>().bounds.size.x / 2 - offset, 0, 0));
-                        break;
-                    case 2:
-						// bottom side wall:
-                        wall.transform.Translate(new Vector3(0, offset - GetComponent<Renderer>().bounds.size.x / 2, 0));
-                        wall.transform.Rotate(new Vector3(0, 0, 90));
-                        break;
-                    case 3:
-						// left side wall:
-						wall.transform.Translate(new Vector3(offset - GetComponent<Renderer>().bounds.size.x / 2, 0, 0));
-                        break;
-                }
-            }
-        }
-	}
 	
 	// Update is called once per frame
 	void Update () {
@@ -100,4 +57,125 @@ public class Tile : MonoBehaviour {
     {
         return 0;
     }
+
+	// creates the tile object:
+	public void setTile(string currentTileType){
+		//print (tileType);
+
+		//find and save the GameMaster
+		gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameMaster>();
+		goalPos = transform.position;
+		int[] wallCheck = {0,0,0,0};
+		GameObject wall;
+
+		switch (currentTileType) {
+			case "x":
+			case "╬":
+				break;
+			case "T0":
+			case "╦":
+				wallCheck[0] = 1;
+				break;
+			case "T1":
+			case "╣":
+				wallCheck[1] = 1;
+				break;
+			case "T2":
+			case "╩":
+				wallCheck[2] = 1;
+				break;
+			case "T3":
+			case "╠":
+				wallCheck[3] = 1;
+				break;
+			case "I0":
+			case "║":
+				wallCheck[1] = 1;
+				wallCheck[3] = 1;
+				break;
+			case "I1":
+			case "═":
+				wallCheck[0] = 1;
+				wallCheck[2] = 1;
+				break;
+			case "L0":
+			case "╚":
+				wallCheck[2] = 1;
+				wallCheck[3] = 1;
+				break;
+			case "L1":
+			case "╔":
+				wallCheck[0] = 1;
+				wallCheck[3] = 1;
+				break;
+			case "L2":
+			case "╗":
+				wallCheck[0] = 1;
+				wallCheck[1] = 1;
+				break;
+			case "L3":
+			case "╝":
+				wallCheck[1] = 1;
+				wallCheck[2] = 1;
+				break;
+			case "V0":
+			case "u":
+				wallCheck[1] = 1;
+				wallCheck[2] = 1;
+				wallCheck[3] = 1;
+				break;
+			case "V1":
+			case "[":
+				wallCheck[0] = 1;
+				wallCheck[2] = 1;
+				wallCheck[3] = 1;
+				break;
+			case "V2":
+			case "n":
+				wallCheck[0] = 1;
+				wallCheck[1] = 1;
+				wallCheck[3] = 1;
+				break;
+			case "V3":
+			case "]":
+				wallCheck[0] = 1;
+				wallCheck[1] = 1;
+				wallCheck[2] = 1;
+				break;
+			case "N":
+			case "¤":
+				wallCheck[0] = 1;
+				wallCheck[1] = 1;
+				wallCheck[2] = 1;
+				wallCheck[3] = 1;
+				break;
+			}
+		for (int i = 0; i < 4; i++) {
+			int currentWallBoolean = wallCheck [i];
+			if (currentWallBoolean == 1) {
+				wall = Instantiate (Wall, transform.position, Quaternion.identity, transform);
+				wall.transform.localScale = new Vector3 (.01f, .05f, .1f);
+				float offset = wall.GetComponent<Renderer> ().bounds.size.x;
+				// right wall:
+			 	if (i == 0) {
+					wall.transform.Translate(new Vector3(0, GetComponent<Renderer>().bounds.size.x/2 - offset, 0));
+					wall.transform.Rotate(new Vector3(0, 0, 90));
+				}
+				// right wall:
+				if (i == 1) {
+					wall.transform.Translate(new Vector3(GetComponent<Renderer>().bounds.size.x / 2 - offset, 0, 0));
+				}
+				// bottom wall:
+				if (i == 2) {
+					// bottom side wall:
+					wall.transform.Translate(new Vector3(0, offset - GetComponent<Renderer>().bounds.size.x / 2, 0));
+					wall.transform.Rotate(new Vector3(0, 0, 90));
+				}
+				// left wall:
+				if (i == 3) {
+					wall.transform.Translate(new Vector3(offset - GetComponent<Renderer>().bounds.size.x / 2, 0, 0));
+				}
+			}
+		}
+	}
 }

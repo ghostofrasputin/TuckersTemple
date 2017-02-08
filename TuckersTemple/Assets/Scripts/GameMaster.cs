@@ -21,9 +21,11 @@ public class GameMaster : MonoBehaviour
     public GameObject Enemy;
     public GameObject Goal;
     public float tileSize; //the size of the tile prefab(should be square)
-    public int numRows = 2; //number of tiles to size
-    public int numCols = 2;
+    public int numRows; //number of tiles to size
+    public int numCols;
     public Canvas winScreen;
+	public int currentLevel = 1; // progress this every time there's a win
+	public string tileType;
 
     // private fields:
     private const int N = 0;
@@ -39,9 +41,6 @@ public class GameMaster : MonoBehaviour
     private Vector2 lastPos = new Vector2(0,0); //holds the last position for mouse input to calculate deltaPosition
     private float totalOffset = 0; //holds total offset for a move, to keep it locked to 1 tile away
     private GameObject[][] tileGrid; // the holder for all the tiles
-    private GameObject roy; //Roy is private, he just likes it that way
-	private GameObject enemy; // enemies also keep private affairs, right?
-    private GameObject goal;
     private bool canInputMove = true;
     private bool charsWalking = false;
     private bool tilesSliding = false;
@@ -50,38 +49,22 @@ public class GameMaster : MonoBehaviour
     // playtest metrics
     private int moves = 0;
     private double time = 0;
-    
+	// JSON level file data:
+	private LevelReader levelData;
+	private List<Level> levelsList;
+
      void Start()
      {
-		//get the size of the tile (1.6)
-        tileSize = Tile.GetComponent<Renderer>().bounds.size.x;
-        //initialize the first array
-        tileGrid = new GameObject[numCols][];
-        //iterate through columns
-        for(int c = 0; c < numCols; c++)
-        {
-            //initialize the secondary arrays
-            tileGrid[c] = new GameObject[numRows];
-            //iterate through rows
-            for(int r = 0; r < numRows; r++)
-            {
+		// extract level list from levelData and set vars we need later:
+		levelData = Camera.main.GetComponent<LevelReader>();
+		levelsList = levelData.getLevels();
+		// Use for DEBUGGING if problems arise in more complicated level files:
+		//levelData.printLevel(1);
+		//levelData.printLevelsList();
 
-					//instantiate a tile at the proper grid position
-					tileGrid [c] [r] = Instantiate (Tile, new Vector3 (c * tileSize, r * tileSize, 0), Quaternion.identity);
-
-            }
-        }
-        Instantiate(Trap, new Vector3(tileGrid[2][2].transform.position.x, tileGrid[2][2].transform.position.y, tileGrid[2][2].transform.position.z), Quaternion.identity,tileGrid[2][2].transform);
-        roy = spawnActor(Character, 0, 0);
-        actors.Add(roy);
-        goal = Instantiate(Goal, new Vector3(tileGrid[1][1].transform.position.x, tileGrid[1][1].transform.position.y, tileGrid[1][1].transform.position.z), Quaternion.identity, tileGrid[1][1].transform);
-        enemy = spawnActor(Enemy, 1, 0);
-		actors.Add(enemy);
-
-        //Add in outer walls to the grid
-        outerWall = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
-        outerWall.transform.localScale = new Vector3( (numCols + 1) * tileSize , (numRows + 1) * tileSize, 0);
-        outerWall.transform.position = new Vector3((numCols + 1) * tileSize / 4, (numRows + 1) * tileSize / 4, 0);
+		// grabbing info from lvl 1:
+		Level levelOne = levelsList[currentLevel-1];
+		generateLevel (levelOne);
     }
 
     // Update is called once per frame
@@ -343,7 +326,7 @@ public class GameMaster : MonoBehaviour
         canInputMove = true;
     }
 	
-    public GameObject spawnActor(GameObject actor, int x, int y, int direction = 0)
+    public GameObject spawnActor(GameObject actor, int x, int y, int direction)
     {
         return Instantiate(actor, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y, tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
     }
@@ -362,6 +345,7 @@ public class GameMaster : MonoBehaviour
 	{
 		Scene scene = SceneManager.GetActiveScene();
 		SceneManager.LoadScene(scene.name);
+		//generateLevel(levelsList[currentLevel]);
 	}
 
 	//Called when the level is won
@@ -383,4 +367,91 @@ public class GameMaster : MonoBehaviour
 		winScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
 		reset();
 	}
+	
+	// takes in the current level and creates it:
+	public void generateLevel(Level currentLevel){
+		// extract level info:
+		string name = currentLevel.Name;
+		numRows = currentLevel.Rows;
+		numCols = currentLevel.Cols;
+		List<List<string>> tileInfo = currentLevel.Tiles;
+		Dictionary<string,List<int>> actorInfo = currentLevel.Actors;
+		Dictionary<string,List<int>> staticObjectInfo = currentLevel.StaticObjects;
+		
+		// Create the Tile Grid:
+		tileSize = Tile.GetComponent<Renderer>().bounds.size.x; //get the size of the tile (1.6)
+		//initialize the first array
+		tileGrid = new GameObject[numCols][];
+		//iterate through columns
+		for(int c = 0; c < numCols; c++)
+		{
+			//initialize the secondary arrays
+			tileGrid[c] = new GameObject[numRows];
+			//iterate through rows
+			for(int r = 0; r < numRows; r++)
+			{
+				List<string> row = tileInfo [numRows-r-1];
+				string currentTileType = row [c];
+				// we pass this to Tile so it knows what tile to make
+				tileType = currentTileType; 
+				//instantiate a tile at the proper grid position
+				tileGrid [c] [r] = Instantiate (Tile, new Vector3 (c * tileSize, r * tileSize, 0), Quaternion.identity);
+				// pass the tile object the type indicator string where it will
+				// create a tile based on that string
+				tileGrid [c] [r].SendMessage ("setTile", tileType);
+			}
+		}
+		
+		// Create the Actors (Characters & Enemies):
+		foreach (KeyValuePair<string, List<int>> kvp in actorInfo) {
+			string key = kvp.Key;
+			List<int> value = kvp.Value;
+			if(key.Equals("roy")){
+				GameObject roy = spawnActor(Character, value[0], value[1], value[2]);
+				actors.Add(roy);
+			}
+			if(key.Equals("emily")){
+				GameObject emily = spawnActor(Character, value[0], value[1], value[2]);
+				actors.Add(emily);
+			}
+			if(key.Equals("jake")){
+				GameObject jake = spawnActor(Character, value[0], value[1], value[2]);
+				actors.Add(jake);
+			}
+			if(key.Equals("tank")){
+				GameObject tank = spawnActor(Character, value[0], value[1], value[2]);
+				actors.Add(tank);
+			}
+			if(key.Contains("shadow")){
+				GameObject enemy = spawnActor(Enemy, value[0], value[1], value[2]);
+				actors.Add(enemy);
+			}
+		}
+		
+		// Create the Static Objects (aka goal & traps):
+		foreach (KeyValuePair<string, List<int>> kvp in staticObjectInfo) {
+			string key = kvp.Key;
+			List<int> value = kvp.Value;
+			if (key.Equals("goal")) {
+				int x = value [0];
+				int y = value [1];
+				GameObject goal = Instantiate (Goal, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y, 
+					tileGrid [x] [y].transform.position.z), Quaternion.identity, tileGrid [x] [y].transform);
+			}
+			if (key.Contains("trap")) {
+				int x = value [0];
+				int y = value [1];
+				GameObject trap = Instantiate (Trap, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y, 
+					tileGrid [x] [y].transform.position.z), Quaternion.identity, tileGrid [x] [y].transform);
+			}
+		}
+		//Add in outer walls to the grid
+		outerWall = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
+		outerWall.transform.localScale = new Vector3( (numCols + 1) * tileSize , (numRows + 1) * tileSize, 0);
+		outerWall.transform.position = new Vector3((numCols + 1) * tileSize / 4, (numRows + 1) * tileSize / 4, 0);
+	}
 }
+
+
+
+// end of code
