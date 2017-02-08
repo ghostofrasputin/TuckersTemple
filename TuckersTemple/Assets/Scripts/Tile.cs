@@ -19,14 +19,32 @@ public class Tile : MonoBehaviour {
     private Vector2 goalPos;
 	private Vector2 wrapPos;
     private GameMaster gm;
+	private LevelReader levelData;
+	private List<Level> levelsList;
+	// keep track of level from GM:
+	private int currentLevel;
+	// keep track of level type, (ie: x, T, L, I)
+	private string tileType;
 
 	// Use this for initialization
 	void Start () {
         //find and save the GameMaster
         gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameMaster>();
+
+		// extract level list from levelData and set vars we need later:
+		levelData = Camera.main.GetComponent<LevelReader>();
+		levelsList = levelData.getLevels();
+		currentLevel = gm.currentLevel;
+		tileType = gm.tileType;
+		print (tileType);
+		Level level = levelsList [currentLevel - 1];
+		List<List<string>> levelInfo = level.Tiles;
+
         goalPos = transform.position;
         GameObject wall;
-        for(int i = 0; i < 4; i++)
+        
+		//create walls on tiles:
+		for(int i = 0; i < 4; i++)
         {
 			// walls are randomized
             if(Random.value > 0.5)

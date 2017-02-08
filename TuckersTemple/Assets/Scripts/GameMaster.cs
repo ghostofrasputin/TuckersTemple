@@ -21,9 +21,11 @@ public class GameMaster : MonoBehaviour
     public GameObject Enemy;
     public GameObject Goal;
     public float tileSize; //the size of the tile prefab(should be square)
-    public int numRows = 2; //number of tiles to size
-    public int numCols = 2;
+    public int numRows; //number of tiles to size
+    public int numCols;
     public Canvas winScreen;
+	public int currentLevel = 1; // progress this every time there's a win
+	public string tileType;
 
     // private fields:
     private const int N = 0;
@@ -53,7 +55,6 @@ public class GameMaster : MonoBehaviour
 	// JSON level file data:
 	private LevelReader levelData;
 	private List<Level> levelsList;
-	private int currentLevel = 1; // progress this every time there's a win
 
      void Start()
      {
@@ -371,6 +372,14 @@ public class GameMaster : MonoBehaviour
 	
 	// takes in the current level and creates it:
 	public void generateLevel(Level currentLevel){
+		// extract level info:
+		string name = currentLevel.Name;
+		numRows = currentLevel.Rows;
+		numCols = currentLevel.Cols;
+		List<List<string>> tileInfo = currentLevel.Tiles;
+		Dictionary<string,List<int>> actorInfo = currentLevel.Actors;
+		Dictionary<string,List<int>> staticObjectInfo = currentLevel.StaticObjects;
+		
 		//get the size of the tile (1.6)
 		tileSize = Tile.GetComponent<Renderer>().bounds.size.x;
 		//initialize the first array
@@ -378,17 +387,22 @@ public class GameMaster : MonoBehaviour
 		//iterate through columns
 		for(int c = 0; c < numCols; c++)
 		{
+			List<string> row = tileInfo [c];
 			//initialize the secondary arrays
 			tileGrid[c] = new GameObject[numRows];
 			//iterate through rows
 			for(int r = 0; r < numRows; r++)
 			{
-
+				string currentTileType = row [r];
+				// we pass this to Tile so it knows what tile to make
+				tileType = currentTileType; 
+				print (tileType);
 				//instantiate a tile at the proper grid position
 				tileGrid [c] [r] = Instantiate (Tile, new Vector3 (c * tileSize, r * tileSize, 0), Quaternion.identity);
 
 			}
 		}
+		
 		Instantiate(Trap, new Vector3(tileGrid[2][2].transform.position.x, tileGrid[2][2].transform.position.y, tileGrid[2][2].transform.position.z), Quaternion.identity,tileGrid[2][2].transform);
 		roy = spawnActor(Character, 0, 0);
 		actors.Add(roy);
