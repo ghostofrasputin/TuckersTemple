@@ -396,10 +396,11 @@ public class GameMaster : MonoBehaviour
 				string currentTileType = row [r];
 				// we pass this to Tile so it knows what tile to make
 				tileType = currentTileType; 
-				print (tileType);
 				//instantiate a tile at the proper grid position
 				tileGrid [c] [r] = Instantiate (Tile, new Vector3 (c * tileSize, r * tileSize, 0), Quaternion.identity);
-
+				// pass the tile object the type indicator string where it will
+				// create a tile based on that string
+				tileGrid [c] [r].SendMessage ("setTile", tileType);
 			}
 		}
 		
