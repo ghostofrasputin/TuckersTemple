@@ -348,6 +348,7 @@ public class GameMaster : MonoBehaviour
 	{
 		Scene scene = SceneManager.GetActiveScene();
 		SceneManager.LoadScene(scene.name);
+		generateLevel(levelsList[currentLevel]);
 	}
 
 	//Called when the level is won
@@ -387,13 +388,13 @@ public class GameMaster : MonoBehaviour
 		//iterate through columns
 		for(int c = 0; c < numCols; c++)
 		{
-			List<string> row = tileInfo [c];
 			//initialize the secondary arrays
 			tileGrid[c] = new GameObject[numRows];
 			//iterate through rows
 			for(int r = 0; r < numRows; r++)
 			{
-				string currentTileType = row [r];
+				List<string> row = tileInfo [numRows-r-1];
+				string currentTileType = row [c];
 				// we pass this to Tile so it knows what tile to make
 				tileType = currentTileType; 
 				//instantiate a tile at the proper grid position
