@@ -41,9 +41,6 @@ public class GameMaster : MonoBehaviour
     private Vector2 lastPos = new Vector2(0,0); //holds the last position for mouse input to calculate deltaPosition
     private float totalOffset = 0; //holds total offset for a move, to keep it locked to 1 tile away
     private GameObject[][] tileGrid; // the holder for all the tiles
-    private GameObject roy; //Roy is private, he just likes it that way
-	private GameObject enemy; // enemies also keep private affairs, right?
-    private GameObject goal;
     private bool canInputMove = true;
     private bool charsWalking = false;
     private bool tilesSliding = false;
@@ -329,7 +326,7 @@ public class GameMaster : MonoBehaviour
         canInputMove = true;
     }
 	
-    public GameObject spawnActor(GameObject actor, int x, int y, int direction = 0)
+    public GameObject spawnActor(GameObject actor, int x, int y, int direction)
     {
         return Instantiate(actor, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y, tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
     }
@@ -348,7 +345,7 @@ public class GameMaster : MonoBehaviour
 	{
 		Scene scene = SceneManager.GetActiveScene();
 		SceneManager.LoadScene(scene.name);
-		generateLevel(levelsList[currentLevel]);
+		//generateLevel(levelsList[currentLevel]);
 	}
 
 	//Called when the level is won
@@ -381,8 +378,8 @@ public class GameMaster : MonoBehaviour
 		Dictionary<string,List<int>> actorInfo = currentLevel.Actors;
 		Dictionary<string,List<int>> staticObjectInfo = currentLevel.StaticObjects;
 		
-		//get the size of the tile (1.6)
-		tileSize = Tile.GetComponent<Renderer>().bounds.size.x;
+		// Create the Tile Grid:
+		tileSize = Tile.GetComponent<Renderer>().bounds.size.x; //get the size of the tile (1.6)
 		//initialize the first array
 		tileGrid = new GameObject[numCols][];
 		//iterate through columns
@@ -405,16 +402,56 @@ public class GameMaster : MonoBehaviour
 			}
 		}
 		
-		Instantiate(Trap, new Vector3(tileGrid[2][2].transform.position.x, tileGrid[2][2].transform.position.y, tileGrid[2][2].transform.position.z), Quaternion.identity,tileGrid[2][2].transform);
-		roy = spawnActor(Character, 0, 0);
-		actors.Add(roy);
-		goal = Instantiate(Goal, new Vector3(tileGrid[1][1].transform.position.x, tileGrid[1][1].transform.position.y, tileGrid[1][1].transform.position.z), Quaternion.identity, tileGrid[1][1].transform);
-		enemy = spawnActor(Enemy, 1, 0);
-		actors.Add(enemy);
-
+		// Create the Actors (Characters & Enemies):
+		foreach (KeyValuePair<string, List<int>> kvp in actorInfo) {
+			string key = kvp.Key;
+			List<int> value = kvp.Value;
+			if(key.Equals("roy")){
+				GameObject roy = spawnActor(Character, value[0], value[1], value[2]);
+				actors.Add(roy);
+			}
+			if(key.Equals("emily")){
+				GameObject emily = spawnActor(Character, value[0], value[1], value[2]);
+				actors.Add(emily);
+			}
+			if(key.Equals("jake")){
+				GameObject jake = spawnActor(Character, value[0], value[1], value[2]);
+				actors.Add(jake);
+			}
+			if(key.Equals("tank")){
+				GameObject tank = spawnActor(Character, value[0], value[1], value[2]);
+				actors.Add(tank);
+			}
+			if(key.Contains("shadow")){
+				GameObject enemy = spawnActor(Enemy, value[0], value[1], value[2]);
+				actors.Add(enemy);
+			}
+		}
+		
+		// Create the Static Objects (aka goal & traps):
+		foreach (KeyValuePair<string, List<int>> kvp in staticObjectInfo) {
+			string key = kvp.Key;
+			List<int> value = kvp.Value;
+			if (key.Equals("goal")) {
+				int x = value [0];
+				int y = value [1];
+				GameObject goal = Instantiate (Goal, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y, 
+					tileGrid [x] [y].transform.position.z), Quaternion.identity, tileGrid [x] [y].transform);
+			}
+			if (key.Contains("trap")) {
+				int x = value [0];
+				int y = value [1];
+				GameObject trap = Instantiate (Trap, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y, 
+					tileGrid [x] [y].transform.position.z), Quaternion.identity, tileGrid [x] [y].transform);
+			}
+		}
 		//Add in outer walls to the grid
 		outerWall = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
 		outerWall.transform.localScale = new Vector3( (numCols + 1) * tileSize , (numRows + 1) * tileSize, 0);
 		outerWall.transform.position = new Vector3((numCols + 1) * tileSize / 4, (numRows + 1) * tileSize / 4, 0);
 	}
 }
+
+
+
+// end of code
