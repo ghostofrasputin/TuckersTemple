@@ -68,12 +68,100 @@ public class Tile : MonoBehaviour {
 		gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameMaster>();
 		goalPos = transform.position;
 		GameObject wall;
+		GameObject wall1;
+		GameObject wall2;
+		GameObject wall3;
+		GameObject wall4;
+		/*
+		// create walls if isn't a 4 path tile aka "x" tile
+		if(!tileType.Equals("x")){
+			// we know one wall must be created
+			wall1 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+			wall1.transform.localScale = new Vector3(.01f,.05f,.1f);
+			float offset = wall.GetComponent<Renderer>().bounds.size.x;
+			if(tileType.Equals("T0")){
+			}
+			if(tileType.Equals("T1")){
+			}
+			if(tileType.Equals("T2")){
+			}
+			if(tileType.Equals("T3")){
+			}
+			if(tileType.Equals("L0")){
+				wall2 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall2.transform.localScale = new Vector3(.01f,.05f,.1f);
+			}
+			if(tileType.Equals("L1")){
+				wall2 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall2.transform.localScale = new Vector3(.01f,.05f,.1f);
+			}
+			if(tileType.Equals("L2")){
+				wall2 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall2.transform.localScale = new Vector3(.01f,.05f,.1f);
+			}
+			if(tileType.Equals("L3")){
+				wall2 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall2.transform.localScale = new Vector3(.01f,.05f,.1f);
+			}
+			if(tileType.Equals("I0")){
+				wall2 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall2.transform.localScale = new Vector3(.01f,.05f,.1f);
+
+			}
+			if(tileType.Equals("I1")){
+				wall2 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall2.transform.localScale = new Vector3(.01f,.05f,.1f);
+
+			}
+			if(tileType.Equals("I2")){
+				wall2 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall2.transform.localScale = new Vector3(.01f,.05f,.1f);
+
+			}
+			if(tileType.Equals("I3")){
+				wall2 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall2.transform.localScale = new Vector3(.01f,.05f,.1f);
+
+			}
+			if(tileType.Equals("V0")){
+				wall2 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall2.transform.localScale = new Vector3(.01f,.05f,.1f);
+				wall3 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall3.transform.localScale = new Vector3(.01f,.05f,.1f);
+			}
+			if(tileType.Equals("V1")){
+				wall2 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall2.transform.localScale = new Vector3(.01f,.05f,.1f);
+				wall3 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall3.transform.localScale = new Vector3(.01f,.05f,.1f);
+			}
+			if(tileType.Equals("V2")){
+				wall2 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall2.transform.localScale = new Vector3(.01f,.05f,.1f);
+				wall3 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall3.transform.localScale = new Vector3(.01f,.05f,.1f);
+			}
+			if(tileType.Equals("V3")){
+				wall2 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall2.transform.localScale = new Vector3(.01f,.05f,.1f);
+				wall3 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall3.transform.localScale = new Vector3(.01f,.05f,.1f);
+			}
+			if(tileType.Equals("N")){
+				wall2 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall2.transform.localScale = new Vector3(.01f,.05f,.1f);
+				wall3 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall3.transform.localScale = new Vector3(.01f,.05f,.1f);
+				wall4 = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+				wall4.transform.localScale = new Vector3(.01f,.05f,.1f);
+			}
+		}*/
 
 		//create walls on tiles:
 		for(int i = 0; i < 4; i++)
 		{
-			// walls are randomized
-			if(Random.value > 0.5)
+			// create walls if it isn't a tile with 4 paths aka an "x" tile
+			if(Random.value>.5)
 			{
 				wall = Instantiate(Wall, transform.position, Quaternion.identity, transform);
 				wall.transform.localScale = new Vector3(.01f,.05f,.1f);
