@@ -49,6 +49,8 @@ public class GameMaster : MonoBehaviour
     // playtest metrics
     private int moves = 0;
     private double time = 0;
+    private bool ticking = true;
+    private int attempts = 1;
 	// JSON level file data:
 	private LevelReader levelData;
 	private List<Level> levelsList;
@@ -70,7 +72,10 @@ public class GameMaster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // time += Time.deltaTime;
+        if (ticking)
+        {
+            time += Time.deltaTime;
+        }
         //This code either uses touch input if it exists,
         //or uses mouse input if exists and converts it into fake touch input
 
@@ -119,7 +124,6 @@ public class GameMaster : MonoBehaviour
                     actor.GetComponent<Actor>().walk();
 					//actor.GetComponent<Enemy>().walk();
                 }
-                moves++;
             }   
         }
     }
@@ -283,7 +287,8 @@ public class GameMaster : MonoBehaviour
 		// only if a tile is selected
 		if (isSelected == true) 
 		{
-			moveGrid(col, row, dir);
+            moves++;
+            moveGrid(col, row, dir);
 		}
 	}
 
@@ -343,10 +348,11 @@ public class GameMaster : MonoBehaviour
 	// it reloads the level, but the tiles will be different
 	public void reset()
 	{
-		Scene scene = SceneManager.GetActiveScene();
-		SceneManager.LoadScene(scene.name);
-		//generateLevel(levelsList[currentLevel]);
-	}
+		// Scene scene = SceneManager.GetActiveScene();
+		// SceneManager.LoadScene(scene.name);
+        attempts++;
+        setupLevel(levelsList[currentLevel-1]);
+    }
 
 	//Called when the level is won
 	//Displays win screen
@@ -355,9 +361,12 @@ public class GameMaster : MonoBehaviour
 		winScreen.GetComponent<CanvasGroup>().alpha = 1;
 		winScreen.GetComponent<CanvasGroup>().interactable = true;
 		winScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
-        print("Level won in " + moves + "moves in " + time + "seconds.");
+        ticking = false;
+        System.IO.File.WriteAllText("playtest.txt", "\"" + levelsList[currentLevel - 1].Name + "\" beaten in " + moves + " moves in " + System.Math.Round(time, 2) + " seconds in " + attempts + " attempts.");
+        currentLevel++;
         moves = 0;
         time = 0;
+        attempts = 1;
 	}
 
 	public void nextLevel()
@@ -367,9 +376,29 @@ public class GameMaster : MonoBehaviour
 		winScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
 		reset();
 	}
-	
-	// takes in the current level and creates it:
-	public void generateLevel(Level currentLevel){
+
+    public void setupLevel(Level level)
+    {
+        // clear everything, then regenerate the level
+        for (int i = 0; i < numCols; i++)
+        {
+            for (int j = 0; j < numRows; j++)
+            {
+		        foreach(Transform child in tileGrid[i][j].transform)
+                {
+                    Destroy(child.gameObject);
+                }
+                Destroy(tileGrid[i][j]);
+            }
+        }
+        actors.Clear();
+        tileGrid = new GameObject[numCols][];
+        Destroy(outerWall);
+        generateLevel(level);
+    }
+
+    // takes in the current level and creates it:
+    public void generateLevel(Level currentLevel){
 		// extract level info:
 		string name = currentLevel.Name;
 		numRows = currentLevel.Rows;
@@ -451,7 +480,4 @@ public class GameMaster : MonoBehaviour
 		outerWall.transform.position = new Vector3((numCols + 1) * tileSize / 4, (numRows + 1) * tileSize / 4, 0);
 	}
 }
-
-
-
 // end of code
