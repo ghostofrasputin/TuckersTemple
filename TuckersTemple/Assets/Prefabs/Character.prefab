@@ -106,3 +106,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   direction: 0
   speed: 0.2
+  playerfootsteps1: {fileID: 8300000, guid: 1f31cfbc0ce694971ad23cd748c67d3b, type: 3}
+  playerfootsteps2: {fileID: 8300000, guid: a237b70ccdbd2459ba410308335b4d4b, type: 3}
+  playerWinSound: {fileID: 8300000, guid: fd4c864dfc55d4bba88652473de90da8, type: 3}
+  playerdeathSound: {fileID: 8300000, guid: 7101f4396d61f46abb1d11ca74d1c898, type: 3}
