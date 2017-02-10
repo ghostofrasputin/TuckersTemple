@@ -14,6 +14,12 @@ public class Actor : MonoBehaviour {
 	// public fields:
 	public int direction;
 	public float speed = 0.05f;
+	
+	// Sfx for player 
+	public AudioClip playerfootsteps1;
+	public AudioClip playerfootsteps2;
+	public AudioClip playerWinSound;
+	public AudioClip playerdeathSound;
 
 	// private fields:
 	private bool isWalking;
@@ -43,6 +49,7 @@ public class Actor : MonoBehaviour {
         // check for characters turn to walk
         if (isWalking)
         {
+		SoundController.instance.RandomSfx (playerfootsteps1, playerfootsteps2);
             if(goalPos.x == transform.position.x && goalPos.y == transform.position.y)
             {
                 // print(goalPos); debugging
@@ -51,12 +58,14 @@ public class Actor : MonoBehaviour {
                 // print(escaped);
                 if (death)
                 {
-                    gm.deleteActor(this.gameObject);
+                    SoundController.instance.RandomSfx (playerdeathSound, playerdeathSound);
+		    gm.deleteActor(this.gameObject);
                     Destroy(this.gameObject);
                     print("actor died"); // debugging
                 }
                 else if (escaped)
                 {
+		    SoundController.instance.RandomSfx (playerWinSound, playerWinSound);
                     print("made it out!");
                     // Application.Quit();
                 }
