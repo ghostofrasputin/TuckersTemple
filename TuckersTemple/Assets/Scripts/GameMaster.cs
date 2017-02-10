@@ -25,6 +25,10 @@ public class GameMaster : MonoBehaviour
     public int numCols = 2;
     public Canvas winScreen;
 
+	// Sound 
+	public AudioClip TileSlide1;
+	public AudioClip TileSlide2;
+
     // private fields:
     private const int N = 0;
     private const int E = 1;
@@ -134,7 +138,7 @@ public class GameMaster : MonoBehaviour
                 foreach(GameObject actor in actors)
                 {
                     actor.GetComponent<Actor>().walk();
-					//actor.GetComponent<Enemy>().walk();
+
                 }
                 moves++;
             }   
@@ -179,6 +183,7 @@ public class GameMaster : MonoBehaviour
         //Set some bools to stop players from entering another move while animations run
         canInputMove = false;
         tilesSliding = true;
+		SoundController.instance.RandomSfx (TileSlide1, TileSlide2);
         //calculate normal offset vector and move the tiles
         Vector2 offset = new Vector2(0, 0);
         GameObject temp;
