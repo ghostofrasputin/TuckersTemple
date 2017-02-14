@@ -62,13 +62,13 @@ public class Actor : MonoBehaviour {
                 if (death)
                 {
                     SoundController.instance.RandomSfx (playerdeathSound, playerdeathSound);
-		    gm.deleteActor(this.gameObject);
+		            gm.deleteActor(this.gameObject);
                     Destroy(this.gameObject);
                     print("actor died"); // debugging
                 }
                 else if (escaped)
                 {
-		    SoundController.instance.RandomSfx (playerWinSound, playerWinSound);
+		            SoundController.instance.RandomSfx (playerWinSound, playerWinSound);
                     print("made it out!");
                     // Application.Quit();
                 }

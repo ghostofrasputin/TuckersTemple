@@ -1,1 +1,1 @@
-"level1" beaten in 2 moves in 2.51 seconds in 1 attempts.
+"level2" beaten in 2 moves in 0 seconds in 2 attempts.
