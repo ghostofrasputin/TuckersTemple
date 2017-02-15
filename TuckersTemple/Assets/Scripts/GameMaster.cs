@@ -38,12 +38,9 @@ public class GameMaster : MonoBehaviour
     private const int W = 3;
     private RaycastHit hit;
     private GameObject touchTarget;
-    private bool isDrag = false; //tracks if valid object is hit for drag
     private bool isVert = false; //Extablishes initial movement axis of swipe
-    private bool isLatched = false; //locks movement axis to initial direction of swipe
     private bool isSelected = false;
     private Vector2 lastPos = new Vector2(0,0); //holds the last position for mouse input to calculate deltaPosition
-    private float totalOffset = 0; //holds total offset for a move, to keep it locked to 1 tile away
     private GameObject[][] tileGrid; // the holder for all the tiles
     private bool canInputMove = true;
     private bool charsWalking = false;
@@ -105,8 +102,6 @@ public class GameMaster : MonoBehaviour
                 {
                     Vector2 offset = new Vector2(Input.mousePosition.x - lastPos.x, Input.mousePosition.y - lastPos.y);
                     HandleTouch(10, Input.mousePosition, TouchPhase.Ended, offset);
-                    //reset the total offset
-                    totalOffset = 0;
                 }
             }
             else
@@ -146,7 +141,7 @@ public class GameMaster : MonoBehaviour
            case TouchPhase.Began:
                Ray ray = Camera.main.ScreenPointToRay (touchPosition);
                touchTarget = null;
-                if (Physics.Raycast(ray, out hit))
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Tile")))
                 {
                     touchTarget = hit.collider.gameObject;
                 }
@@ -471,13 +466,13 @@ public class GameMaster : MonoBehaviour
 			if (key.Equals("goal")) {
 				int x = value [0];
 				int y = value [1];
-				GameObject goal = Instantiate (Goal, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y, 
+				Instantiate (Goal, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y, 
 					tileGrid [x] [y].transform.position.z), Quaternion.identity, tileGrid [x] [y].transform);
 			}
 			if (key.Contains("trap")) {
 				int x = value [0];
 				int y = value [1];
-				GameObject trap = Instantiate (Trap, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y, 
+				Instantiate (Trap, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y, 
 					tileGrid [x] [y].transform.position.z), Quaternion.identity, tileGrid [x] [y].transform);
 			}
 		}
