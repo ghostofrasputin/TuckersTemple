@@ -34,7 +34,7 @@ public class LevelReader : MonoBehaviour {
 	private JsonData levelData;
 	private string iterString = "level";
 	private List<Level> levels = new List<Level>();
-	private List<List<string>> tiles; 
+	private List<List<string>> tiles;
 	private Dictionary<string,List<int>> acts;
 	private Dictionary<string,List<int>> stats; 
 
@@ -60,35 +60,13 @@ public class LevelReader : MonoBehaviour {
 
 			// get character data into the right type format:
 			JsonData actors = levelInfo [4];
-			string[] keys = new string[actors.Count];
-			actors.Keys.CopyTo(keys, 0);
-			// new Dict for each level
-			acts = new Dictionary<string, List<int>>();
-			for (int l = 0; l < keys.Length; l++) {
-				string key = keys[l];
-				List<int> actorInfo = new List<int> (); 
-				for (int m = 0; m < actors[key].Count; m++) {
-					int num = (int)actors[key][m];
-					actorInfo.Add (num);
-				}
-				acts.Add(key,actorInfo);
-			}
+			acts = new Dictionary<string,List<int>> ();
+			setDict(actors, acts);
 
 			// get static object data into the right type format:
 			JsonData staticO = levelInfo [5];
-			string[] skeys = new string[staticO.Count];
-			staticO.Keys.CopyTo(skeys, 0);
-			// new Dict for each level
-			stats = new Dictionary<string, List<int>>();
-			for (int n = 0; n < skeys.Length; n++) {
-				string key = skeys[n];
-				List<int> staticObjectInfo = new List<int> (); 
-				for (int o = 0; o < staticO[key].Count; o++) {
-					int num = (int)staticO[key][o];
-					staticObjectInfo.Add (num);
-				}
-				stats.Add(key,staticObjectInfo);
-			}
+			stats = new Dictionary<string,List<int>> ();
+			setDict(staticO, stats);
 
 			// Create a new level:
 			Level level = new Level {
@@ -116,6 +94,35 @@ public class LevelReader : MonoBehaviour {
 		return levels;
 	}
 
+	// sets dictionaries for actors and static objects
+	// yeee reusable code!!!
+	private void setDict(JsonData data, Dictionary<string, List<int>> objectList){
+		string[] keys = new string[data.Count];
+		data.Keys.CopyTo(keys, 0);
+		// new Dict for each level
+		for (int l = 0; l < keys.Length; l++) {
+			string key = keys[l];
+			// numOfObjectTypes example: 1 roy, 2 shadows = 2 objects
+			//                           1 goal, 5 traps = 2 objects
+			int numOfObjectTypes = data[key].Count;
+			for (int m = 0; m < numOfObjectTypes; m++) {
+				List<int> objectInfo = new List<int> ();
+				for (int inner= 0; inner < data[key][m].Count; inner++) {
+					int num = (int)data[key][m][inner];
+					objectInfo.Add (num);
+				}
+				// duplicate actors need their 
+				// own specific key:
+				string tempKey = key;
+				if (numOfObjectTypes > 1) {
+					key = key + m.ToString ();
+				}
+				objectList.Add(key,objectInfo);
+				key = tempKey;
+			}
+		}
+	}
+
 	// DEBUGGING TOOLS BELOW --------------------------
 
 	// prints out each level from
@@ -127,7 +134,7 @@ public class LevelReader : MonoBehaviour {
 			Debug.Log("Level Rows: " + level.Rows);
 			Debug.Log("Level Cols: " + level.Cols);
 			string tileString = "";
-			foreach (List<string> l in tiles) {
+			foreach (List<string> l in level.Tiles) {
 				tileString = tileString + "[";
 				foreach (string str in l) {
 					tileString= tileString+ " " + str;
@@ -156,7 +163,7 @@ public class LevelReader : MonoBehaviour {
 		Debug.Log("Level Rows: " + level.Rows);
 		Debug.Log("Level Cols: " + level.Cols);
 		string tileString = "";
-		foreach (List<string> l in tiles) {
+		foreach (List<string> l in level.Tiles) {
 			tileString = tileString + "[";
 			foreach (string str in l) {
 				tileString= tileString+ " " + str;
@@ -188,4 +195,3 @@ public class LevelReader : MonoBehaviour {
 
 }
 
-// end of code
