@@ -84,7 +84,7 @@ public class LevelReader : MonoBehaviour {
 		}
 
 		// DEBUGGING:
-		printLevelsList();
+		//printLevelsList();
 		//printLevel(1);
 	}
 
