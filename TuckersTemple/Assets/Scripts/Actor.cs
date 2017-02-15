@@ -21,6 +21,12 @@ public class Actor : MonoBehaviour {
 	public AudioClip playerWinSound;
 	public AudioClip playerdeathSound;
 
+    // actor sprites for each direction.
+    public Sprite upSprite;
+    public Sprite rightSprite;
+    public Sprite downSprite;
+    public Sprite leftSprite;
+
 	// private fields:
 	private bool isWalking;
     private bool death;
@@ -29,12 +35,15 @@ public class Actor : MonoBehaviour {
 	private GameMaster gm;
     private Vector2 goalPos;
     private Vector2[] v2Dirs = { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
+    private SpriteRenderer sr;
 
 
 	// Actor Initialization
 	void Start() {
         //find and save the GameMaster
         gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameMaster>();
+        // get a reference to this actor's sprite renderer.
+        sr = GetComponent<SpriteRenderer>();
 		// extract initial direction from lvl file
 		direction = 0; 
         goalPos = transform.position;
@@ -59,7 +68,10 @@ public class Actor : MonoBehaviour {
                 if (death)
                 {
                     SoundController.instance.RandomSfx (playerdeathSound, playerdeathSound);
-		    gm.deleteActor(this.gameObject);
+                    // cleanup later
+                    isWalking = false;
+                    gm.doneWalking();
+		            gm.deleteActor(this.gameObject);
                     Destroy(this.gameObject);
                     print("actor died"); // debugging
                 }
@@ -81,17 +93,6 @@ public class Actor : MonoBehaviour {
                 transform.position = Vector2.MoveTowards(transform.position, goalPos, speed);
             }
         }
-
-		// check enemy and trap collisions:
-		// if (collision with enemy || trap) {
-		// 	 	// play death sprite/animation
-	    //		Destroy(GameObject)
-	    //}
-
-		// Check goal collision
-		//if (goalCollision) {
-		//	win
-		//}
 	}
 
 	// walk to new tile
@@ -108,22 +109,22 @@ public class Actor : MonoBehaviour {
                 break;
 			case 0:
 				direction = directionToWalk;
-				transform.eulerAngles = new Vector3 (0, 0, 0);
+                sr.sprite = upSprite;
                 WalkTo(new Vector2(0, walkDistance));
                 break;
             case 1:
                 direction = directionToWalk;
-				transform.eulerAngles = new Vector3 (0, 0, 270);
+                sr.sprite = rightSprite;
                 WalkTo(new Vector2(walkDistance, 0));
                 break;
             case 2:
                 direction = directionToWalk;
-				transform.eulerAngles = new Vector3 (0, 0, 180);
+                sr.sprite = downSprite;
                 WalkTo(new Vector2(0, -walkDistance));
                 break;
             case 3:
                 direction = directionToWalk;
-				transform.eulerAngles = new Vector3 (0, 0, 90);
+                sr.sprite = leftSprite;
                 WalkTo(new Vector2(-walkDistance, 0));
                 break;
         }

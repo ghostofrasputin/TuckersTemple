@@ -12,6 +12,10 @@ public class Tile : MonoBehaviour {
 
 	// public fields:
 	public GameObject Wall;
+    public Sprite upWall;
+    public Sprite rightWall;
+    public Sprite downWall;
+    public Sprite leftWall;
 
 	// private fields:
 	private float speed = 0.05f;
@@ -154,28 +158,32 @@ public class Tile : MonoBehaviour {
 			int currentWallBoolean = wallCheck [i];
 			if (currentWallBoolean == 1) {
 				wall = Instantiate (Wall, transform.position, Quaternion.identity, transform);
-				wall.transform.localScale = new Vector3 (.01f, .05f, .1f);
+                // wall.transform.localScale = new Vector3 (.01f, .05f, .1f);
+                SpriteRenderer sr = wall.GetComponent<SpriteRenderer>();
 				float offset = wall.GetComponent<Renderer> ().bounds.size.x;
 				// right wall:
 			 	if (i == 0) {
-					wall.transform.Translate(new Vector3(0, GetComponent<Renderer>().bounds.size.x/2 - offset, 0));
-					wall.transform.Rotate(new Vector3(0, 0, 90));
+                    sr.sprite = upWall;
+					wall.transform.Translate(new Vector3(0, offset, 0));
 				}
 				// right wall:
 				if (i == 1) {
-					wall.transform.Translate(new Vector3(GetComponent<Renderer>().bounds.size.x / 2 - offset, 0, 0));
-				}
-				// bottom wall:
-				if (i == 2) {
-					// bottom side wall:
-					wall.transform.Translate(new Vector3(0, offset - GetComponent<Renderer>().bounds.size.x / 2, 0));
-					wall.transform.Rotate(new Vector3(0, 0, 90));
+                    sr.sprite = rightWall;
+					wall.transform.Translate(new Vector3(offset, 0.1f, 0));
+                    wall.transform.localScale = new Vector3 (1, 1.4f, 1);
+                }
+                // bottom wall:
+                if (i == 2) {
+                    sr.sprite = downWall;
+					wall.transform.Translate(new Vector3(0, offset * -1, 0));
 				}
 				// left wall:
 				if (i == 3) {
-					wall.transform.Translate(new Vector3(offset - GetComponent<Renderer>().bounds.size.x / 2, 0, 0));
-				}
-			}
+                    sr.sprite = leftWall;
+					wall.transform.Translate(new Vector3(offset * -1, 0.1f, 0));
+                    wall.transform.localScale = new Vector3 (1, 1.4f, 1);
+                }
+            }
 		}
 	}
 }

@@ -20,8 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4319723454816300}
   - component: {fileID: 212022274222474074}
-  - component: {fileID: 65108157240775778}
   - component: {fileID: 114301527679809938}
+  - component: {fileID: 65222007010623984}
   m_Layer: 9
   m_Name: testSprite
   m_TagString: Untagged
@@ -37,12 +37,12 @@ Transform:
   m_GameObject: {fileID: 1984444076187268}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 1}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &65108157240775778
+--- !u!65 &65222007010623984
 BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -52,7 +52,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.16, y: 0.16, z: 0.2}
+  m_Size: {x: 6, y: 6, z: 0.2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114301527679809938
 MonoBehaviour:
@@ -66,6 +66,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Wall: {fileID: 1518398402186632, guid: e9cbbdfb7d6f1394f9e3d53b1f39e554, type: 2}
+  upWall: {fileID: 21300000, guid: b575801b9b95db34ab052f123a9e8d4a, type: 3}
+  rightWall: {fileID: 21300000, guid: 477e4eac9a637564f92f27474dbdaff2, type: 3}
+  downWall: {fileID: 21300000, guid: 4565a5d3f29d88b49b3980e924379528, type: 3}
+  leftWall: {fileID: 21300000, guid: 3df02b1fc29b3d448945e7228d93f4f4, type: 3}
 --- !u!212 &212022274222474074
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -97,7 +101,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1286930939
   m_SortingOrder: 0
-  m_Sprite: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: c6249897ecb379e4aa792f50903bf61b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
