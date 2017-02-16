@@ -42,6 +42,7 @@ public class GameMaster : MonoBehaviour
     private bool isSelected = false;
     private Vector2 lastPos = new Vector2(0,0); //holds the last position for mouse input to calculate deltaPosition
     private GameObject[][] tileGrid; // the holder for all the tiles
+    private GameObject boundary;
     private bool canInputMove = true;
     private bool charsWalking = false;
     private bool tilesSliding = false;
@@ -350,8 +351,9 @@ public class GameMaster : MonoBehaviour
 	// it reloads the level, but the tiles will be different
 	public void reset()
 	{
-		// Scene scene = SceneManager.GetActiveScene();
-		// SceneManager.LoadScene(scene.name);
+        winScreen.GetComponent<CanvasGroup>().alpha = 0;
+        winScreen.GetComponent<CanvasGroup>().interactable = false;
+        winScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
         attempts++;
         setupLevel(levelsList[currentLevel-1]);
     }
@@ -364,8 +366,8 @@ public class GameMaster : MonoBehaviour
 		winScreen.GetComponent<CanvasGroup>().interactable = true;
 		winScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
         ticking = false;
-        System.IO.File.WriteAllText("playtest.txt", "\"" + levelsList[currentLevel - 1].Name + "\" beaten in " + moves + " moves in " + System.Math.Round(time, 2) + " seconds in " + attempts + " attempts.");
-        currentLevel++;
+        System.IO.File.WriteAllText("playtest.txt", "\"" + levelsList[currentLevel - 1].Name + "\" beaten in " + moves 
+            + " moves in " + System.Math.Round(time, 2) + " seconds in " + attempts + " attempts.");
         moves = 0;
         time = 0;
         attempts = 1;
@@ -373,10 +375,8 @@ public class GameMaster : MonoBehaviour
 
 	public void nextLevel()
 	{
-		winScreen.GetComponent<CanvasGroup>().alpha = 0;
-		winScreen.GetComponent<CanvasGroup>().interactable = false;
-		winScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
-		reset();
+        currentLevel++;
+        reset();
 	}
 
     public void setupLevel(Level level)
@@ -395,8 +395,8 @@ public class GameMaster : MonoBehaviour
         }
         actors.Clear();
         tileGrid = new GameObject[numCols][];
-        Destroy(outerWall);
         generateLevel(level);
+        Destroy(boundary);
     }
 
     // takes in the current level and creates it:
@@ -477,9 +477,9 @@ public class GameMaster : MonoBehaviour
 			}
 		}
 		//Add in outer walls to the grid
-		outerWall = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
-		outerWall.transform.localScale = new Vector3( (numCols + 1) * tileSize , (numRows + 1) * tileSize, 0);
-		outerWall.transform.position = new Vector3((numCols + 1) * tileSize / 4, (numRows + 1) * tileSize / 4, 0);
+		boundary = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
+		boundary.transform.localScale = new Vector3( (numCols + 1) * tileSize , (numRows + 1) * tileSize, 0);
+		boundary.transform.position = new Vector3((numCols + 1) * tileSize / 4, (numRows + 1) * tileSize / 4, 0);
 	}
 }
 // end of code

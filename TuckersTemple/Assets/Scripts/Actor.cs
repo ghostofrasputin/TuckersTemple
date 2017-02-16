@@ -64,21 +64,29 @@ public class Actor : MonoBehaviour {
                 // print(goalPos); debugging
                 //set new parent based on goalPos
                 transform.parent = gm.getTile(transform.position).transform;
-                // print(escaped);
+                if (gameObject.tag == "Player") print(death);
                 if (death)
                 {
                     SoundController.instance.RandomSfx (playerdeathSound, playerdeathSound);
                     // cleanup later
                     isWalking = false;
                     gm.doneWalking();
-		            gm.deleteActor(this.gameObject);
-                    Destroy(this.gameObject);
-                    print("actor died"); // debugging
+                    gm.deleteActor(this.gameObject);
+                    if(gameObject.tag == "Player")
+                    {
+                        gm.reset();
+                        print("character died, resetting"); // debugging
+                    }
+                    else
+                    {
+                        Destroy(this.gameObject);
+                        //print("actor died");
+                    }
                 }
                 else if (escaped)
                 {
-		    SoundController.instance.RandomSfx (playerWinSound, playerWinSound);
-                    print("made it out!");
+		            SoundController.instance.RandomSfx (playerWinSound, playerWinSound);
+                    //print("made it out!");
                     // Application.Quit();
                 }
                 else
@@ -187,7 +195,7 @@ public class Actor : MonoBehaviour {
                 if (ray.collider.tag == "Wall" || ray.collider.tag == "OuterWall")
                 {
                     foundWall = true;
-                    print("I found a wall");
+                    //print("I found a wall");
                     break;
                 }
             }
@@ -246,7 +254,7 @@ public class Actor : MonoBehaviour {
                     }
                     else if (ray.collider.tag == "Trap")
                     {
-                        print("You activated my Trap card");
+                        //print("You activated my Trap card");
                         death = true;
                     }
 
