@@ -25,7 +25,6 @@ public class GameMaster : MonoBehaviour
     public int numCols;
     public Canvas winScreen;
 	public int currentLevel = 1; // progress this every time there's a win
-	public string tileType;
 
 	// Sound 
 	public AudioClip TileSlide1;
@@ -362,6 +361,7 @@ public class GameMaster : MonoBehaviour
 	//Displays win screen
 	public void levelWin()
 	{
+		turnOffTileColliders ();
 		winScreen.GetComponent<CanvasGroup>().alpha = 1;
 		winScreen.GetComponent<CanvasGroup>().interactable = true;
 		winScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
@@ -378,7 +378,20 @@ public class GameMaster : MonoBehaviour
         currentLevel++;
         reset();
 	}
-
+	
+	public void turnOffTileColliders()
+	{
+		for (int i = 0; i < numCols; i++)
+		{
+			for (int j = 0; j < numRows; j++)
+			{
+				{
+					tileGrid[i][j].GetComponent<BoxCollider> ().enabled = false;
+				}
+			}
+		}
+	}
+	
     public void setupLevel(Level level)
     {
         // clear everything, then regenerate the level
@@ -423,13 +436,11 @@ public class GameMaster : MonoBehaviour
 			{
 				List<string> row = tileInfo [numRows-r-1];
 				string currentTileType = row [c];
-				// we pass this to Tile so it knows what tile to make
-				tileType = currentTileType; 
 				//instantiate a tile at the proper grid position
 				tileGrid [c] [r] = Instantiate (Tile, new Vector3 (c * tileSize, r * tileSize, 0), Quaternion.identity);
 				// pass the tile object the type indicator string where it will
 				// create a tile based on that string
-				tileGrid [c] [r].SendMessage ("setTile", tileType);
+				tileGrid [c] [r].SendMessage ("setTile", currentTileType);
 			}
 		}
 		
