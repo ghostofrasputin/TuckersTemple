@@ -64,9 +64,8 @@ public class GameMaster : MonoBehaviour
 		// Use for DEBUGGING if problems arise in more complicated level files:
 		//levelData.printLevel(1);
 		//levelData.printLevelsList();
-
 		// grabbing info from lvl 1:
-		Level levelOne = levelsList[currentLevel-1];
+		Level levelOne = levelsList [currentLevel - 1];
 		generateLevel (levelOne);
     }
 
@@ -343,7 +342,6 @@ public class GameMaster : MonoBehaviour
 	{
 		actors.Remove (actor);
 	}
-
 	
 	// this will load the current level scene 
 	// as of right now, levels are being generated, so
