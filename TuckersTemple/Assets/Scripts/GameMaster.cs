@@ -23,7 +23,7 @@ public class GameMaster : MonoBehaviour
     public float tileSize; //the size of the tile prefab(should be square)
     public int numRows; //number of tiles to size
     public int numCols;
-    public Canvas winScreen;
+    //public Canvas winScreen;
 	public int currentLevel = 1; // progress this every time there's a win
 
 	// Sound 
@@ -350,9 +350,9 @@ public class GameMaster : MonoBehaviour
 	// it reloads the level, but the tiles will be different
 	public void reset()
 	{
-        winScreen.GetComponent<CanvasGroup>().alpha = 0;
-        winScreen.GetComponent<CanvasGroup>().interactable = false;
-        winScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
+        //winScreen.GetComponent<CanvasGroup>().alpha = 0;
+        //winScreen.GetComponent<CanvasGroup>().interactable = false;
+        //winScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
         attempts++;
         setupLevel(levelsList[currentLevel-1]);
     }
@@ -362,9 +362,9 @@ public class GameMaster : MonoBehaviour
 	public void levelWin()
 	{
 		turnOffTileColliders ();
-		winScreen.GetComponent<CanvasGroup>().alpha = 1;
-		winScreen.GetComponent<CanvasGroup>().interactable = true;
-		winScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
+		//winScreen.GetComponent<CanvasGroup>().alpha = 1;
+		//winScreen.GetComponent<CanvasGroup>().interactable = true;
+		//winScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
         ticking = false;
         System.IO.File.WriteAllText("playtest.txt", "\"" + levelsList[currentLevel - 1].Name + "\" beaten in " + moves 
             + " moves in " + System.Math.Round(time, 2) + " seconds in " + attempts + " attempts.");
