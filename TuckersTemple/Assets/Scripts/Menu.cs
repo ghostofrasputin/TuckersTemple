@@ -15,7 +15,6 @@ public class Menu : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
 	}
 	
 	// We might have something
@@ -24,9 +23,9 @@ public class Menu : MonoBehaviour {
 		
 	}
 
-	// Start Game from Level One:
-	public void play()
+	// load scene by name
+	public void loadScene(string scene)
 	{
-		SceneManager.LoadScene("main");
+		SceneManager.LoadScene(scene);
 	}
 }

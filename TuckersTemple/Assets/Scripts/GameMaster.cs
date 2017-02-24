@@ -369,6 +369,7 @@ public class GameMaster : MonoBehaviour
         moves = 0;
         time = 0;
         attempts = 1;
+		//SceneManager.LoadScene ("winScreen");
 	}
 
 	public void nextLevel()

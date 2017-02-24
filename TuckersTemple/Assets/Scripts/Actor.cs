@@ -85,7 +85,7 @@ public class Actor : MonoBehaviour {
                 }
                 else if (escaped)
                 {
-		            SoundController.instance.RandomSfx (playerWinSound, playerWinSound);
+		            //SoundController.instance.RandomSfx (playerWinSound, playerWinSound);
                     //print("made it out!");
                     // Application.Quit();
                 }
