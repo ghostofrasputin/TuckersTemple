@@ -12,13 +12,21 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class Menu : MonoBehaviour {
-	public GameObject menuSlide1;
+
+	//publics:
+	public GameObject animations;
+
+	//private:
 	private Animator anim;
-	private int counter = 0;
+	private int leftCounter = 0;
+	private int rightCounter = 0;
+	private bool isPaused = false; 
+
 	// Use this for initialization
 	void Start () {
-		anim = menuSlide1.GetComponent<Animator>();
+		anim = animations.GetComponent<Animator>();
 		Time.timeScale = 1;
+		anim.enabled = false;
 	}
 	
 	// We might have something
@@ -37,34 +45,46 @@ public class Menu : MonoBehaviour {
 	public void shift(string flag){
 		anim.enabled = true;
 		if (flag == "right") {
-			counter++;
-			if (counter == 1) {
+			rightCounter++;
+			if (rightCounter == 1) {
 				anim.Play ("menuSlide1");
 			}
-			if (counter == 2) {
+			if (rightCounter == 2) {
 				anim.Play ("menuSlide2");
 			}
-			if (counter == 3) {
+			if (rightCounter == 3) {
 				anim.Play ("menuSlide3");
-			}
-			if (counter == -1) {
-				anim.Play ("menuSlide4");
+				rightCounter = 0;
 			}
 		}
 		if (flag == "left") {
-			counter--;
-			if (counter == 1) {
+			leftCounter++;
+			if (leftCounter == 1) {
+				anim.Play ("menuSlide4");
+			}
+			if (leftCounter == 2) {
 				anim.Play ("menuSlide5");
 			}
-			if (counter == 2) {
+			if (leftCounter == 3) {
 				anim.Play ("menuSlide6");
-			}
-			if (counter == 3) {
-				anim.Play ("menuSlide7");
-			}
-			if (counter == -1) {
-				anim.Play ("menuSlide8");
+				leftCounter = 0;
 			}
 		}
 	}
+
+	//function to pause the game
+	public void PauseGame(){
+		anim.enabled = true;
+		anim.Play("PauseMenuSlideIn");
+		isPaused = true;
+		Time.timeScale = 0;
+	}
+
+	//function to unpause the game
+	public void UnpauseGame(){
+		isPaused = false;
+		anim.Play("PauseMenuSlideOut");
+		Time.timeScale = 1;
+	}
 }
+
