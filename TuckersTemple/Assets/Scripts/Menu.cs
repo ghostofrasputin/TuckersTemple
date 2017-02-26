@@ -18,9 +18,7 @@ public class Menu : MonoBehaviour {
 
 	//private:
 	private Animator anim;
-	private int leftCounter = 0;
-	private int rightCounter = 0;
-	private bool isPaused = false; 
+	private int counter = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -44,30 +42,30 @@ public class Menu : MonoBehaviour {
 	public void shift(string flag){
 		anim.enabled = true;
 		if (flag == "right") {
-			rightCounter++;
-			if (rightCounter == 1) {
-				anim.Play ("menuSlide1");
+			if (counter == 0) {
+				anim.Play ("slideRight1");
 			}
-			if (rightCounter == 2) {
-				anim.Play ("menuSlide2");
+			if (counter == 1) {
+				anim.Play ("slideRight2");
 			}
-			if (rightCounter == 3) {
-				anim.Play ("menuSlide3");
-				rightCounter = 0;
+			if (counter == 2) {
+				anim.Play ("slideRight3");
+				counter = 0;
 			}
+			counter++;
 		}
 		if (flag == "left") {
-			leftCounter++;
-			if (leftCounter == 1) {
-				anim.Play ("menuSlide4");
+			if (counter == 0) {
+				anim.Play ("slideLeft1");
 			}
-			if (leftCounter == 2) {
-				anim.Play ("menuSlide5");
+			if (counter == 1) {
+				anim.Play ("slideLeft2");
 			}
-			if (leftCounter == 3) {
-				anim.Play ("menuSlide6");
-				leftCounter = 0;
+			if (counter == 2) {
+				anim.Play ("slideLeft3");
+				counter = 0;
 			}
+			counter--;
 		}
 	}
 
