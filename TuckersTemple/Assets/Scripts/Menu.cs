@@ -14,7 +14,7 @@ using UnityEngine;
 public class Menu : MonoBehaviour {
 
 	//publics:
-	public GameObject animations;
+	public GameObject pauseAnimator;
 
 	//private:
 	private Animator anim;
@@ -24,8 +24,7 @@ public class Menu : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		anim = animations.GetComponent<Animator>();
-		Time.timeScale = 1;
+		anim = pauseAnimator.GetComponent<Animator>();
 		anim.enabled = false;
 	}
 	
@@ -73,18 +72,9 @@ public class Menu : MonoBehaviour {
 	}
 
 	//function to pause the game
-	public void PauseGame(){
+	public void playAnim(string anima){
 		anim.enabled = true;
-		anim.Play("PauseMenuSlideIn");
-		isPaused = true;
-		Time.timeScale = 0;
-	}
-
-	//function to unpause the game
-	public void UnpauseGame(){
-		isPaused = false;
-		anim.Play("PauseMenuSlideOut");
-		Time.timeScale = 1;
+		anim.Play (anima);
 	}
 }
 

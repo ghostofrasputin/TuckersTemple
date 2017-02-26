@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 
 public class GameMaster : MonoBehaviour
@@ -78,7 +79,7 @@ public class GameMaster : MonoBehaviour
         }
         //This code either uses touch input if it exists,
         //or uses mouse input if exists and converts it into fake touch input
-
+		if (!EventSystem.current.IsPointerOverGameObject()) {
         // Simulate touch events from mouse events with dummy ID out of range
         if (canInputMove)
         {
@@ -125,7 +126,7 @@ public class GameMaster : MonoBehaviour
             }   
         }
     }
-
+	}
     //this function handles touch input
     /*
      * touchFingerId is the touch index, 10 for mouse
@@ -384,6 +385,17 @@ public class GameMaster : MonoBehaviour
 			for (int j = 0; j < numRows; j++)
 			{
 				tileGrid[i][j].GetComponent<BoxCollider> ().enabled = false;
+			}
+		}
+	}
+
+	public void turnOnTileColliders()
+	{
+		for (int i = 0; i < numCols; i++)
+		{
+			for (int j = 0; j < numRows; j++)
+			{
+				tileGrid[i][j].GetComponent<BoxCollider> ().enabled = true;
 			}
 		}
 	}
