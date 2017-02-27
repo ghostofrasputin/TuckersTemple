@@ -14,7 +14,7 @@ using UnityEngine;
 public class MainMenuManager : MonoBehaviour {
 
 	//publics:
-	public GameObject animation;
+	public GameObject ani;
 	public GameObject panel;
 
 	//private:
@@ -24,7 +24,7 @@ public class MainMenuManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		anim = animation.GetComponent<Animator>();
+		anim = ani.GetComponent<Animator>();
 		pan = panel.GetComponent<RectTransform> ();
 		anim.enabled = false;
 	}
@@ -74,6 +74,11 @@ public class MainMenuManager : MonoBehaviour {
 			}
 			counter--;
 		}
+	}
+
+	void startLevel(int levelNum){
+		//gm.currentLevel = levelNum;
+		loadScene ("main");
 	}
 
 }
