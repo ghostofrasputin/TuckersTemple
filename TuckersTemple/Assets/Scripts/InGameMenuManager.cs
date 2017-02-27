@@ -6,14 +6,14 @@ using UnityEngine;
 public class InGameMenuManager : MonoBehaviour {
 
 	//publics:
-	public GameObject animation;
+	public GameObject ani;
 
 	//private:
 	private Animator anim;
 
 	// Use this for initialization
 	void Start () {
-		anim = animation.GetComponent<Animator>();
+		anim = ani.GetComponent<Animator>();
 		anim.enabled = false;
 	}
 	

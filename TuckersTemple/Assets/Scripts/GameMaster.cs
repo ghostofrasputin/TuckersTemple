@@ -54,6 +54,8 @@ public class GameMaster : MonoBehaviour
 	// JSON level file data:
 	private LevelReader levelData;
 	private List<Level> levelsList;
+	// level selected from main menu:
+	private int selectedLevel = 1;
 
      void Start()
      {
@@ -63,9 +65,19 @@ public class GameMaster : MonoBehaviour
 		// Use for DEBUGGING if problems arise in more complicated level files:
 		//levelData.printLevel(1);
 		//levelData.printLevelsList();
-		// grabbing info from lvl 1:
-		Level levelOne = levelsList [currentLevel - 1];
-		generateLevel (levelOne);
+
+		// This is in case no level has been selected from the main menu to avoid
+		// crashing. level 1 will play by default.
+		try {
+			// play level from level selection screen:
+			selectedLevel = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevel();
+			currentLevel = selectedLevel;
+			generateLevel (levelsList [currentLevel - 1]);
+
+		} catch(System.Exception){
+			Level levelOne = levelsList [currentLevel - 1];
+			generateLevel (levelOne);
+		}
     }
 
     // Update is called once per frame
