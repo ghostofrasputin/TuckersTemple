@@ -64,7 +64,7 @@ public class Actor : MonoBehaviour {
                 // print(goalPos); debugging
                 //set new parent based on goalPos
                 transform.parent = gm.getTile(transform.position).transform;
-                if (gameObject.tag == "Player") print(death);
+                //if (gameObject.tag == "Player") print(death);
                 if (death)
                 {
                     SoundController.instance.RandomSfx (playerdeathSound, playerdeathSound);
@@ -203,10 +203,11 @@ public class Actor : MonoBehaviour {
             {
                 foreach (RaycastHit2D ray in raycasts)
                 {
-                    print(ray.collider.tag);
+                    //print(ray.collider.tag);
                     if (ray.collider.tag == "Enemy")
                     {
-                        int EnemyView = ray.collider.gameObject.GetComponent<Actor>().direction;
+						print ("Enemy");
+						int EnemyView = ray.collider.gameObject.GetComponent<Actor>().direction;
                         switch (EnemyView)
                         {
                             case 0:
@@ -247,7 +248,7 @@ public class Actor : MonoBehaviour {
                     {
                         //Set a win varible to true
                         escaped = true;
-                        print("Escape!");
+                        //print("Escape!");
                         if (this.GetType().Name == "Actor") {
                           gm.levelWin ();
                         }
