@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 
-
 public class GameMaster : MonoBehaviour
 {
     // public fields:
@@ -55,6 +54,8 @@ public class GameMaster : MonoBehaviour
 	// JSON level file data:
 	private LevelReader levelData;
 	private List<Level> levelsList;
+	// level selected from main menu:
+	private int selectedLevel = 1;
 
      void Start()
      {
@@ -64,9 +65,19 @@ public class GameMaster : MonoBehaviour
 		// Use for DEBUGGING if problems arise in more complicated level files:
 		//levelData.printLevel(1);
 		//levelData.printLevelsList();
-		// grabbing info from lvl 1:
-		Level levelOne = levelsList [currentLevel - 1];
-		generateLevel (levelOne);
+
+		// This is in case no level has been selected from the main menu to avoid
+		// crashing. level 1 will play by default.
+		try {
+			// play level from level selection screen:
+			selectedLevel = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevel();
+			currentLevel = selectedLevel;
+			generateLevel (levelsList [currentLevel - 1]);
+
+		} catch(System.Exception){
+			Level levelOne = levelsList [currentLevel - 1];
+			generateLevel (levelOne);
+		}
     }
 
     // Update is called once per frame
@@ -78,7 +89,6 @@ public class GameMaster : MonoBehaviour
         }
         //This code either uses touch input if it exists,
         //or uses mouse input if exists and converts it into fake touch input
-
         // Simulate touch events from mouse events with dummy ID out of range
         if (canInputMove)
         {
@@ -125,7 +135,6 @@ public class GameMaster : MonoBehaviour
             }   
         }
     }
-
     //this function handles touch input
     /*
      * touchFingerId is the touch index, 10 for mouse
@@ -384,6 +393,17 @@ public class GameMaster : MonoBehaviour
 			for (int j = 0; j < numRows; j++)
 			{
 				tileGrid[i][j].GetComponent<BoxCollider> ().enabled = false;
+			}
+		}
+	}
+
+	public void turnOnTileColliders()
+	{
+		for (int i = 0; i < numCols; i++)
+		{
+			for (int j = 0; j < numRows; j++)
+			{
+				tileGrid[i][j].GetComponent<BoxCollider> ().enabled = true;
 			}
 		}
 	}
