@@ -56,6 +56,7 @@ public class GameMaster : MonoBehaviour
 	private List<Level> levelsList;
 	// level selected from main menu:
 	private int selectedLevel = 1;
+    private Vector2 touchStart;
 
      void Start()
      {
@@ -97,7 +98,7 @@ public class GameMaster : MonoBehaviour
                 //Calls when mouse is first pressed(begin)
                 if (Input.GetMouseButtonDown(0))
                 {
-                    HandleTouch(10, Input.mousePosition, TouchPhase.Began, new Vector2(0, 0));
+                    HandleTouch(10, Input.mousePosition, TouchPhase.Began);
                     //store the last position for next tick
                     lastPos = Input.mousePosition;
                 }
@@ -109,15 +110,14 @@ public class GameMaster : MonoBehaviour
                 //called when mouse is lifted up(ended)
                 if (Input.GetMouseButtonUp(0))
                 {
-                    Vector2 offset = new Vector2(Input.mousePosition.x - lastPos.x, Input.mousePosition.y - lastPos.y);
-                    HandleTouch(10, Input.mousePosition, TouchPhase.Ended, offset);
+                    HandleTouch(10, Input.mousePosition, TouchPhase.Ended);
                 }
             }
             else
             {
                 //use the first touch registered
                 Touch touch = Input.touches[0];
-                HandleTouch(touch.fingerId, touch.position, touch.phase, touch.deltaPosition);
+                HandleTouch(touch.fingerId, touch.position, touch.phase);
             }
         }
         else
@@ -142,13 +142,14 @@ public class GameMaster : MonoBehaviour
      * touchPhase is either Began, Moved, or Ended
      * deltaPosition is a vector of the difference in position since last tick
      */
-    private void HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase, Vector2 deltaPosition)
+    private void HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase)
     {
         switch (touchPhase)
         {
            case TouchPhase.Began:
                Ray ray = Camera.main.ScreenPointToRay (touchPosition);
                touchTarget = null;
+                touchStart = new Vector2(touchPosition.x, touchPosition.y);
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Tile")))
                 {
                     touchTarget = hit.collider.gameObject;
@@ -159,7 +160,7 @@ public class GameMaster : MonoBehaviour
                 break;
 
             case TouchPhase.Ended:
-                findTouchVector(touchTarget, deltaPosition);
+                findTouchVector(touchTarget, ((Vector2)touchPosition)-touchStart);
                 break;
 
             default:

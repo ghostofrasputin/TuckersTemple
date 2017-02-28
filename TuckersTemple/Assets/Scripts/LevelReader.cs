@@ -40,7 +40,8 @@ public class LevelReader : MonoBehaviour {
 
 	// FILE PARSING
 	void Start () {
-		jsonString = File.ReadAllText(Application.dataPath + "/Resources/levels.json");
+        TextAsset levelFile = Resources.Load("levels") as TextAsset;
+		jsonString = levelFile.ToString();
 		levelData = JsonMapper.ToObject(jsonString);
 		for(int i = 1; i < levelData.Count+1; i++) {
 			iterString = iterString + i.ToString();
