@@ -74,9 +74,8 @@ public class Actor : MonoBehaviour {
                     gm.deleteActor(this.gameObject);
                     if(gameObject.tag == "Player")
                     {
-                        gm.reset();
-                        print("character died, resetting"); // debugging
-                    }
+						gm.levelDeath ();
+					}
                     else
                     {
                         Destroy(this.gameObject);
@@ -257,9 +256,6 @@ public class Actor : MonoBehaviour {
                     {
                         //print("You activated my Trap card");
                         death = true;
-						if (this.GetType().Name == "Actor") {
-							gm.levelDeath ();
-						}
                     }
 
                 }

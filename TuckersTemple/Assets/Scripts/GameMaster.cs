@@ -353,15 +353,6 @@ public class GameMaster : MonoBehaviour
 		actors.Remove (actor);
 	}
 	
-	// death
-	public void levelDeath(){
-		turnOffTileColliders ();
-		deathScreen.GetComponent<CanvasGroup>().alpha = 1;
-		deathScreen.GetComponent<CanvasGroup>().interactable = true;
-		deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
-	}
-
-	
 	// this will load the current level scene 
 	// as of right now, levels are being generated, so
 	// it reloads the level, but the tiles will be different
@@ -391,6 +382,14 @@ public class GameMaster : MonoBehaviour
         moves = 0;
         time = 0;
         attempts = 1;
+	}
+
+	// displays death screen:
+	public void levelDeath(){
+		turnOffTileColliders ();
+		deathScreen.GetComponent<CanvasGroup>().alpha = 1;
+		deathScreen.GetComponent<CanvasGroup>().interactable = true;
+		deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
 	}
 
 	public void nextLevel()
