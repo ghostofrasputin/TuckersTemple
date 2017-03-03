@@ -12,7 +12,6 @@ using UnityEngine;
 public class GameMaster : MonoBehaviour
 {
     // public fields:
-    public float slideSpeed = .02f;
     public GameObject outerWall;
     public GameObject Tile; //The tile prefab to spawn in
     public GameObject Character;
@@ -23,6 +22,7 @@ public class GameMaster : MonoBehaviour
     public int numRows; //number of tiles to size
     public int numCols;
     public Canvas winScreen;
+	public Canvas deathScreen;
 	public int currentLevel = 1; // progress this every time there's a win
 
 	// Sound 
@@ -353,6 +353,15 @@ public class GameMaster : MonoBehaviour
 		actors.Remove (actor);
 	}
 	
+	// death
+	public void levelDeath(){
+		turnOffTileColliders ();
+		deathScreen.GetComponent<CanvasGroup>().alpha = 1;
+		deathScreen.GetComponent<CanvasGroup>().interactable = true;
+		deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
+	}
+
+	
 	// this will load the current level scene 
 	// as of right now, levels are being generated, so
 	// it reloads the level, but the tiles will be different
@@ -361,10 +370,13 @@ public class GameMaster : MonoBehaviour
 		winScreen.GetComponent<CanvasGroup>().alpha = 0;
         winScreen.GetComponent<CanvasGroup>().interactable = false;
         winScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
+		deathScreen.GetComponent<CanvasGroup>().alpha = 0;
+		deathScreen.GetComponent<CanvasGroup>().interactable = false;
+		deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
         attempts++;
         setupLevel(levelsList[currentLevel-1]);
     }
-
+	
 	//Called when the level is won
 	//Displays win screen
 	public void levelWin()

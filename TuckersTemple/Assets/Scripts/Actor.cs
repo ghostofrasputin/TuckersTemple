@@ -257,6 +257,9 @@ public class Actor : MonoBehaviour {
                     {
                         //print("You activated my Trap card");
                         death = true;
+						if (this.GetType().Name == "Actor") {
+							gm.levelDeath ();
+						}
                     }
 
                 }
