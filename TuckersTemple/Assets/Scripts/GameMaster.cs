@@ -40,6 +40,7 @@ public class GameMaster : MonoBehaviour
     private bool isSelected = false;
     private Vector2 lastPos = new Vector2(0,0); //holds the last position for mouse input to calculate deltaPosition
     private GameObject[][] tileGrid; // the holder for all the tiles
+    private List<GameObject> playerChars = new List<GameObject>();
     private GameObject boundary;
     private bool canInputMove = true;
     private bool charsWalking = false;
@@ -134,7 +135,32 @@ public class GameMaster : MonoBehaviour
                 }
             }   
         }
+                //This is to check if an actor runs into a enemy on the same tile
+        foreach (GameObject actor in actors)
+        {
+
+            if ((actor.gameObject.tag == "Player") && (!playerChars.Contains(actor)))
+            {
+                print("getting players");
+                playerChars.Add(actor);
+            }
+        }
+        foreach(GameObject actor in actors)
+        {
+            //print(actor.gameObject.tag);
+            if(actor.gameObject.tag == "Enemy")
+            {
+                foreach(GameObject playerChar in playerChars)
+                {
+                    if(actor.transform.position == playerChar.transform.position)
+                    {
+                        playerChar.GetComponent<Actor>().death = true;
+                    }
+                }
+            }
+        }
     }
+   
     //this function handles touch input
     /*
      * touchFingerId is the touch index, 10 for mouse
@@ -435,6 +461,7 @@ public class GameMaster : MonoBehaviour
             }
         }
         actors.Clear();
+        playerChars.Clear();
         tileGrid = new GameObject[numCols][];
         generateLevel(level);
         Destroy(boundary);
