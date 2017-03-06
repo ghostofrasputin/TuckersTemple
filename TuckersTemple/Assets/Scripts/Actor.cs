@@ -26,10 +26,10 @@ public class Actor : MonoBehaviour {
     public Sprite rightSprite;
     public Sprite downSprite;
     public Sprite leftSprite;
+    public bool death;
+    // private fields:
+    private bool isWalking;
 
-	// private fields:
-	private bool isWalking;
-    private bool death;
     private bool foundWall;
     private bool escaped;
 	private GameMaster gm;
