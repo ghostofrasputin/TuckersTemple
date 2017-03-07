@@ -102,6 +102,27 @@ public class Actor : MonoBehaviour {
         }
 	}
 
+    public void setDirection(int dir)
+    {
+        direction = dir;
+        print(dir);
+        switch (direction)
+        {
+            case 0:
+                sr.sprite = upSprite;
+                break;
+            case 1:
+                sr.sprite = rightSprite;
+                break;
+            case 2:
+                sr.sprite = downSprite;
+                break;
+            case 3:
+                sr.sprite = leftSprite;
+                break;
+        }
+    }
+
 	// walk to new tile
 	public void walk(){
         int directionToWalk = findNextMove(direction);
