@@ -8,6 +8,8 @@ public class InGameMenuManager : MonoBehaviour {
 	//publics:
 	public GameObject ani;
 
+	public AudioClip InGameMenuSound;
+
 	//private:
 	private Animator anim;
 
@@ -25,11 +27,14 @@ public class InGameMenuManager : MonoBehaviour {
 	// load scene by name
 	public void loadScene(string scene)
 	{
+		//SoundController.instance.PlaySingle (InGameMenuSound);
 		SceneManager.LoadScene(scene);
+		SoundController.instance.PlaySingle (InGameMenuSound);
 	}
 
 	//function to pause the game
 	public void playAnim(string anima){
+		SoundController.instance.PlaySingle (InGameMenuSound);
 		anim.enabled = true;
 		anim.Play (anima);
 	}

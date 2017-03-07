@@ -1,10 +1,12 @@
 fileFormatVersion: 2
 guid: f26da4f5bf0e82e46acd67de2034c473
-timeCreated: 1488152566
+timeCreated: 1488501979
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - ani: {instanceID: 0}
+  - InGameMenuSound: {fileID: 8300000, guid: 3c47fa130571d46e7a4ac5ba1919bc48, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
