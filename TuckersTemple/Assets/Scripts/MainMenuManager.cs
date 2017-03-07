@@ -17,6 +17,10 @@ public class MainMenuManager : MonoBehaviour {
 	public GameObject ani;
 	public GameObject panel;
 
+	// audio
+	public AudioClip MenuSlide;
+	public AudioClip PlayStart;
+
 	//private:
 	private Animator anim;
 	private RectTransform pan;
@@ -38,6 +42,7 @@ public class MainMenuManager : MonoBehaviour {
 	// load scene by name
 	public void loadScene(string scene)
 	{
+		SoundController.instance.PlaySingle (PlayStart);
 		SceneManager.LoadScene(scene);
 	}
 
@@ -47,12 +52,15 @@ public class MainMenuManager : MonoBehaviour {
 		if (flag == "right") {
 			if (counter == 0) {
 				anim.Play ("slideRight1");
+				SoundController.instance.PlaySingle (MenuSlide);
 			}
 			if (counter == 1) {
 				anim.Play ("slideRight2");
+				SoundController.instance.PlaySingle (MenuSlide);
 			}
 			if (counter == 2) {
 				anim.Play ("slideRight3");
+				SoundController.instance.PlaySingle (MenuSlide);
 				counter = 0;
 				pan.offsetMin = new Vector2 (-57,0);
 				pan.offsetMax = new Vector2 (-305,0);
@@ -63,14 +71,17 @@ public class MainMenuManager : MonoBehaviour {
 		if (flag == "left") {
 			if (counter == 0) {
 				anim.Play ("slideLeft1");
+				SoundController.instance.PlaySingle (MenuSlide);
 				counter = 2;
 				return;
 			}
 			if (counter == 1) {
 				anim.Play ("slideLeft2");
+				SoundController.instance.PlaySingle (MenuSlide);
 			}
 			if (counter == 2) {
 				anim.Play ("slideLeft3");
+				SoundController.instance.PlaySingle (MenuSlide);
 			}
 			counter--;
 		}
