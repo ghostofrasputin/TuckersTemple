@@ -28,14 +28,14 @@ public class Actor : MonoBehaviour {
     public Sprite leftSprite;
     public bool death;
     // private fields:
-    private bool isWalking;
+    protected bool isWalking;
 
-    private bool foundWall;
-    private bool escaped;
-	private GameMaster gm;
-    private Vector2 goalPos;
-    private Vector2[] v2Dirs = { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
-    private SpriteRenderer sr;
+    protected bool foundWall;
+    protected bool escaped;
+	protected GameMaster gm;
+    protected Vector2 goalPos;
+    protected Vector2[] v2Dirs = { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
+    protected SpriteRenderer sr;
 
 
 	// Actor Initialization
