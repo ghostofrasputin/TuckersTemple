@@ -169,7 +169,7 @@ public class Actor : MonoBehaviour {
     //take in direction for actor to move
     //returns 0,1,2,3 for which direction they should move
     //returns -1 if no valid move found
-    private int findNextMove(int dir)
+    public virtual int findNextMove(int dir)
     {
 
         //order to try in is straight->right->left->back

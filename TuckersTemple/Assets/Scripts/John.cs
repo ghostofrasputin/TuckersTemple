@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class John : Actor {
-
-    private int findNextMove(int dir)
+public class John : Actor {
+    public override int findNextMove(int dir)
     {
 
         //order to try in is straight->right->left->back
@@ -104,7 +103,7 @@ public partial class John : Actor {
                         //Set a win varible to true
                         escaped = true;
                         //print("Escape!");
-                        if (this.GetType().Name == "Actor")
+                        if (this.GetType().Name == "John")
                         {
                             gm.levelWin();
                         }
