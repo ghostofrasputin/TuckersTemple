@@ -91,6 +91,11 @@ public class MainMenuManager : MonoBehaviour {
 		//gm.currentLevel = levelNum;
 		loadScene ("main");
 	}
-
+	//function to pause the game
+	public void playAnim(string anima){
+		//SoundController.instance.PlaySingle (InGameMenuSound);
+		anim.enabled = true;
+		anim.Play (anima);
+	}
 }
 
