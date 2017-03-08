@@ -1,6 +1,6 @@
 {
 	"level1": {
-	  "name": "level",
+	  "name": "Teach Walking",
 	  "rows": 3,
 	  "cols": 3,
 	  "tiles": [
@@ -39,7 +39,7 @@
 	  }
 	},
 	"level2": {
-	  "name": "level",
+	  "name": "Walking is Hard",
 	  "rows": 3,
 	  "cols": 3,
 	  "tiles": [
@@ -78,46 +78,7 @@
 	  }
 	},
 	"level3": {
-	  "name": "level",
-	  "rows": 3,
-	  "cols": 3,
-	  "tiles": [
-	    [
-	      "V2",
-	      "L0",
-	      "V3"
-	    ],
-	    [
-	      "L3",
-	      "N",
-	      "L1"
-	    ],
-	    [
-	      "V1",
-	      "L2",
-	      "V0"
-	    ]
-	  ],
-	  "actors": {
-	    "roy": [
-	      [
-	        0,
-	        0,
-	        0
-	      ]
-	    ]
-	  },
-	  "static": {
-	    "goal": [
-	      [
-	        2,
-	        2
-	      ]
-	    ]
-	  }
-	},
-	"level4": {
-	  "name": "level",
+	  "name": "Enemy Appears",
 	  "rows": 3,
 	  "cols": 3,
 	  "tiles": [
@@ -162,8 +123,8 @@
 	    ]
 	  }
 	},
-	"level5": {
-	  "name": "level",
+	"level4": {
+	  "name": "Close Call",
 	  "rows": 3,
 	  "cols": 3,
 	  "tiles": [
@@ -208,8 +169,8 @@
 	    ]
 	  }
 	},
-	"level6": {
-	  "name": "level",
+	"level5": {
+	  "name": "Trap Room",
 	  "rows": 3,
 	  "cols": 3,
 	  "tiles": [
@@ -249,6 +210,63 @@
 	      [
 	        1,
 	        1
+	      ]
+	    ]
+	  }
+	},
+	"level6": {
+	  "name": "Trapping",
+	  "rows": 3,
+	  "cols": 3,
+	  "tiles": [
+	    [
+	      "L1",
+	      "T0",
+	      "L2"
+	    ],
+	    [
+	      "T3",
+	      "T1",
+	      "L3"
+	    ],
+	    [
+	      "L0",
+	      "T2",
+	      "L3"
+	    ]
+	  ],
+	  "actors": {
+	    "roy": [
+	      [
+	        0,
+	        0,
+	        0
+	      ]
+	    ],
+		"shadow": [
+	      [
+	        1,
+	        0,
+	        0
+	      ],
+		  [
+	        2,
+	        0,
+	        0
+	      ]
+		]
+	  },
+	  "static": {
+	    "goal": [
+	      [
+	        2,
+	        1
+	      ]
+	    ],
+	    "trap": [
+	      [
+	        1,
+	        2
 	      ]
 	    ]
 	  }
