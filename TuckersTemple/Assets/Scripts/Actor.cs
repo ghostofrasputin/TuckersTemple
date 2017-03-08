@@ -13,7 +13,8 @@ public class Actor : MonoBehaviour {
 
 	// public fields:
 	public int direction;
-	public float speed = 0.05f;
+    public int currDirection = 0;
+    public float speed = 0.05f;
 	
 	// Sfx for player 
 	public AudioClip playerfootsteps1;
@@ -29,7 +30,7 @@ public class Actor : MonoBehaviour {
     public bool death;
     // private fields:
     private bool isWalking;
-
+    private int enemyDir;
     private bool foundWall;
     private bool escaped;
 	private GameMaster gm;
@@ -102,7 +103,7 @@ public class Actor : MonoBehaviour {
         }
 	}
 
-    public void setDirection(int dir)
+/*    public void setDirection(int dir)
     {
         direction = dir;
         print(dir);
@@ -122,21 +123,20 @@ public class Actor : MonoBehaviour {
                 break;
         }
     }
-
-	// walk to new tile
-	public void walk(){
-        int directionToWalk = findNextMove(direction);
+*/
+    // walk to new tile
+    public void walk(int dir)
+    {
+        int directionToWalk = dir;
+        print(directionToWalk);
 
         //decide where to move and call WalkTo based on directionToWalk
         float walkDistance = gm.tileSize;
         switch (directionToWalk)
         {
-            //no moves
-            case -1:
-                gm.doneWalking();
-                break;
-			case 0:
-				direction = directionToWalk;
+            //no moves                
+            case 0:
+                direction = directionToWalk;
                 sr.sprite = upSprite;
                 WalkTo(new Vector2(0, walkDistance));
                 break;
@@ -155,9 +155,12 @@ public class Actor : MonoBehaviour {
                 sr.sprite = leftSprite;
                 WalkTo(new Vector2(-walkDistance, 0));
                 break;
+            default:
+                gm.doneWalking();
+                break;
         }
 
-	}
+    }
 
     //Tells the character the offset to walk to
     public void WalkTo(Vector2 pos)
@@ -169,7 +172,7 @@ public class Actor : MonoBehaviour {
     //take in direction for actor to move
     //returns 0,1,2,3 for which direction they should move
     //returns -1 if no valid move found
-    private int findNextMove(int dir)
+    public void findNextMove(int dir)
     {
 
         //order to try in is straight->right->left->back
@@ -192,10 +195,9 @@ public class Actor : MonoBehaviour {
                 currDir += 4;
             }
 
-
             //RAYCAST LASER BEAMS ♫♫♫♫♫
             //Actual comment: Raycasts are complicated.  Here it is then I'll explain
-            RaycastHit2D[] raycasts = Physics2D.RaycastAll(transform.position, v2Dirs[currDir], gm.tileSize, LayerMask.GetMask("Wall"));
+            RaycastHit2D ray = Physics2D.Raycast(transform.position, v2Dirs[currDir], gm.tileSize, LayerMask.GetMask("Wall"));
             //RaycastHit2D raycastEnemy = Physics2D.Raycast(transform.position, v2Dirs[currDir], gm.tileSize, LayerMask.GetMask("Enemy"));
             /*
              * RaycastHit2D is a return type of raycasts, that holds something
@@ -209,83 +211,98 @@ public class Actor : MonoBehaviour {
             // using RAYCAAAAST! for enemy collision
             //if (raycastEnemy
             //if raycast doesn't return anything, then there isn't anything there!
-            foreach (RaycastHit2D ray in raycasts)
+
+            if (ray.collider != null && (ray.collider.tag == "Wall" || ray.collider.tag == "OuterWall"))
             {
-                // print(currDir + " " + ray.collider);
-                if (ray.collider.tag == "Wall" || ray.collider.tag == "OuterWall")
-                {
-                    foundWall = true;
-                    //print("I found a wall");
-                    break;
-                }
+                foundWall = true;
+                print(currDir + " " + ray.collider.gameObject.tag);
+                //print("I found a wall");                  
             }
+            else
+            {
+                foundWall = false;
+            }
+
             if (!foundWall)
             {
-                foreach (RaycastHit2D ray in raycasts)
-                {
-                    //print(ray.collider.tag);
-                    if (ray.collider.tag == "Enemy")
-                    {
-						print ("Enemy");
-						int EnemyView = ray.collider.gameObject.GetComponent<Actor>().direction;
-                        switch (EnemyView)
-                        {
-                            case 0:
-                                {
-                                    if (direction == 2)
-                                    {
-                                        death = true;
-                                    }
-                                    break;
-                                }
-                            case 1:
-                                {
-                                    if (direction == 3)
-                                    {
-                                        death = true;
-                                    }
-                                    break;
-                                }
-                            case 2:
-                                {
-                                    if (direction == 0)
-                                    {
-                                        death = true;
-                                    }
-                                    break;
-                                }
-                            case 3:
-                                {
-                                    if (direction == 1)
-                                    {
-                                        death = true;
-                                    }
-                                    break;
-                                }
-                        }
-                    }
-                    else if (ray.collider.tag == "Goal")
-                    {
-                        //Set a win varible to true
-                        escaped = true;
-                        //print("Escape!");
-                        if (this.GetType().Name == "Actor") {
-                          gm.levelWin ();
-                        }
-                    }
-                    else if (ray.collider.tag == "Trap")
-                    {
-                        //print("You activated my Trap card");
-                        death = true;
-                    }
-
-                }
-                return currDir;
+                currDirection = currDir;
+                return;
             }
-            foundWall = false;
+            else
+            {
+                currDirection = -1;
+            }
         }
-        //if no moves were found
-        return -1;
+    }
+
+    public void checkCollide(int currDir)
+    {
+        RaycastHit2D ray = Physics2D.Raycast(transform.position, v2Dirs[currDirection], gm.tileSize, LayerMask.GetMask("Wall"));
+        print("direction in checkcollide: " + direction);
+        if (ray.collider != null && this.tag == "Player") print("this + hitTag in checkcollide: " + this.tag + " " + ray.collider.tag);
+        if (ray.collider != null)
+        {
+            if ((ray.collider.tag == "Enemy") && (this.tag == "Player"))
+            {
+                enemyDir = ray.collider.gameObject.GetComponent<Actor>().currDirection;
+                print("this + enemy dir in checkcollide: " + this.tag + " " + enemyDir);
+                switch (currDir)
+                {
+                    case 0:
+                        {
+                            print("Case 0");
+                            if (enemyDir == 2)
+                            {
+                                death = true;
+                            }
+                            break;
+                        }
+                    case 1:
+                        {
+                            print("Case 1");
+                            if (enemyDir == 3)
+                            {
+                                death = true;
+                            }
+                            break;
+                        }
+                    case 2:
+                        {
+                            print("Case 2");
+                            if (enemyDir == 0)
+                            {
+                                death = true;
+                            }
+                            break;
+                        }
+                    case 3:
+                        {
+                            print("Case 3");
+                            if (enemyDir == 1)
+                            {
+                                death = true;
+                            }
+                            break;
+                        }
+                }
+            }
+            else if (ray.collider.tag == "Goal")
+            {
+                //Set a win varible to true
+                escaped = true;
+                //print("Escape!");
+                if (this.GetType().Name == "Actor")
+                {
+                    gm.levelWin();
+                }
+            }
+            else if (ray.collider.tag == "Trap")
+            {
+                //print("You activated my Trap card");
+                death = true;
+            }
+        }
+
     }
 
 }
