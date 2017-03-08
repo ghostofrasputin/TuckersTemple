@@ -4,14 +4,40 @@ using UnityEngine;
 
 public class SoundController : MonoBehaviour {
 
+	// public:
 	public AudioSource sfxSource;
 	public AudioSource musicSource;
-	public static SoundController instance = null; 
+	public static SoundController instance = null;
 
 	// pitch variations for a suttle difference
 	public float lowPitch = .95f; // - 5%
 	public float highPitch = 1.05f; // + 5%
 
+	// private:
+	private bool zombieMusicBool = true;
+	private bool zombieSFXBool = true;
+
+	void Update(){
+		try {
+			zombieMusicBool = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getMusicToggle();
+			zombieSFXBool = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getSFXToggle();
+
+			// check music
+			if(zombieMusicBool==false){
+				musicSource.mute = true;
+			} else{
+				musicSource.mute = false;
+			}
+			// check sfx
+			if(zombieSFXBool==false){
+				sfxSource.mute = true;
+			} else{
+				sfxSource.mute = false;
+			}
+		}
+		catch(System.Exception) {
+		}
+	}
 
 	// Use this for initialization
 	void Awake () {

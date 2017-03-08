@@ -62,8 +62,8 @@ public class MainMenuManager : MonoBehaviour {
 				anim.Play ("slideRight3");
 				SoundController.instance.PlaySingle (MenuSlide);
 				counter = 0;
-				pan.offsetMin = new Vector2 (-57,0);
-				pan.offsetMax = new Vector2 (-305,0);
+				//pan.offsetMin = new Vector2 (-57,0);
+				//pan.offsetMax = new Vector2 (-305,0);
 				return;
 			}
 			counter++;
@@ -92,5 +92,13 @@ public class MainMenuManager : MonoBehaviour {
 		loadScene ("main");
 	}
 
+	//function to pause the game
+	public void playAnim(string anima){
+		//SoundController.instance.PlaySingle (InGameMenuSound);
+		anim.enabled = true;
+		anim.Play (anima);
+	}
 }
+
+
 
