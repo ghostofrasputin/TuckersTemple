@@ -20,7 +20,7 @@ public class SoundController : MonoBehaviour {
 	void Update(){
 		try {
 			zombieMusicBool = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getMusicToggle();
-			zombieSFXBool = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getMusicToggle();
+			zombieSFXBool = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getSFXToggle();
 
 			// check music
 			if(zombieMusicBool==false){
