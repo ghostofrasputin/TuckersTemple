@@ -39,6 +39,14 @@ public class MainMenuManager : MonoBehaviour {
 		
 	}
 
+	// sets level through zombie passer
+	// this works from scene to scene
+	public void updateLevelNum(int newLevelNum){
+		try {
+			GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setLevel(newLevelNum);
+		} catch(System.Exception){}
+	}
+
 	// load scene by name
 	public void loadScene(string scene)
 	{
