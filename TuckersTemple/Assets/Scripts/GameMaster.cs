@@ -426,11 +426,15 @@ public class GameMaster : MonoBehaviour
 		winScreen.GetComponent<CanvasGroup>().interactable = true;
 		winScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
         ticking = false;
-        System.IO.File.WriteAllText("playtest.txt", "\"" + levelsList[currentLevel - 1].Name + "\" beaten in " + moves 
+        using (System.IO.StreamWriter file =
+            new System.IO.StreamWriter("playtest.txt", true))
+        {
+            file.WriteLine("\"" + levelsList[currentLevel - 1].Name + "\" beaten in " + moves
             + " moves in " + System.Math.Round(time, 2) + " seconds in " + attempts + " attempts.");
+        }
         moves = 0;
         time = 0;
-        attempts = 1;
+        attempts = 0;
 	}
 
 	// displays death screen:
@@ -445,6 +449,7 @@ public class GameMaster : MonoBehaviour
 	{
         currentLevel++;
         reset();
+        ticking = true;
 	}
 	
 	public void turnOffTileColliders()
