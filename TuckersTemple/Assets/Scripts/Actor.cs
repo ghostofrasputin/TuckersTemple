@@ -305,8 +305,9 @@ public class Actor : MonoBehaviour {
 
     }
 
-    public void enemyCollision(GameObject enemy)
+    public virtual void enemyCollision(GameObject enemy)
     {
+        print("enemy collision");
         death = true;
     }
 
