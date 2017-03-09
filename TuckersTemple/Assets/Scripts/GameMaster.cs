@@ -56,7 +56,6 @@ public class GameMaster : MonoBehaviour
 	private LevelReader levelData;
 	private List<Level> levelsList;
 	// level selected from main menu:
-	private int selectedLevel = 1;
     private Vector2 touchStart;
 
      void Start()
@@ -71,15 +70,10 @@ public class GameMaster : MonoBehaviour
 		// This is in case no level has been selected from the main menu to avoid
 		// crashing. level 1 will play by default.
 		try {
-			// play level from level selection screen:
-			selectedLevel = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevel();
-			currentLevel = selectedLevel;
-			generateLevel (levelsList [currentLevel - 1]);
+			currentLevel = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevel();
+		} catch(System.Exception){}
 
-		} catch(System.Exception){
-			Level levelOne = levelsList [currentLevel - 1];
-			generateLevel (levelOne);
-		}
+		generateLevel (levelsList [currentLevel - 1]);
     }
 
     // Update is called once per frame

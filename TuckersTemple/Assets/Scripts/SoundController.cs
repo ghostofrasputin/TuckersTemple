@@ -35,8 +35,7 @@ public class SoundController : MonoBehaviour {
 				sfxSource.mute = false;
 			}
 		}
-		catch(System.Exception) {
-		}
+		catch(System.Exception) {}
 	}
 
 	// Use this for initialization

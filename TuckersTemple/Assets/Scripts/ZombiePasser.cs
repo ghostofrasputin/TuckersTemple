@@ -28,12 +28,16 @@ public class ZombiePasser : MonoBehaviour {
 	// Make this game object and all its transform children
 	// survive when loading a new scene.
 	private void Awake () {
-		DontDestroyOnLoad(transform.gameObject);
+		DontDestroyOnLoad(this);
+		if (FindObjectsOfType(GetType()).Length > 1)
+		{
+			Destroy(gameObject);
+		}
 	}
 
-	// update level to be played through button
-	// clicks
-	public void updateLevelNum(int newLevelNum){
+	// sets level to be played through button
+	// associated with that level
+	public void setLevel(int newLevelNum){
 		levelNum = newLevelNum;
 	}
 		
