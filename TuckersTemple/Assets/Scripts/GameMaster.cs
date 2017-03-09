@@ -282,9 +282,26 @@ public class GameMaster : MonoBehaviour
     //After a swipe is finished, this is called with the touched object and the total delta of the swipe
     //It uses that information to decide which row or col needs to move, and in what direction.
     private void findTouchVector(GameObject obj, Vector2 delta)
-    {
+    { 
         //check which direction had the greater offset
         isVert = Mathf.Abs(delta.y) > Mathf.Abs(delta.x);
+        //check if touch vector is large enough to register as a swipe
+        if (isVert)
+        {
+            if(Mathf.Abs(delta.y) < 20)
+            {
+                print("Touch too short to be swipe (delta: " + delta.y + ").");
+                return;
+            }
+        }
+        else
+        {
+            if (Mathf.Abs(delta.x) < 20)
+            {
+                print("Touch too short to be swipe (delta: " + delta.x + ").");
+                return;
+            }
+        }
         int dir = -1;
         //check if it is vertical or horizontal, then if it is positive or negative
         if (isVert)
