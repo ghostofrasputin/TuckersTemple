@@ -253,7 +253,7 @@ public class Actor : MonoBehaviour {
                             print("Case 0");
                             if (enemyDir == 2)
                             {
-                                death = true;
+                                enemyCollision(ray.collider.gameObject);
                             }
                             break;
                         }
@@ -262,7 +262,7 @@ public class Actor : MonoBehaviour {
                             print("Case 1");
                             if (enemyDir == 3)
                             {
-                                death = true;
+                                enemyCollision(ray.collider.gameObject);
                             }
                             break;
                         }
@@ -271,7 +271,7 @@ public class Actor : MonoBehaviour {
                             print("Case 2");
                             if (enemyDir == 0)
                             {
-                                death = true;
+                                enemyCollision(ray.collider.gameObject);
                             }
                             break;
                         }
@@ -280,7 +280,7 @@ public class Actor : MonoBehaviour {
                             print("Case 3");
                             if (enemyDir == 1)
                             {
-                                death = true;
+                                enemyCollision(ray.collider.gameObject);
                             }
                             break;
                         }
@@ -303,6 +303,11 @@ public class Actor : MonoBehaviour {
             }
         }
 
+    }
+
+    private void enemyCollision(GameObject enemy)
+    {
+        death = true;
     }
 
 }
