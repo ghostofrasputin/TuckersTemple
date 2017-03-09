@@ -305,7 +305,7 @@ public class Actor : MonoBehaviour {
 
     }
 
-    private void enemyCollision(GameObject enemy)
+    public void enemyCollision(GameObject enemy)
     {
         death = true;
     }

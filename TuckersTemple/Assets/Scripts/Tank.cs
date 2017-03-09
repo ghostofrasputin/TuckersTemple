@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Tank : Actor {
 
-	private void enemyCollision(GameObject enemy)
+	public void enemyCollision(GameObject enemy)
     {
         print("Tank has killed.");
         enemy.GetComponent<Actor>().death = true;

@@ -158,7 +158,7 @@ public class GameMaster : MonoBehaviour
                 {
                     if(actor.transform.position == playerChar.transform.position)
                     {
-                        playerChar.GetComponent<Actor>().death = true;
+                        playerChar.GetComponent<Actor>().enemyCollision(actor.gameObject);
                     }
                 }
             }
