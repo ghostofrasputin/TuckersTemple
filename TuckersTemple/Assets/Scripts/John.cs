@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class John : Actor {
-    public override int findNextMove(int dir)
+public class John : Actor
+{
+    public override void findNextMove(int dir)
     {
-
         //order to try in is straight->right->left->back
 
         //this is the modifies to the directions something can face
@@ -26,10 +26,9 @@ public class John : Actor {
                 currDir += 4;
             }
 
-
             //RAYCAST LASER BEAMS ♫♫♫♫♫
             //Actual comment: Raycasts are complicated.  Here it is then I'll explain
-            RaycastHit2D[] raycasts = Physics2D.RaycastAll(transform.position, v2Dirs[currDir], gm.tileSize, LayerMask.GetMask("Wall"));
+            RaycastHit2D ray = Physics2D.Raycast(transform.position, v2Dirs[currDir], gm.tileSize, LayerMask.GetMask("Wall"));
             //RaycastHit2D raycastEnemy = Physics2D.Raycast(transform.position, v2Dirs[currDir], gm.tileSize, LayerMask.GetMask("Enemy"));
             /*
              * RaycastHit2D is a return type of raycasts, that holds something
@@ -43,83 +42,27 @@ public class John : Actor {
             // using RAYCAAAAST! for enemy collision
             //if (raycastEnemy
             //if raycast doesn't return anything, then there isn't anything there!
-            foreach (RaycastHit2D ray in raycasts)
+
+            if (ray.collider != null && (ray.collider.tag == "Wall" || ray.collider.tag == "OuterWall"))
             {
-                // print(currDir + " " + ray.collider);
-                if (ray.collider.tag == "Wall" || ray.collider.tag == "OuterWall")
-                {
-                    foundWall = true;
-                    //print("I found a wall");
-                    break;
-                }
+                foundWall = true;
+                print(currDir + " " + ray.collider.gameObject.tag);
+                //print("I found a wall");                  
             }
+            else
+            {
+                foundWall = false;
+            }
+
             if (!foundWall)
             {
-                foreach (RaycastHit2D ray in raycasts)
-                {
-                    //print(ray.collider.tag);
-                    if (ray.collider.tag == "Enemy")
-                    {
-                        print("Enemy");
-                        int EnemyView = ray.collider.gameObject.GetComponent<Actor>().direction;
-                        switch (EnemyView)
-                        {
-                            case 0:
-                                {
-                                    if (direction == 2)
-                                    {
-                                        death = true;
-                                    }
-                                    break;
-                                }
-                            case 1:
-                                {
-                                    if (direction == 3)
-                                    {
-                                        death = true;
-                                    }
-                                    break;
-                                }
-                            case 2:
-                                {
-                                    if (direction == 0)
-                                    {
-                                        death = true;
-                                    }
-                                    break;
-                                }
-                            case 3:
-                                {
-                                    if (direction == 1)
-                                    {
-                                        death = true;
-                                    }
-                                    break;
-                                }
-                        }
-                    }
-                    else if (ray.collider.tag == "Goal")
-                    {
-                        //Set a win varible to true
-                        escaped = true;
-                        //print("Escape!");
-                        if (this.GetType().Name == "John")
-                        {
-                            gm.levelWin();
-                        }
-                    }
-                    else if (ray.collider.tag == "Trap")
-                    {
-                        //print("You activated my Trap card");
-                        death = true;
-                    }
-
-                }
-                return currDir;
+                currDirection = currDir;
+                return;
             }
-            foundWall = false;
+            else
+            {
+                currDirection = -1;
+            }
         }
-        //if no moves were found
-        return -1;
     }
 }

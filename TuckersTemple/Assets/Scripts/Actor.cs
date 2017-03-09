@@ -30,7 +30,7 @@ public class Actor : MonoBehaviour {
     public bool death;
     // private fields:
     protected bool isWalking;
-
+    protected int enemyDir;
     protected bool foundWall;
     protected bool escaped;
     protected GameMaster gm;
@@ -104,27 +104,6 @@ public class Actor : MonoBehaviour {
         }
 	}
 
-/*    public void setDirection(int dir)
-    {
-        direction = dir;
-        print(dir);
-        switch (direction)
-        {
-            case 0:
-                sr.sprite = upSprite;
-                break;
-            case 1:
-                sr.sprite = rightSprite;
-                break;
-            case 2:
-                sr.sprite = downSprite;
-                break;
-            case 3:
-                sr.sprite = leftSprite;
-                break;
-        }
-    }
-*/
     // walk to new tile
     public void walk(int dir)
     {
@@ -173,7 +152,7 @@ public class Actor : MonoBehaviour {
     //take in direction for actor to move
     //returns 0,1,2,3 for which direction they should move
     //returns -1 if no valid move found
-    public virtual int findNextMove(int dir)
+    public virtual void findNextMove(int dir)
     {
 
         //order to try in is straight->right->left->back
@@ -292,7 +271,7 @@ public class Actor : MonoBehaviour {
                 //Set a win varible to true
                 escaped = true;
                 //print("Escape!");
-                if (this.GetType().Name == "Actor")
+                if (this.GetType().Name == "Actor" || this.GetType().Name == "John")
                 {
                     gm.levelWin();
                 }
