@@ -56,7 +56,6 @@ public class GameMaster : MonoBehaviour
 	private LevelReader levelData;
 	private List<Level> levelsList;
 	// level selected from main menu:
-	private int selectedLevel = 1;
     private Vector2 touchStart;
 
      void Start()
@@ -71,15 +70,10 @@ public class GameMaster : MonoBehaviour
 		// This is in case no level has been selected from the main menu to avoid
 		// crashing. level 1 will play by default.
 		try {
-			// play level from level selection screen:
-			selectedLevel = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevel();
-			currentLevel = selectedLevel;
-			generateLevel (levelsList [currentLevel - 1]);
+			currentLevel = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevel();
+		} catch(System.Exception){}
 
-		} catch(System.Exception){
-			Level levelOne = levelsList [currentLevel - 1];
-			generateLevel (levelOne);
-		}
+		generateLevel (levelsList [currentLevel - 1]);
     }
 
     // Update is called once per frame
@@ -288,9 +282,26 @@ public class GameMaster : MonoBehaviour
     //After a swipe is finished, this is called with the touched object and the total delta of the swipe
     //It uses that information to decide which row or col needs to move, and in what direction.
     private void findTouchVector(GameObject obj, Vector2 delta)
-    {
+    { 
         //check which direction had the greater offset
         isVert = Mathf.Abs(delta.y) > Mathf.Abs(delta.x);
+        //check if touch vector is large enough to register as a swipe
+        if (isVert)
+        {
+            if(Mathf.Abs(delta.y) < 20)
+            {
+                print("Touch too short to be swipe (delta: " + delta.y + ").");
+                return;
+            }
+        }
+        else
+        {
+            if (Mathf.Abs(delta.x) < 20)
+            {
+                print("Touch too short to be swipe (delta: " + delta.x + ").");
+                return;
+            }
+        }
         int dir = -1;
         //check if it is vertical or horizontal, then if it is positive or negative
         if (isVert)
