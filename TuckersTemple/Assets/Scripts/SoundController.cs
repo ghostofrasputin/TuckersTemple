@@ -7,6 +7,8 @@ public class SoundController : MonoBehaviour {
 	// public:
 	public AudioSource sfxSource;
 	public AudioSource musicSource;
+	public AudioSource sfxSourceTiles;
+
 	public static SoundController instance = null;
 
 	// pitch variations for a suttle difference
@@ -50,6 +52,9 @@ public class SoundController : MonoBehaviour {
 	public void PlaySingle (AudioClip clip){
 		sfxSource.clip = clip;
 		sfxSource.Play ();
+
+		sfxSourceTiles.clip = clip;
+		sfxSourceTiles.Play ();
 	}
 
 	// Randomizes between two audio clips so it doesnt sound so repetitive all the time!
@@ -60,6 +65,16 @@ public class SoundController : MonoBehaviour {
 		sfxSource.pitch = randomPitch; // set pitch
 		sfxSource.clip = clips [randomIndex]; // set random index from array
 		sfxSource.Play (); // play clip!
+
+	}
+
+	public void RandomSfxTiles (params AudioClip [] clips){
+		int randomIndex = Random.Range (0, clips.Length); // chooses randoml clip
+		float randomPitch = Random.Range (lowPitch, highPitch); // chooses range of pitch
+
+		sfxSourceTiles.pitch = randomPitch; // set pitch
+		sfxSourceTiles.clip = clips [randomIndex]; // set random index from array
+		sfxSourceTiles.Play ();
 
 	}
 

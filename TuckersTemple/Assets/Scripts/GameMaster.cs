@@ -205,7 +205,7 @@ public class GameMaster : MonoBehaviour
         canInputMove = false;
         tilesSliding = true;
 
-		SoundController.instance.RandomSfx (TileSlide1, TileSlide2);
+		SoundController.instance.RandomSfxTiles (TileSlide1, TileSlide2);
 
         //calculate normal offset vector and move the tiles
         Vector2 offset = new Vector2(0, 0);
