@@ -421,6 +421,13 @@ public class GameMaster : MonoBehaviour
 	//Displays win screen
 	public void levelWin()
 	{
+		try
+		{
+			// unlocks the next level. 
+			//note: currentlevel-1 is the real current level for the array, currentlevel is the next level
+			GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setLockedLevelBool(currentLevel);
+		} catch(System.Exception){
+		}
 		turnOffTileColliders ();
 		winScreen.GetComponent<CanvasGroup>().alpha = 1;
 		winScreen.GetComponent<CanvasGroup>().interactable = true;
