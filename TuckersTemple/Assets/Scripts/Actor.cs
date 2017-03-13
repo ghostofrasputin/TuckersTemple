@@ -69,7 +69,7 @@ public class Actor : MonoBehaviour {
                 //if (gameObject.tag == "Player") print(death);
                 if (death)
                 {
-                    SoundController.instance.RandomSfx (playerdeathSound, playerdeathSound);
+					SoundController.instance.PlaySingle (playerdeathSound);
                     // cleanup later
                     isWalking = false;
                     gm.doneWalking();
