@@ -17,6 +17,8 @@ public class ZombiePasser : MonoBehaviour {
 
 	// private:
 	private int levelNum = 1;
+	private LevelReader levelData;
+	private List<Level> levelsList;
 
 	// NOTE: eventually this data will be loaded from save data:
 	private bool musicToggle = true;
@@ -27,6 +29,10 @@ public class ZombiePasser : MonoBehaviour {
 	// Make this game object and all its transform children
 	// survive when loading a new scene.
 	private void Awake () {
+		// extract level JSON file here:
+		levelData = Camera.main.GetComponent<LevelReader>();
+		levelsList = levelData.getLevels();
+
 		DontDestroyOnLoad(this);
 		if (FindObjectsOfType(GetType()).Length > 1)
 		{
@@ -103,6 +109,11 @@ public class ZombiePasser : MonoBehaviour {
 	// return the private level int
 	public int getLevel(){
 		return levelNum;
+	}
+
+	// return list of levels
+	public List<Level> getLevels(){
+		return levelsList;
 	}
 
 	public bool getLockedLevelBool(int index){
