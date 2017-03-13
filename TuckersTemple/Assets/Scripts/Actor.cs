@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Actor.cs
  * 
  * Is attached to the Actor prefab
@@ -29,14 +29,15 @@ public class Actor : MonoBehaviour {
     public Sprite leftSprite;
     public bool death;
     // private fields:
-    private bool isWalking;
-    private int enemyDir;
-    private bool foundWall;
-    private bool escaped;
-	private GameMaster gm;
-    private Vector2 goalPos;
-    private Vector2[] v2Dirs = { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
-    private SpriteRenderer sr;
+    protected bool isWalking;
+    protected int enemyDir;
+    protected bool foundWall;
+    protected bool escaped;
+    protected GameMaster gm;
+    protected Vector2 goalPos;
+    protected Vector2[] v2Dirs = { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
+    protected SpriteRenderer sr;
+
 
 
 	// Actor Initialization
@@ -103,27 +104,6 @@ public class Actor : MonoBehaviour {
         }
 	}
 
-/*    public void setDirection(int dir)
-    {
-        direction = dir;
-        print(dir);
-        switch (direction)
-        {
-            case 0:
-                sr.sprite = upSprite;
-                break;
-            case 1:
-                sr.sprite = rightSprite;
-                break;
-            case 2:
-                sr.sprite = downSprite;
-                break;
-            case 3:
-                sr.sprite = leftSprite;
-                break;
-        }
-    }
-*/
     // walk to new tile
     public void walk(int dir)
     {
@@ -172,7 +152,7 @@ public class Actor : MonoBehaviour {
     //take in direction for actor to move
     //returns 0,1,2,3 for which direction they should move
     //returns -1 if no valid move found
-    public void findNextMove(int dir)
+    public virtual void findNextMove(int dir)
     {
 
         //order to try in is straight->right->left->back
@@ -291,7 +271,7 @@ public class Actor : MonoBehaviour {
                 //Set a win varible to true
                 escaped = true;
                 //print("Escape!");
-                if (this.GetType().Name == "Actor")
+                if (this.GetType().Name == "Actor" || this.GetType().Name == "John")
                 {
                     gm.levelWin();
                 }

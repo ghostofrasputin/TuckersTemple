@@ -282,9 +282,26 @@ public class GameMaster : MonoBehaviour
     //After a swipe is finished, this is called with the touched object and the total delta of the swipe
     //It uses that information to decide which row or col needs to move, and in what direction.
     private void findTouchVector(GameObject obj, Vector2 delta)
-    {
+    { 
         //check which direction had the greater offset
         isVert = Mathf.Abs(delta.y) > Mathf.Abs(delta.x);
+        //check if touch vector is large enough to register as a swipe
+        if (isVert)
+        {
+            if(Mathf.Abs(delta.y) < 20)
+            {
+                print("Touch too short to be swipe (delta: " + delta.y + ").");
+                return;
+            }
+        }
+        else
+        {
+            if (Mathf.Abs(delta.x) < 20)
+            {
+                print("Touch too short to be swipe (delta: " + delta.x + ").");
+                return;
+            }
+        }
         int dir = -1;
         //check if it is vertical or horizontal, then if it is positive or negative
         if (isVert)
@@ -409,11 +426,15 @@ public class GameMaster : MonoBehaviour
 		winScreen.GetComponent<CanvasGroup>().interactable = true;
 		winScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
         ticking = false;
-        System.IO.File.WriteAllText("playtest.txt", "\"" + levelsList[currentLevel - 1].Name + "\" beaten in " + moves 
+        using (System.IO.StreamWriter file =
+            new System.IO.StreamWriter("playtest.txt", true))
+        {
+            file.WriteLine("\"" + levelsList[currentLevel - 1].Name + "\" beaten in " + moves
             + " moves in " + System.Math.Round(time, 2) + " seconds in " + attempts + " attempts.");
+        }
         moves = 0;
         time = 0;
-        attempts = 1;
+        attempts = 0;
 	}
 
 	// displays death screen:
@@ -428,6 +449,7 @@ public class GameMaster : MonoBehaviour
 	{
         currentLevel++;
         reset();
+        ticking = true;
 	}
 	
 	public void turnOffTileColliders()
