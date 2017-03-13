@@ -42,15 +42,33 @@ public class ZombiePasser : MonoBehaviour {
 		
 	// music toggle:
 	public void setMusicToggle(){
+		try {
+			Toggle clickedToggle = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Toggle>();
+			if(clickedToggle == null) {
+				return;
+			}
+		} catch(System.Exception){
+			return;
+		}
+
 		if (musicToggle == true) {
 			musicToggle = false;
 		} else {
 			musicToggle = true;
 		}
+		//print ("set"+musicToggle);
 	}
 		
 	// sfx toggle:
 	public void setSFXToggle(){
+		try {
+			Toggle clickedToggle = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Toggle>();
+			if(clickedToggle == null) {
+				return;
+			}
+		} catch(System.Exception){
+			return;
+		}
 		if (sfxToggle == true) {
 			sfxToggle = false;
 		} else {
@@ -60,6 +78,14 @@ public class ZombiePasser : MonoBehaviour {
 
 	// vibration toggle:
 	public void setVibToggle(){
+		try {
+			Toggle clickedToggle = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Toggle>();
+			if(clickedToggle == null) {
+				return;
+			}
+		} catch(System.Exception){
+			return;
+		}
 		if (vibToggle == true) {
 			vibToggle = false;
 		} else {

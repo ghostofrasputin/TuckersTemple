@@ -32,14 +32,11 @@ public class MainMenuManager : MonoBehaviour {
 		anim = ani.GetComponent<Animator>();
 		pan = panel.GetComponent<RectTransform> ();
 		anim.enabled = false;
-        
+
 		Toggle music = GameObject.Find("MusicToggle").GetComponent<Toggle>();
 		music.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getMusicToggle();
 		Toggle sfx = GameObject.Find("SFXToggle").GetComponent<Toggle>();
 		sfx.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getSFXToggle();
-
-		//Toggle vibration = GameObject.Find("VibToggle").GetComponent<Toggle>();
-		//vibration.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getVibToggle();
 
 	}
 
@@ -50,15 +47,11 @@ public class MainMenuManager : MonoBehaviour {
 	}
 
 	public void musicToggle(){
-		try {
-			GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setMusicToggle();
-		} catch(System.Exception){}
+		GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setMusicToggle();
 	}
 
 	public void sfxToggle(){
-		try {
-			GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setSFXToggle();
-		} catch(System.Exception){}
+		GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setSFXToggle();
 	}
 
 	// sets level through zombie passer
