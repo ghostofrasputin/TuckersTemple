@@ -9,6 +9,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ZombiePasser : MonoBehaviour {
 
@@ -16,14 +17,12 @@ public class ZombiePasser : MonoBehaviour {
 
 	// private:
 	private int levelNum = 1;
+
+	// NOTE: eventually this data will be loaded from save data:
 	private bool musicToggle = true;
 	private bool sfxToggle = true;
 	private bool vibToggle = true;
-
-	// Use this for initialization
-	void Start () {
-		Awake ();
-	}
+	private bool[] lockedLevels = {false,true,true,true,true,true};
 
 	// Make this game object and all its transform children
 	// survive when loading a new scene.
@@ -68,9 +67,23 @@ public class ZombiePasser : MonoBehaviour {
 		}
 	}
 
+	public void setLockedLevelBool(int index){
+		if (index > lockedLevels.Length-1 || index < 0) {
+			Debug.Log ("error: index out of range");
+		}
+		lockedLevels [index] = false;
+	}
+
 	// return the private level int
 	public int getLevel(){
 		return levelNum;
+	}
+
+	public bool getLockedLevelBool(int index){
+		if (index > lockedLevels.Length-1 || index < 0) {
+			Debug.Log ("error: index out of range");
+		}
+		return lockedLevels [index];
 	}
 
 	public bool getMusicToggle(){

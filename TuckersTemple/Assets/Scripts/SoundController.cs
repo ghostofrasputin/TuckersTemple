@@ -16,28 +16,27 @@ public class SoundController : MonoBehaviour {
 	public float highPitch = 1.05f; // + 5%
 
 	// private:
-	private bool zombieMusicBool = true;
-	private bool zombieSFXBool = true;
+	private bool zombieMusicBool;
+	private bool zombieSFXBool;
 
 	void Update(){
-		try {
-			zombieMusicBool = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getMusicToggle();
-			zombieSFXBool = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getSFXToggle();
+		zombieMusicBool = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getMusicToggle();
+		zombieSFXBool = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getSFXToggle();
 
-			// check music
-			if(zombieMusicBool==false){
-				musicSource.mute = true;
-			} else{
-				musicSource.mute = false;
-			}
-			// check sfx
-			if(zombieSFXBool==false){
-				sfxSource.mute = true;
-			} else{
-				sfxSource.mute = false;
-			}
+		// check music
+		if(zombieMusicBool==false){
+			musicSource.mute = true;
+		} else{
+			musicSource.mute = false;
 		}
-		catch(System.Exception) {}
+		// check sfx
+		if(zombieSFXBool==false){
+			sfxSource.mute = true;
+			sfxSourceTiles.mute = true;
+		} else{
+			sfxSource.mute = false;
+			sfxSourceTiles.mute = false;
+		}
 	}
 
 	// Use this for initialization
