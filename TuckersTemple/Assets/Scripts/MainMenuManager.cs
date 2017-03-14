@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainMenuManager : MonoBehaviour {
 
@@ -31,12 +32,26 @@ public class MainMenuManager : MonoBehaviour {
 		anim = ani.GetComponent<Animator>();
 		pan = panel.GetComponent<RectTransform> ();
 		anim.enabled = false;
+
+		Toggle music = GameObject.Find("MusicToggle").GetComponent<Toggle>();
+		music.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getMusicToggle();
+		Toggle sfx = GameObject.Find("SFXToggle").GetComponent<Toggle>();
+		sfx.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getSFXToggle();
+
 	}
 
 	// We might have something
 	// animate on our main menu?
 	void Update () {
 		
+	}
+
+	public void musicToggle(){
+		GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setMusicToggle();
+	}
+
+	public void sfxToggle(){
+		GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setSFXToggle();
 	}
 
 	// sets level through zombie passer

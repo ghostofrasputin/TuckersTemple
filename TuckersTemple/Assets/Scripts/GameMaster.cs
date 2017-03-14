@@ -53,27 +53,20 @@ public class GameMaster : MonoBehaviour
     private bool ticking = true;
     private int attempts = 1;
 	// JSON level file data:
-	private LevelReader levelData;
 	private List<Level> levelsList;
 	// level selected from main menu:
     private Vector2 touchStart;
 
      void Start()
      {
-		// extract level list from levelData and set vars we need later:
-		levelData = Camera.main.GetComponent<LevelReader>();
-		levelsList = levelData.getLevels();
-		// Use for DEBUGGING if problems arise in more complicated level files:
-		//levelData.printLevel(1);
-		//levelData.printLevelsList();
-
-		// This is in case no level has been selected from the main menu to avoid
-		// crashing. level 1 will play by default.
 		try {
+			levelsList = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevels();
 			currentLevel = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevel();
-		} catch(System.Exception){}
-
-		generateLevel (levelsList [currentLevel - 1]);
+			generateLevel (levelsList [currentLevel - 1]);
+		} catch(System.Exception){
+			Debug.Log ("Error: start game from mainMenu scene.");
+			Application.Quit ();
+		}
     }
 
     // Update is called once per frame
@@ -421,6 +414,13 @@ public class GameMaster : MonoBehaviour
 	//Displays win screen
 	public void levelWin()
 	{
+		try
+		{
+			// unlocks the next level. 
+			//note: currentlevel-1 is the real current level for the array, currentlevel is the next level
+			GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setLockedLevelBool(currentLevel);
+		} catch(System.Exception){
+		}
 		turnOffTileColliders ();
 		winScreen.GetComponent<CanvasGroup>().alpha = 1;
 		winScreen.GetComponent<CanvasGroup>().interactable = true;
