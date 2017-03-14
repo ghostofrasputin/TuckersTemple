@@ -24,6 +24,7 @@ public class GameMaster : MonoBehaviour
     public Canvas winScreen;
 	public Canvas deathScreen;
 	public int currentLevel = 1; // progress this every time there's a win
+    public Canvas uiBorder;
 
 	// Sound 
 	public AudioClip TileSlide1;
@@ -422,9 +423,8 @@ public class GameMaster : MonoBehaviour
 		} catch(System.Exception){
 		}
 		turnOffTileColliders ();
-		winScreen.GetComponent<CanvasGroup>().alpha = 1;
-		winScreen.GetComponent<CanvasGroup>().interactable = true;
-		winScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
+        setCanvas(winScreen, true);
+        winScreen.GetComponent<InGameMenuManager>().playAnim("winEnter");
         ticking = false;
         using (System.IO.StreamWriter file =
             new System.IO.StreamWriter("playtest.txt", true))
@@ -436,6 +436,13 @@ public class GameMaster : MonoBehaviour
         time = 0;
         attempts = 0;
 	}
+
+    private void setCanvas(Canvas c, bool b)
+    {
+        c.GetComponent<CanvasGroup>().alpha = (float)System.Convert.ToDouble(b);
+        c.GetComponent<CanvasGroup>().interactable = b;
+        c.GetComponent<CanvasGroup>().blocksRaycasts = b;
+    }
 
 	// displays death screen:
 	public void levelDeath(){
