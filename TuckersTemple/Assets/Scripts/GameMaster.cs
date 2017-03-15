@@ -401,9 +401,6 @@ public class GameMaster : MonoBehaviour
 	// it reloads the level, but the tiles will be different
 	public void reset()
 	{
-		winScreen.GetComponent<CanvasGroup>().alpha = 0;
-        winScreen.GetComponent<CanvasGroup>().interactable = false;
-        winScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
 		deathScreen.GetComponent<CanvasGroup>().alpha = 0;
 		deathScreen.GetComponent<CanvasGroup>().interactable = false;
 		deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
@@ -423,7 +420,6 @@ public class GameMaster : MonoBehaviour
 		} catch(System.Exception){
 		}
 		turnOffTileColliders ();
-        setCanvas(winScreen, true);
         winScreen.GetComponent<InGameMenuManager>().playAnim("winEnter");
         ticking = false;
         using (System.IO.StreamWriter file =
@@ -454,6 +450,7 @@ public class GameMaster : MonoBehaviour
 
 	public void nextLevel()
 	{
+		winScreen.GetComponent<InGameMenuManager>().playAnim("winLeave");
         currentLevel++;
         reset();
         ticking = true;
