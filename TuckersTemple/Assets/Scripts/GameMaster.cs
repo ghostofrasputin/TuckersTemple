@@ -450,7 +450,7 @@ public class GameMaster : MonoBehaviour
 
 	public void nextLevel()
 	{
-		winScreen.GetComponent<InGameMenuManager>().playAnim("winLeave");
+		print ("Next Level");
         currentLevel++;
         reset();
         ticking = true;
