@@ -25,14 +25,18 @@ public class ZombiePasser : MonoBehaviour {
 	private bool sfxToggle = true;
 	private bool vibToggle = true;
 	private bool[] lockedLevels = {false,true,true,true,true,true};
-
+    private Dictionary<int,int> starRating = new Dictionary<int,int>();
+    
 	// Make this game object and all its transform children
 	// survive when loading a new scene.
 	private void Awake () {
 		// extract level JSON file here:
 		levelData = Camera.main.GetComponent<LevelReader>();
 		levelsList = levelData.getLevels();
-
+        for(int i = 0; i< lockedLevels.Length;i++)
+        {
+            starRating.Add(i + 1, 0);
+        }
 		DontDestroyOnLoad(this);
 		if (FindObjectsOfType(GetType()).Length > 1)
 		{
@@ -105,7 +109,10 @@ public class ZombiePasser : MonoBehaviour {
 		}
 		lockedLevels [index] = false;
 	}
-
+    public void setStars(int level, int star)
+    {
+        starRating[level] = star;
+    }
 	// return the private level int
 	public int getLevel(){
 		return levelNum;
@@ -115,7 +122,11 @@ public class ZombiePasser : MonoBehaviour {
 	public List<Level> getLevels(){
 		return levelsList;
 	}
-
+    // return a star value from dictionary
+    public int getStars(int level)
+    {
+        return starRating[level];
+    }
 	public bool getLockedLevelBool(int index){
 		if (index > lockedLevels.Length-1 || index < 0) {
 			Debug.Log ("error: index out of range");
@@ -134,4 +145,5 @@ public class ZombiePasser : MonoBehaviour {
 	public bool getVibToggle(){
 		return vibToggle;
 	}
+
 }

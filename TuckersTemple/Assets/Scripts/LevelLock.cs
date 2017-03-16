@@ -16,7 +16,7 @@ public class LevelLock : MonoBehaviour {
 	// private:
 	private int levelNum;
 	private bool isLocked;
-
+    private int numOfStars;
 	// Use this for initialization
 	void Start () {
 		levelNum = System.Convert.ToInt32(gameObject.name);
@@ -24,12 +24,13 @@ public class LevelLock : MonoBehaviour {
 			isLocked = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLockedLevelBool(levelNum-1);
 			// use locked sprite and turn off button:
 			if(isLocked == true) {
-				this.gameObject.GetComponent<Button>().interactable = false;
+                this.gameObject.GetComponent<Button>().interactable = false;
 				Sprite lockedSprite = Resources.Load("UI/Lock",typeof(Sprite)) as Sprite;
-				this.gameObject.GetComponent<Image>().sprite = lockedSprite; 
-				Text buttonText = this.gameObject.GetComponent<Button>().GetComponentsInChildren<Text>()[0];
-				buttonText.text = "";
-			} 
+                this.gameObject.GetComponent<Image>().sprite = lockedSprite;
+                Text buttonText = this.gameObject.GetComponent<Button>().GetComponentsInChildren<Text>()[0];
+                buttonText.text = "";
+                this.gameObject.transform.Find("stars").GetComponent<Image>().enabled = false;
+            } 
 			// use unlocked sprite:
 			else {
 				this.gameObject.GetComponent<Button>().interactable = true;
@@ -37,6 +38,10 @@ public class LevelLock : MonoBehaviour {
 				//this.gameObject.GetComponent<Image>().sprite = lockedSprite;
 				Text buttonText = this.gameObject.GetComponent<Button>().GetComponentsInChildren<Text>()[0];
 				buttonText.text = ""+levelNum+"";
+                numOfStars = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getStars(levelNum-1);
+                string target = "UI/" +numOfStars+ " star";
+                Sprite threeStars = Resources.Load(target, typeof(Sprite)) as Sprite;
+                this.gameObject.transform.Find("stars").GetComponent<Image>().sprite = threeStars;
 			}
 		} catch(System.Exception){}
 	}
