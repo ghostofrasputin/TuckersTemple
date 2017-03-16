@@ -24,6 +24,7 @@ public class GameMaster : MonoBehaviour
     public Canvas winScreen;
 	public Canvas deathScreen;
 	public int currentLevel = 1; // progress this every time there's a win
+    public Canvas uiBorder;
 
 	// Sound 
 	public AudioClip TileSlide1;
@@ -400,9 +401,6 @@ public class GameMaster : MonoBehaviour
 	// it reloads the level, but the tiles will be different
 	public void reset()
 	{
-		winScreen.GetComponent<CanvasGroup>().alpha = 0;
-        winScreen.GetComponent<CanvasGroup>().interactable = false;
-        winScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
 		deathScreen.GetComponent<CanvasGroup>().alpha = 0;
 		deathScreen.GetComponent<CanvasGroup>().interactable = false;
 		deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
@@ -422,9 +420,7 @@ public class GameMaster : MonoBehaviour
 		} catch(System.Exception){
 		}
 		turnOffTileColliders ();
-		winScreen.GetComponent<CanvasGroup>().alpha = 1;
-		winScreen.GetComponent<CanvasGroup>().interactable = true;
-		winScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
+        winScreen.GetComponent<InGameMenuManager>().playAnim("winEnter");
         ticking = false;
         using (System.IO.StreamWriter file =
             new System.IO.StreamWriter("playtest.txt", true))
@@ -437,6 +433,13 @@ public class GameMaster : MonoBehaviour
         attempts = 0;
 	}
 
+    private void setCanvas(Canvas c, bool b)
+    {
+        c.GetComponent<CanvasGroup>().alpha = (float)System.Convert.ToDouble(b);
+        c.GetComponent<CanvasGroup>().interactable = b;
+        c.GetComponent<CanvasGroup>().blocksRaycasts = b;
+    }
+
 	// displays death screen:
 	public void levelDeath(){
 		turnOffTileColliders ();
@@ -447,6 +450,7 @@ public class GameMaster : MonoBehaviour
 
 	public void nextLevel()
 	{
+		print ("Next Level");
         currentLevel++;
         reset();
         ticking = true;
