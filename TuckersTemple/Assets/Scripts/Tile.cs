@@ -16,6 +16,17 @@ public class Tile : MonoBehaviour {
     public Sprite rightWall;
     public Sprite downWall;
     public Sprite leftWall;
+	
+    public Sprite TLCorner;
+    public Sprite TRCorner;
+    public Sprite BLCorner;
+    public Sprite BRCorner;
+
+	public Sprite xTile;
+	public Sprite TTile;
+	public Sprite ITile;
+	public Sprite LTile;
+	public Sprite VTile;
 
 	// private fields:
 	private float speed = 0.05f;
@@ -65,7 +76,6 @@ public class Tile : MonoBehaviour {
 	// creates the tile object:
 	public void setTile(string currentTileType){
 		//print (tileType);
-
 		//find and save the GameMaster
 		gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameMaster>();
 		goalPos = transform.position;
@@ -75,76 +85,101 @@ public class Tile : MonoBehaviour {
 		switch (currentTileType) {
 			case "x":
 			case "╬":
+				this.GetComponent<SpriteRenderer>().sprite = xTile;
 				break;
 			case "T0":
 			case "╦":
 				wallCheck[0] = 1;
+				this.GetComponent<SpriteRenderer>().sprite = TTile;
 				break;
 			case "T1":
 			case "╣":
 				wallCheck[1] = 1;
+				this.GetComponent<SpriteRenderer>().sprite = TTile;
+				transform.Rotate(Vector3.forward * -90);
 				break;
 			case "T2":
 			case "╩":
 				wallCheck[2] = 1;
+				this.GetComponent<SpriteRenderer>().sprite = TTile;
+				transform.Rotate(Vector3.forward * 180);
 				break;
 			case "T3":
 			case "╠":
 				wallCheck[3] = 1;
+				this.GetComponent<SpriteRenderer>().sprite = TTile;
+				transform.Rotate(Vector3.forward * 90);
 				break;
 			case "I0":
 			case "║":
 				wallCheck[1] = 1;
 				wallCheck[3] = 1;
+				this.GetComponent<SpriteRenderer>().sprite = ITile;
 				break;
 			case "I1":
 			case "═":
 				wallCheck[0] = 1;
 				wallCheck[2] = 1;
+				this.GetComponent<SpriteRenderer>().sprite = ITile;
+				transform.Rotate(Vector3.forward * 90);
 				break;
 			case "L0":
 			case "╚":
 				wallCheck[2] = 1;
 				wallCheck[3] = 1;
+				this.GetComponent<SpriteRenderer>().sprite = LTile;
 				break;
 			case "L1":
 			case "╔":
 				wallCheck[0] = 1;
 				wallCheck[3] = 1;
+				this.GetComponent<SpriteRenderer>().sprite = LTile;
+				transform.Rotate(Vector3.forward * -90);
 				break;
 			case "L2":
 			case "╗":
 				wallCheck[0] = 1;
 				wallCheck[1] = 1;
+				this.GetComponent<SpriteRenderer>().sprite = LTile;
+				transform.Rotate(Vector3.forward * 180);
 				break;
 			case "L3":
 			case "╝":
 				wallCheck[1] = 1;
 				wallCheck[2] = 1;
+				this.GetComponent<SpriteRenderer>().sprite = LTile;
+				transform.Rotate(Vector3.forward * 90);
 				break;
 			case "V0":
 			case "u":
 				wallCheck[1] = 1;
 				wallCheck[2] = 1;
 				wallCheck[3] = 1;
+				this.GetComponent<SpriteRenderer>().sprite = VTile;
 				break;
 			case "V1":
 			case "[":
 				wallCheck[0] = 1;
 				wallCheck[2] = 1;
 				wallCheck[3] = 1;
+				this.GetComponent<SpriteRenderer>().sprite = VTile;
+				transform.Rotate(Vector3.forward * -90);
 				break;
 			case "V2":
 			case "n":
 				wallCheck[0] = 1;
 				wallCheck[1] = 1;
 				wallCheck[3] = 1;
+				this.GetComponent<SpriteRenderer>().sprite = VTile;
+				transform.Rotate(Vector3.forward * 180);
 				break;
 			case "V3":
 			case "]":
 				wallCheck[0] = 1;
 				wallCheck[1] = 1;
 				wallCheck[2] = 1;
+				this.GetComponent<SpriteRenderer>().sprite = VTile;
+				transform.Rotate(Vector3.forward * 90);
 				break;
 			case "N":
 			case "¤":
@@ -154,13 +189,34 @@ public class Tile : MonoBehaviour {
 				wallCheck[3] = 1;
 				break;
 			}
+			
+		//Draw Walls
+			
+		//draw all corners
+		wall = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+		wall.GetComponent<SpriteRenderer>().sprite = TLCorner;
+		float offset = wall.GetComponent<Renderer> ().bounds.size.x;
+		wall.transform.Translate(new Vector3(-offset, offset), 0);
+		
+		wall = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+		wall.GetComponent<SpriteRenderer>().sprite = TRCorner;
+		wall.transform.Translate(new Vector3(offset, offset), 0);	
+		
+		wall = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+		wall.GetComponent<SpriteRenderer>().sprite = BRCorner;
+		wall.transform.Translate(new Vector3(offset, -offset), 0);	
+		
+		wall = Instantiate(Wall, transform.position, Quaternion.identity, transform);
+		wall.GetComponent<SpriteRenderer>().sprite = BLCorner;
+		wall.transform.Translate(new Vector3(-offset, -offset), 0);	
+			
+		//Draw relevent walls	
 		for (int i = 0; i < 4; i++) {
 			int currentWallBoolean = wallCheck [i];
 			if (currentWallBoolean == 1) {
 				wall = Instantiate (Wall, transform.position, Quaternion.identity, transform);
                 // wall.transform.localScale = new Vector3 (.01f, .05f, .1f);
                 SpriteRenderer sr = wall.GetComponent<SpriteRenderer>();
-				float offset = wall.GetComponent<Renderer> ().bounds.size.x;
 				// right wall:
 			 	if (i == 0) {
                     sr.sprite = upWall;
@@ -184,6 +240,6 @@ public class Tile : MonoBehaviour {
                     wall.transform.localScale = new Vector3 (1, 1.4f, 1);
                 }
             }
-		}
+		}		
 	}
 }
