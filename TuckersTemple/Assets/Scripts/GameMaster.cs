@@ -428,6 +428,7 @@ public class GameMaster : MonoBehaviour
             file.WriteLine("\"" + levelsList[currentLevel - 1].Name + "\" beaten in " + moves
             + " moves in " + System.Math.Round(time, 2) + " seconds in " + attempts + " attempts.");
         }
+        GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setStars(currentLevel-1,3);
         moves = 0;
         time = 0;
         attempts = 0;
