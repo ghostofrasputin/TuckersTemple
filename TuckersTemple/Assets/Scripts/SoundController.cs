@@ -58,8 +58,16 @@ public class SoundController : MonoBehaviour {
 		sfxSourceTiles.Play ();
 	}
 
-	// Randomizes between two audio clips so it doesnt sound so repetitive all the time!
-	public void RandomSfx (params AudioClip [] clips){
+    // Play single audio clips with delay
+    public void PlaySingleDelay(AudioClip clip)
+    {
+        // !!!!! footsteps need work !!!!!!!!!!
+        sfxSource.clip = clip;
+        sfxSource.PlayDelayed(.02f);
+    }
+
+    // Randomizes between two audio clips so it doesnt sound so repetitive all the time!
+    public void RandomSfx (params AudioClip [] clips){
 		int randomIndex = Random.Range (0, clips.Length); // chooses randoml clip
 		float randomPitch = Random.Range (lowPitch, highPitch); // chooses range of pitch
 

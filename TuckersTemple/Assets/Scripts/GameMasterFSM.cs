@@ -34,6 +34,12 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject boundary;
     public List<GameObject> playerChars = new List<GameObject>();
 
+    // audio:
+    public AudioClip TileSlide1;
+    public AudioClip TileSlide2;
+    public AudioClip nextLevelSound;
+    public AudioClip playerdeathSound;
+
     // private:
     private RaycastHit hit;
     private GameObject touchTarget;
@@ -71,9 +77,13 @@ public class GameMasterFSM : MonoBehaviour
         OrderActorsState actor = new OrderActorsState(this);
         actor.AddTransition(Transition.ActorsDone, StateID.Ready);
         actor.AddTransition(Transition.LevelDone, StateID.LevelWon);
+        actor.AddTransition(Transition.ActorDied, StateID.LevelDeath);
 
         LevelWonState win = new LevelWonState(this);
         win.AddTransition(Transition.NextLevel, StateID.Juice);
+
+        LevelDeathState death = new LevelDeathState(this);
+        death.AddTransition(Transition.RestartedLevel, StateID.Juice);
 
         LevelJuiceState juice = new LevelJuiceState(this);
         juice.AddTransition(Transition.DoneJuicing, StateID.Ready);
@@ -84,6 +94,7 @@ public class GameMasterFSM : MonoBehaviour
         fsm.AddState(tile);
         fsm.AddState(actor);
         fsm.AddState(win);
+        fsm.AddState(death);
         fsm.AddState(juice);
     }
 
@@ -108,7 +119,12 @@ public class GameMasterFSM : MonoBehaviour
         setCanvas(deathScreen, false);
         attempts++;
         setupLevel(levelsList[currentLevel - 1]);
+        if (fsm.CurrentStateID == StateID.LevelDeath)
+        {
+            GetComponent<GameMasterFSM>().SetTransition(Transition.RestartedLevel); //to ready
+        }
     }
+
 
     //Called when the level is won
     //Displays win screen
@@ -150,6 +166,7 @@ public class GameMasterFSM : MonoBehaviour
     // displays death screen:
     public void levelDeath()
     {
+        SoundController.instance.PlaySingle(playerdeathSound);
         turnOffTileColliders();
         setCanvas(deathScreen, true);
     }
@@ -159,6 +176,7 @@ public class GameMasterFSM : MonoBehaviour
         currentLevel++;
         reset();
         ticking = true;
+        SoundController.instance.PlaySingle(nextLevelSound);
         GetComponent<GameMasterFSM>().SetTransition(Transition.NextLevel); //to ready
     }
 
@@ -424,7 +442,7 @@ public class GameMasterFSM : MonoBehaviour
         const int S = 2;
         const int W = 3;
         float tileSize = tileGrid[0][0].GetComponent<Renderer>().bounds.size.x;
-        //SoundController.instance.RandomSfx(TileSlide1, TileSlide2);
+        SoundController.instance.RandomSfx(TileSlide1, TileSlide2);
 
         //calculate normal offset vector and move the tiles
         Vector2 offset = new Vector2(0, 0);
@@ -553,6 +571,18 @@ public class GameMasterFSM : MonoBehaviour
         {
             return true;
         }
+    }
+
+    public bool characterDied()
+    {
+        foreach (GameObject character in characters)
+        {
+            if (character.GetComponent<ActorFSM>().fsm.CurrentStateID == StateID.EnemyDeadA || character.GetComponent<ActorFSM>().fsm.CurrentStateID == StateID.TrapDeadA)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public GameObject getTile(Vector2 pos)
@@ -738,15 +768,25 @@ public class OrderActorsState : FSMState
     {
         stateID = StateID.OrderActors;
         controlref = control;
-        hasExecuted = false;
+    }
+
+    public override void DoBeforeEntering()
+    {
+        foreach (GameObject actor in controlref.actors)
+        {
+            actor.GetComponent<ActorFSM>().doneSlide = true;
+        }
     }
 
     public override void Reason(GameObject gm, GameObject npc)
     {
-        if (hasExecuted && controlref.doneWalking())
+        if (controlref.characterDied())
+        {
+            npc.GetComponent<GameMasterFSM>().SetTransition(Transition.ActorDied); //to leveldeath
+        }
+        else if (controlref.doneWalking())
         {
             //Debug.Log("fsm actor reason");
-            hasExecuted = false;
             if (controlref.characters.Count == 0)
             {
                 npc.GetComponent<GameMasterFSM>().SetTransition(Transition.LevelDone); //to levelwin
@@ -760,14 +800,6 @@ public class OrderActorsState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
-        if (!hasExecuted)
-        {
-            foreach (GameObject actor in controlref.actors)
-            {
-                actor.GetComponent<ActorFSM>().doneSlide = true;
-            }
-            hasExecuted = true;
-        }
     }
 
 } // OrderActorsState
@@ -798,4 +830,31 @@ public class LevelWonState : FSMState
     }
 
 } // LevelWonState
+
+public class LevelDeathState : FSMState
+{
+    GameMasterFSM controlref;
+
+    public LevelDeathState(GameMasterFSM control)
+    {
+        stateID = StateID.LevelDeath;
+        controlref = control;
+    }
+
+    public override void DoBeforeEntering()
+    {
+        controlref.levelDeath();
+    }
+
+    public override void Reason(GameObject gm, GameObject npc)
+    {
+
+    }
+
+    public override void Act(GameObject gm, GameObject npc)
+    {
+
+    }
+
+} // LevelDeathState
 

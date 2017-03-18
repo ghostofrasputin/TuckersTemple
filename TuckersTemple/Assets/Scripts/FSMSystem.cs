@@ -67,7 +67,9 @@ public enum Transition
 	PathFound,
 	FinishedWalk,//endactor
     LevelDone,//gamemaster
+    RestartedLevel,
     InputReceived,
+    ActorDied,
     TilesDone,
     NextLevel,
     LevelLoaded,
@@ -96,6 +98,7 @@ public enum StateID
     InitLevel,
     OrderTiles,
     LevelWon,
+    LevelDeath,
     Juice,
     OrderActors,//endgamemaster
 }

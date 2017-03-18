@@ -17,6 +17,10 @@ public class ActorFSM : MonoBehaviour
     public Sprite downSprite;
     public Sprite leftSprite;
 
+    // audio:
+    public AudioClip playerfootsteps1;
+    public AudioClip playerfootsteps2;
+
     public void SetTransition(Transition t) { fsm.PerformTransition(t); }
 
     public void Start()
@@ -92,7 +96,8 @@ public class ActorFSM : MonoBehaviour
                 currDir += 4;
             }
             //RAYCAST LASER BEAMS ♫♫♫♫♫
-            RaycastHit2D ray = Physics2D.Raycast(transform.position, v2Dirs[currDir], GetComponentInParent<TileFSM>().GetComponent<Renderer>().bounds.size.x, LayerMask.GetMask("Wall"));//*************danger*********
+            Debug.Log(this+", "+currDir);
+            RaycastHit2D ray = Physics2D.Raycast(transform.position, v2Dirs[currDir], GetComponentInParent<TileFSM>().GetComponent<Renderer>().bounds.size.x, LayerMask.GetMask("Wall"));
 
             if (ray.collider == null || !(ray.collider.tag == "Wall" || ray.collider.tag == "OuterWall"))
             {
@@ -282,6 +287,7 @@ public class WalkAState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
 	{
+        SoundController.instance.PlaySingleDelay(controlref.playerfootsteps1);
         npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
     }
 
@@ -337,9 +343,10 @@ public class TrapDeadAState : FSMState
         {
             if (npc.tag == "Player")
             {
-                gm.GetComponent<GameMasterFSM>().characters.Remove(npc);
-                gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
-                controlref.destroyObj();
+                //gm.GetComponent<GameMasterFSM>().characters.Remove(npc);
+                //gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
+                //controlref.destroyObj();
+                controlref.sr.enabled = false;
             }
             else if (npc.tag == "Enemy")
             {
@@ -376,15 +383,16 @@ public class EnemyDeadAState : FSMState
     {
         if (npc.tag == "Player")
         {
-            gm.GetComponent<GameMasterFSM>().characters.Remove(npc);
-            gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
-            controlref.destroyObj();
+            //gm.GetComponent<GameMasterFSM>().characters.Remove(npc);
+            //gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
+            //controlref.destroyObj();
+            controlref.sr.enabled = false;
         }
         else if (npc.tag == "Enemy")
         {
-            gm.GetComponent<GameMasterFSM>().enemies.Remove(npc);
-            gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
-            controlref.destroyObj();
+            //gm.GetComponent<GameMasterFSM>().enemies.Remove(npc);
+            //gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
+            //controlref.destroyObj();
         }
     }
 } // EnemyDeadState
