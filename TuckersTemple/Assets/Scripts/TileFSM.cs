@@ -1,77 +1,62 @@
-﻿/*
- * Tile.cs
- * 
- * This script is attached to the tile prefab and helps it do its job
- */
-
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
-public class Tile : MonoBehaviour
+public class TileFSM : MonoBehaviour
 {
+    public GameObject gm;
+    public FSMSystem fsm;
+    public Vector2 goalPos;
+    public Vector2 wrapPos;
+    public Vector2 wrapGoalPos;
+    public bool offGrid;
+    public void SetTransition(Transition t) { fsm.PerformTransition(t); }
 
-    // public fields:
     public GameObject Wall;
     public Sprite upWall;
     public Sprite rightWall;
     public Sprite downWall;
     public Sprite leftWall;
 
-    // private fields:
-    private float speed = 0.05f;
-    private bool wrap = false;
-    private Vector2 goalPos;
-    private Vector2 wrapPos;
-    private GameMaster gm;
-
-    // Update is called once per frame
-    void Update()
+    public void Start()
     {
-        if (transform.position.x != goalPos.x || transform.position.y != goalPos.y)
-        {
-            transform.position = Vector2.MoveTowards(transform.position, goalPos, speed);
-            if (transform.position.x == goalPos.x && transform.position.y == goalPos.y)
-            {
-                if (wrap)
-                {
-                    wrap = false;
-                    transform.position = wrapPos;
-                    goalPos = wrapPos;
-                }
-                gm.doneSliding();
-            }
-        }
-    }
-    /*
-     * Slide is called by GameMaster, and moves the tile
-     * x is the offset in the x direction
-     * y is the offset in the y direction
-     */
-    public void SlideTo(Vector2 pos)
-    {
-        goalPos = new Vector2(pos.x + transform.position.x, pos.y + transform.position.y);
+        goalPos = transform.position;
+        offGrid = false;
+        MakeFSM();
     }
 
-    public void WrapPosition(Vector2 pos)
+    public void Update()
     {
-        wrap = true;
-        wrapPos = pos;
-    }
-    //legacy, remove later thanks
-    public int wallInDir(int dir)
-    {
-        return 0;
+        fsm.CurrentState.Reason(gm, gameObject);
+        fsm.CurrentState.Act(gm, gameObject);
     }
 
-    // creates the tile object:
+    // The tile has 3 states: idle, wrapping and moving
+    // If it's on idle and userSwipe transition is fired, it changes to moving
+    // If it's on moving and reachedGoal transition is fired, it returns to idle
+    // If it's on moving and offGrid is fired, it changes to wrapping
+    // If it's on wrapping and finished wrap is fired, it changes to idle
+    private void MakeFSM()
+    {
+        MoveState moving = new MoveState(this);
+        moving.AddTransition(Transition.ReachedGoal, StateID.Idle);
+        moving.AddTransition(Transition.OffGrid, StateID.Wrapping);
+
+        IdleState idle = new IdleState(this);
+        idle.AddTransition(Transition.UserSwiped, StateID.Moving);
+
+        WrapState wrap = new WrapState(this);
+        wrap.AddTransition(Transition.FinishedWrap, StateID.Idle);
+
+        fsm = new FSMSystem();
+        fsm.AddState(idle);
+        fsm.AddState(moving);
+        fsm.AddState(wrap);
+    }
+
     public void setTile(string currentTileType)
     {
-        //print (tileType);
-
-        //find and save the GameMaster
-        gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameMaster>();
-        goalPos = transform.position;
         int[] wallCheck = { 0, 0, 0, 0 };
         GameObject wall;
 
@@ -197,3 +182,93 @@ public class Tile : MonoBehaviour
         }
     }
 }
+
+public class MoveState : FSMState
+{
+    public TileFSM controlref;
+    private float speed = .05f;
+
+    public MoveState(TileFSM control)
+    {
+        stateID = StateID.Moving;
+        controlref = control;
+    }
+
+    public override void Reason(GameObject gm, GameObject npc)
+    {
+        if (npc.transform.position.x == controlref.goalPos.x && npc.transform.position.y == controlref.goalPos.y)
+        {
+            if (controlref.offGrid)
+            {
+                //do before leaving
+                controlref.offGrid = false;
+                npc.transform.position = controlref.wrapPos;
+                controlref.goalPos = controlref.wrapGoalPos;
+
+                npc.GetComponent<TileFSM>().SetTransition(Transition.OffGrid);
+            }
+            else
+            {
+                npc.GetComponent<TileFSM>().SetTransition(Transition.ReachedGoal);
+            }
+        }
+    }
+
+    public override void Act(GameObject gm, GameObject npc)
+    {
+        npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
+    }
+
+} //MoveState
+
+public class IdleState : FSMState
+{
+    TileFSM controlref;
+
+    public IdleState(TileFSM control)
+    {
+        stateID = StateID.Idle;
+        controlref = control;
+    }
+
+    public override void Reason(GameObject gm, GameObject npc)
+    {
+        if(npc.transform.position.x != controlref.goalPos.x || npc.transform.position.y != controlref.goalPos.y)
+        {
+            npc.GetComponent<TileFSM>().SetTransition(Transition.UserSwiped);
+        }
+        
+    }
+
+    public override void Act(GameObject gm, GameObject npc)
+    {
+    }
+
+} // IdleState
+
+public class WrapState : FSMState
+{
+    TileFSM controlref;
+    private float spd = .08f;
+
+    public WrapState(TileFSM control)
+    {
+        stateID = StateID.Wrapping;
+        controlref = control;
+    }
+
+    public override void Reason(GameObject gm, GameObject npc)
+    {
+        //magic number hack for tile scale
+        if (npc.transform.position.x == controlref.goalPos.x && npc.transform.position.y == controlref.goalPos.y)
+        {
+            npc.GetComponent<TileFSM>().SetTransition(Transition.FinishedWrap);
+        }
+    }
+
+    public override void Act(GameObject gm, GameObject npc)
+    {
+        npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, spd);
+    }
+
+} // ChasePlayerState
