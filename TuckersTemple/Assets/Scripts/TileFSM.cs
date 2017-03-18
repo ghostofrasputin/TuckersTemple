@@ -19,6 +19,15 @@ public class TileFSM : MonoBehaviour
     public Sprite downWall;
     public Sprite leftWall;
 
+    public GameObject corners;
+    public GameObject pathOverlay;
+
+    public Sprite XPath;
+    public Sprite TPath;
+    public Sprite IPath;
+    public Sprite LPath;
+    public Sprite VPath;
+
     public void Start()
     {
         goalPos = transform.position;
@@ -59,81 +68,108 @@ public class TileFSM : MonoBehaviour
     {
         int[] wallCheck = { 0, 0, 0, 0 };
         GameObject wall;
+        GameObject paths = Instantiate(pathOverlay, transform.position, Quaternion.identity, transform);
+        Instantiate(corners, transform.position, Quaternion.identity, transform);
 
         switch (currentTileType)
         {
             case "x":
             case "╬":
+                paths.GetComponent<SpriteRenderer>().sprite = XPath;
                 break;
             case "T0":
             case "╦":
                 wallCheck[0] = 1;
+                paths.GetComponent<SpriteRenderer>().sprite = TPath;
                 break;
             case "T1":
             case "╣":
                 wallCheck[1] = 1;
+                paths.GetComponent<SpriteRenderer>().sprite = TPath;
+                paths.transform.Rotate(Vector3.forward * -90);
                 break;
             case "T2":
             case "╩":
                 wallCheck[2] = 1;
+                paths.GetComponent<SpriteRenderer>().sprite = TPath;
+                paths.transform.Rotate(Vector3.forward * 180);
                 break;
             case "T3":
             case "╠":
                 wallCheck[3] = 1;
+                paths.GetComponent<SpriteRenderer>().sprite = TPath;
+                paths.transform.Rotate(Vector3.forward * 90);
                 break;
             case "I0":
             case "║":
                 wallCheck[1] = 1;
                 wallCheck[3] = 1;
+                paths.GetComponent<SpriteRenderer>().sprite = IPath;
                 break;
             case "I1":
             case "═":
                 wallCheck[0] = 1;
                 wallCheck[2] = 1;
+                paths.GetComponent<SpriteRenderer>().sprite = IPath;
+                paths.transform.Rotate(Vector3.forward * -90);
                 break;
             case "L0":
             case "╚":
                 wallCheck[2] = 1;
                 wallCheck[3] = 1;
+                paths.GetComponent<SpriteRenderer>().sprite = LPath;
                 break;
             case "L1":
             case "╔":
                 wallCheck[0] = 1;
                 wallCheck[3] = 1;
+                paths.GetComponent<SpriteRenderer>().sprite = LPath;
+                paths.transform.Rotate(Vector3.forward * -90);
                 break;
             case "L2":
             case "╗":
                 wallCheck[0] = 1;
                 wallCheck[1] = 1;
+                paths.GetComponent<SpriteRenderer>().sprite = LPath;
+                paths.transform.Rotate(Vector3.forward * 180);
                 break;
             case "L3":
             case "╝":
                 wallCheck[1] = 1;
                 wallCheck[2] = 1;
+                paths.GetComponent<SpriteRenderer>().sprite = LPath;
+                paths.transform.Rotate(Vector3.forward * 90);
                 break;
             case "V0":
             case "u":
                 wallCheck[1] = 1;
                 wallCheck[2] = 1;
                 wallCheck[3] = 1;
+                paths.GetComponent<SpriteRenderer>().sprite = VPath;
                 break;
             case "V1":
             case "[":
                 wallCheck[0] = 1;
                 wallCheck[2] = 1;
                 wallCheck[3] = 1;
+                paths.GetComponent<SpriteRenderer>().sprite = VPath;
+                paths.transform.Rotate(Vector3.forward * -90);
                 break;
             case "V2":
             case "n":
                 wallCheck[0] = 1;
                 wallCheck[1] = 1;
                 wallCheck[3] = 1;
+                paths.GetComponent<SpriteRenderer>().sprite = VPath;
+                paths.transform.Rotate(Vector3.forward * 180);
                 break;
             case "V3":
             case "]":
                 wallCheck[0] = 1;
                 wallCheck[1] = 1;
                 wallCheck[2] = 1;
+                paths.GetComponent<SpriteRenderer>().sprite = VPath;
+                paths.transform.Rotate(Vector3.forward * 90);
                 break;
             case "N":
             case "¤":
@@ -141,6 +177,7 @@ public class TileFSM : MonoBehaviour
                 wallCheck[1] = 1;
                 wallCheck[2] = 1;
                 wallCheck[3] = 1;
+                GameObject.Destroy(paths);
                 break;
         }
         for (int i = 0; i < 4; i++)

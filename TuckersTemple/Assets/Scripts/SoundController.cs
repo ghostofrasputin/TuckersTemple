@@ -71,7 +71,7 @@ public class SoundController : MonoBehaviour {
 		int randomIndex = Random.Range (0, clips.Length); // chooses randoml clip
 		float randomPitch = Random.Range (lowPitch, highPitch); // chooses range of pitch
 
-		sfxSource.pitch = randomPitch; // set pitch
+		//sfxSource.pitch = randomPitch; // set pitch
 		sfxSource.clip = clips [randomIndex]; // set random index from array
 		sfxSource.Play (); // play clip!
 
