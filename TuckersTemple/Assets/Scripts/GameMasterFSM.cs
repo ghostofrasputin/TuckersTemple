@@ -323,7 +323,7 @@ public class GameMasterFSM : MonoBehaviour
         boundary.transform.position = new Vector3((numCols + 1) * tileSize / 4, (numRows + 1) * tileSize / 4, 0);
     }
 
-    public bool HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase)
+	public bool HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase, Vector3 touchDelta = default(Vector3))
     {
         bool touchSuccess = false;
         switch (touchPhase)
@@ -338,9 +338,46 @@ public class GameMasterFSM : MonoBehaviour
                 }
                 break;
 
-            case TouchPhase.Moved:
-                break;
-
+		case TouchPhase.Moved:
+			int row = 0;
+			int col = 0;
+			Vector2 offset = (Vector2)touchPosition - touchStart;
+			if (Math.Abs(offset.x) > 10 || Math.Abs(offset.y) > 10) {
+				bool isVert = Mathf.Abs (offset.y) > Mathf.Abs (offset.x);
+					
+				bool foundTile = false; 
+				for (int c = 0; c < numCols; c++) {
+					for (int r = 0; r < numRows; r++) {
+						if (tileGrid [c] [r].Equals (touchTarget)) {
+							row = r;
+							col = c;
+							foundTile = true;
+						}
+						if (foundTile) {
+							break;
+						}
+					}
+					if (foundTile) {
+						break;
+					}
+				}
+				if (foundTile) {
+					if (isVert) {
+						for (int c = 0; c < numCols; ++c) {
+							tileGrid [row] [c].transform.position = 
+							new Vector2 (tileGrid [row] [c].transform.position.x, 
+									tileGrid [row] [c].transform.position.y + touchDelta.y * .02f);
+						}
+					} else {
+						for (int r = 0; r < numRows; ++r) {
+							tileGrid [r] [col].transform.position = 
+								new Vector2 (tileGrid [r] [col].transform.position.x + touchDelta.x * .02f, 
+								tileGrid [r] [col].transform.position.y);
+						}
+					}
+				}
+			}
+				break;
             case TouchPhase.Ended:
                 touchSuccess = findTouchVector(touchTarget, ((Vector2)touchPosition) - touchStart);
                 break;
@@ -382,19 +419,19 @@ public class GameMasterFSM : MonoBehaviour
         //check if it is vertical or horizontal, then if it is positive or negative
         if (isVert)
         {
-            dir = N;
-            if (delta.y < 0)
-            {
-                dir = S;
-            }
+			if (delta.y < 0) {
+				dir = S;
+			} else {
+				dir = N;
+			}
         }
         else
         {
-            dir = E;
-            if (delta.x < 0)
-            {
-                dir = W;
-            }
+			if (delta.x < 0) {
+				dir = W;
+			} else {
+				dir = E;
+			}
         }
 
         int row = -1;
@@ -471,11 +508,11 @@ public class GameMasterFSM : MonoBehaviour
                 for (int r = numRows - 1; r > 0; r--)
                 {
                     tileGrid[col][r] = tileGrid[col][r - 1];
-                    tileGrid[col][r].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][r].transform.position.x, offset.y + tileGrid[col][r].transform.position.y);
+			tileGrid[col][r].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][r].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[col][r].GetComponent<TileFSM>().startPos.y);
                 }
                 tileGrid[col][0] = temp;
                 tileGrid[col][0].GetComponent<TileFSM>().offGrid = true;
-                tileGrid[col][0].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][0].transform.position.x, offset.y + tileGrid[col][0].transform.position.y);
+		tileGrid[col][0].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][0].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[col][0].GetComponent<TileFSM>().startPos.y);
                 tileGrid[col][0].GetComponent<TileFSM>().wrapPos = new Vector2(tileSize * col, -tileSize);
                 tileGrid[col][0].GetComponent<TileFSM>().wrapGoalPos = new Vector2(tileSize * col, 0);
 
@@ -486,11 +523,11 @@ public class GameMasterFSM : MonoBehaviour
                 for (int r = 0; r < numRows - 1; r++)
                 {
                     tileGrid[col][r] = tileGrid[col][r + 1];
-                    tileGrid[col][r].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][r].transform.position.x, offset.y + tileGrid[col][r].transform.position.y);
+			tileGrid[col][r].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][r].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[col][r].GetComponent<TileFSM>().startPos.y);
                 }
                 tileGrid[col][numRows - 1] = temp;
                 tileGrid[col][numRows - 1].GetComponent<TileFSM>().offGrid = true;
-                tileGrid[col][numRows - 1].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][numRows - 1].transform.position.x, offset.y + tileGrid[col][numRows - 1].transform.position.y);
+		tileGrid[col][numRows - 1].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][numRows - 1].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[col][numRows - 1].GetComponent<TileFSM>().startPos.y);
                 tileGrid[col][numRows - 1].GetComponent<TileFSM>().wrapPos = new Vector2(tileSize * col, numRows * tileSize);
                 tileGrid[col][numRows - 1].GetComponent<TileFSM>().wrapGoalPos = new Vector2(tileSize * col, (numRows - 1) * tileSize);
                 break;
@@ -500,11 +537,11 @@ public class GameMasterFSM : MonoBehaviour
                 for (int c = numCols - 1; c > 0; c--)
                 {
                     tileGrid[c][row] = tileGrid[c - 1][row];
-                    tileGrid[c][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[c][row].transform.position.x, offset.y + tileGrid[c][row].transform.position.y);
+			tileGrid[c][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[c][row].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[c][row].GetComponent<TileFSM>().startPos.y);
                 }
                 tileGrid[0][row] = temp;
                 tileGrid[0][row].GetComponent<TileFSM>().offGrid = true;
-                tileGrid[0][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[0][row].transform.position.x, offset.y + tileGrid[0][row].transform.position.y);
+		tileGrid[0][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[0][row].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[0][row].GetComponent<TileFSM>().startPos.y);
                 tileGrid[0][row].GetComponent<TileFSM>().wrapPos = new Vector2(-tileSize, tileSize * row);
                 tileGrid[0][row].GetComponent<TileFSM>().wrapGoalPos = new Vector2(0, tileSize * row);
                 break;
@@ -514,11 +551,11 @@ public class GameMasterFSM : MonoBehaviour
                 for (int c = 0; c < numCols - 1; c++)
                 {
                     tileGrid[c][row] = tileGrid[c + 1][row];
-                    tileGrid[c][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[c][row].transform.position.x, offset.y + tileGrid[c][row].transform.position.y);
+			tileGrid[c][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[c][row].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[c][row].GetComponent<TileFSM>().startPos.y);
                 }
                 tileGrid[numCols - 1][row] = temp;
                 tileGrid[numCols - 1][row].GetComponent<TileFSM>().offGrid = true;
-                tileGrid[numCols - 1][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[numCols - 1][row].transform.position.x, offset.y + tileGrid[numCols - 1][row].transform.position.y);
+		tileGrid[numCols - 1][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[numCols - 1][row].transform.position.x, offset.y + tileGrid[numCols - 1][row].GetComponent<TileFSM>().startPos.y);
                 tileGrid[numCols - 1][row].GetComponent<TileFSM>().wrapPos = new Vector2(numCols * tileSize, row * tileSize);
                 tileGrid[numCols - 1][row].GetComponent<TileFSM>().wrapGoalPos = new Vector2((numCols - 1) * tileSize, row * tileSize);
                 break;
@@ -711,7 +748,8 @@ public class InputState : FSMState
             //called when mouse his held down(moved)
             if (Input.GetMouseButton(0))
             {
-
+				controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Moved, Input.mousePosition - (Vector3)controlref.lastPos);
+				controlref.lastPos = Input.mousePosition;
             }
             //called when mouse is lifted up(ended)
             if (Input.GetMouseButtonUp(0))
@@ -724,7 +762,7 @@ public class InputState : FSMState
         {
             //use the first touch registered
             Touch touch = Input.touches[0];
-            swiped = controlref.HandleTouch(touch.fingerId, touch.position, touch.phase);
+			swiped = controlref.HandleTouch(touch.fingerId, touch.position, touch.phase, touch.deltaPosition);
         }
     }
 

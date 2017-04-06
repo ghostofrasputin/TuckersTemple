@@ -7,6 +7,7 @@ public class TileFSM : MonoBehaviour
 {
     public GameObject gm;
     public FSMSystem fsm;
+	public Vector2 startPos;
     public Vector2 goalPos;
     public Vector2 wrapPos;
     public Vector2 wrapGoalPos;
@@ -267,6 +268,12 @@ public class IdleState : FSMState
         stateID = StateID.Idle;
         controlref = control;
     }
+
+	public override void DoBeforeEntering ()
+	{
+		controlref.startPos.x = controlref.transform.position.x;
+		controlref.startPos.y = controlref.transform.position.y;
+	}
 
     public override void Reason(GameObject gm, GameObject npc)
     {
