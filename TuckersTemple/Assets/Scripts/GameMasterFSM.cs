@@ -122,9 +122,9 @@ public class GameMasterFSM : MonoBehaviour
         setupLevel(levelsList[currentLevel - 1]);
 		if (fsm.CurrentStateID == StateID.LevelDeath) {
 			GetComponent<GameMasterFSM> ().SetTransition (Transition.RestartedLevelFromDeath); //to ready
-		} else {
+		} else if (fsm.CurrentStateID == StateID.Ready) {
 			GetComponent<GameMasterFSM> ().SetTransition (Transition.RestartedLevel);
-		}
+		} 
     }
 
 
@@ -355,7 +355,6 @@ public class GameMasterFSM : MonoBehaviour
 
 	//called to skip animations
 	public void skipAnimation(){
-		print ("Skipping animation");
 		//Level Juicing
 		foreach (GameObject[] a in tileGrid) {
 			foreach (GameObject t in a) {
@@ -681,6 +680,9 @@ public class LevelJuiceState : FSMState
     {
 		if (Input.touchCount > 0 || Input.GetMouseButtonDown(0)) {
 			controlref.skipAnimation();
+		}
+		if(controlref.doneSliding()){
+			npc.GetComponent<GameMasterFSM>().SetTransition(Transition.DoneJuicing);
 		}
     }
 

@@ -335,9 +335,6 @@ public class SetupState : FSMState
 	{
 		if (controlref.transform.position.x == controlref.goalPos.x && controlref.transform.position.y == controlref.goalPos.y)
 		{
-			if (gm.GetComponent<GameMasterFSM> ().fsm.CurrentStateID == StateID.Juice) {
-				gm.GetComponent<GameMasterFSM> ().SetTransition (Transition.DoneJuicing);
-			}
 			controlref.GetComponent<TileFSM>().SetTransition(Transition.FinishedSetup);
 		}
 	}
