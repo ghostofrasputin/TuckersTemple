@@ -56,7 +56,8 @@ public enum Transition
     ReachedGoal,
     OffGrid,
     FinishedWrap,
-	FinishedSlide,//endtile
+	FinishedSlide,
+	FinishedSetup,//endtile
 	NoMoves,//actor
 	FoundMove,
 	GoalFound,
@@ -65,16 +66,19 @@ public enum Transition
     EnemyCollide,
     EnemyCollide1,
 	PathFound,
-	FinishedWalk,//endactor
+	FinishedWalk,
+	FinishedEnter,
+	EnterLevel,//endactor
     LevelDone,//gamemaster
-    RestartedLevel,
+    RestartedLevelFromDeath,
     InputReceived,
     ActorDied,
     TilesDone,
     NextLevel,
     LevelLoaded,
     DoneJuicing,
-    ActorsDone,//endgamemaster
+    ActorsDone,
+	RestartedLevel,//endgamemaster
 
 }
 
@@ -87,13 +91,15 @@ public enum StateID
     NullStateID = 0, // Use this ID to represent a non-existing State in your system
     Idle,//tile
     Moving,
-    Wrapping,//endtile
+    Wrapping,
+	Setup,//endtile
 	IdleA,//actor
 	LookA,
 	TrapDeadA,
 	EnemyDeadA,
 	WalkA,
-	WinA,//endactor
+	WinA,
+	EnterA,//endactor
     Ready,//gamemaster
     InitLevel,
     OrderTiles,

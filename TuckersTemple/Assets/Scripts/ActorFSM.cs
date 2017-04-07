@@ -43,6 +43,7 @@ public class ActorFSM : MonoBehaviour
     {
         IdleAState idle = new IdleAState(this);
         idle.AddTransition(Transition.FoundMove, StateID.LookA);
+		idle.AddTransition (Transition.EnterLevel, StateID.EnterA);
 
         LookAState look = new LookAState(this);
         look.AddTransition(Transition.EnemyFound, StateID.EnemyDeadA);
@@ -61,8 +62,12 @@ public class ActorFSM : MonoBehaviour
 
         EnemyDeadAState enemy = new EnemyDeadAState(this);
 
+		EnterState enter = new EnterState (this);
+		enter.AddTransition (Transition.FinishedEnter, StateID.IdleA);
+
         fsm = new FSMSystem();
-        fsm.AddState(idle);
+		fsm.AddState(idle);
+		fsm.AddState(enter);
         fsm.AddState(look);
         fsm.AddState(walk);
         fsm.AddState(win);
@@ -396,3 +401,30 @@ public class EnemyDeadAState : FSMState
         }
     }
 } // EnemyDeadState
+
+public class EnterState : FSMState
+{
+	ActorFSM controlref;
+	private float speed = .07f;
+
+	public EnterState(ActorFSM control)
+	{
+		stateID = StateID.EnterA;
+		controlref = control;
+	}
+
+	public override void Reason(GameObject gm, GameObject npc)
+	{
+		if (controlref.transform.position.x == controlref.goalPos.x && npc.transform.position.y == controlref.goalPos.y)
+		{
+			npc.GetComponent<ActorFSM>().SetTransition(Transition.EnemyCollide); //to Idle
+		}
+
+	}
+
+	public override void Act(GameObject gm, GameObject npc)
+	{
+		npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
+	}
+
+} // EnterState

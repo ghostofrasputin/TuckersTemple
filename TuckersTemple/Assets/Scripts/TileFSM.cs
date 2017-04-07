@@ -30,7 +30,13 @@ public class TileFSM : MonoBehaviour
 
     public void Start()
     {
+		gm = GameObject.FindGameObjectWithTag ("GameController").gameObject;
         goalPos = transform.position;
+		if (goalPos.y/GetComponent<SpriteRenderer>().bounds.size.y % 2 == 0) {
+			transform.position = new Vector2 (goalPos.x - 3, goalPos.y);
+		} else {
+			transform.position = new Vector2 (goalPos.x + 3, goalPos.y);
+		}
         offGrid = false;
         MakeFSM();
     }
@@ -58,7 +64,11 @@ public class TileFSM : MonoBehaviour
         WrapState wrap = new WrapState(this);
         wrap.AddTransition(Transition.FinishedWrap, StateID.Idle);
 
+		SetupState setup = new SetupState (this);
+		setup.AddTransition(Transition.FinishedSetup, StateID.Idle);
+
         fsm = new FSMSystem();
+		fsm.AddState(setup);
         fsm.AddState(idle);
         fsm.AddState(moving);
         fsm.AddState(wrap);
@@ -309,3 +319,29 @@ public class WrapState : FSMState
     }
 
 } // ChasePlayerState
+
+public class SetupState : FSMState
+{
+	public TileFSM controlref;
+	private float speed = .05f;
+
+	public SetupState(TileFSM control)
+	{
+		stateID = StateID.Setup;
+		controlref = control;
+	}
+
+	public override void Reason(GameObject gm, GameObject npc)
+	{
+		if (controlref.transform.position.x == controlref.goalPos.x && controlref.transform.position.y == controlref.goalPos.y)
+		{
+			controlref.GetComponent<TileFSM>().SetTransition(Transition.FinishedSetup);
+		}
+	}
+
+	public override void Act(GameObject gm, GameObject npc)
+	{
+		controlref.transform.position = Vector2.MoveTowards(controlref.transform.position, controlref.goalPos, speed);
+	}
+
+} //SetupState
