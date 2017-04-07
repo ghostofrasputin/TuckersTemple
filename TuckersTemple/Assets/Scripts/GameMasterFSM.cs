@@ -70,6 +70,7 @@ public class GameMasterFSM : MonoBehaviour
 
         InputState ready = new InputState(this);
         ready.AddTransition(Transition.InputReceived, StateID.OrderTiles);
+		ready.AddTransition (Transition.RestartedLevel, StateID.Juice);
 
         OrderTilesState tile = new OrderTilesState(this);
         tile.AddTransition(Transition.TilesDone, StateID.OrderActors);
@@ -83,7 +84,7 @@ public class GameMasterFSM : MonoBehaviour
         win.AddTransition(Transition.NextLevel, StateID.Juice);
 
         LevelDeathState death = new LevelDeathState(this);
-        death.AddTransition(Transition.RestartedLevel, StateID.Juice);
+        death.AddTransition(Transition.RestartedLevelFromDeath, StateID.Juice);
 
         LevelJuiceState juice = new LevelJuiceState(this);
         juice.AddTransition(Transition.DoneJuicing, StateID.Ready);
@@ -119,10 +120,11 @@ public class GameMasterFSM : MonoBehaviour
         setCanvas(deathScreen, false);
         attempts++;
         setupLevel(levelsList[currentLevel - 1]);
-        if (fsm.CurrentStateID == StateID.LevelDeath)
-        {
-            GetComponent<GameMasterFSM>().SetTransition(Transition.RestartedLevel); //to ready
-        }
+		if (fsm.CurrentStateID == StateID.LevelDeath) {
+			GetComponent<GameMasterFSM> ().SetTransition (Transition.RestartedLevelFromDeath); //to ready
+		} else {
+			GetComponent<GameMasterFSM> ().SetTransition (Transition.RestartedLevel);
+		}
     }
 
 
@@ -350,6 +352,17 @@ public class GameMasterFSM : MonoBehaviour
         }
         return touchSuccess;
     }
+
+	//called to skip animations
+	public void skipAnimation(){
+		print ("Skipping animation");
+		//Level Juicing
+		foreach (GameObject[] a in tileGrid) {
+			foreach (GameObject t in a) {
+				t.transform.position = t.GetComponent<TileFSM>().goalPos;
+			}
+		}
+	}
 
     public bool findTouchVector(GameObject obj, Vector2 delta)
     {
@@ -626,7 +639,7 @@ public class InitState : FSMState
     {
         if (isDone)
         {
-            npc.GetComponent<GameMasterFSM>().SetTransition(Transition.LevelLoaded); //to ready
+            npc.GetComponent<GameMasterFSM>().SetTransition(Transition.LevelLoaded); //to juice
         }
     }
 
@@ -666,7 +679,9 @@ public class LevelJuiceState : FSMState
 
     public override void Reason(GameObject gm, GameObject npc)
     {
-        npc.GetComponent<GameMasterFSM>().SetTransition(Transition.DoneJuicing); //to Ready
+		if (Input.touchCount > 0 || Input.GetMouseButtonDown(0)) {
+			controlref.skipAnimation();
+		}
     }
 
     public override void Act(GameObject gm, GameObject npc)
