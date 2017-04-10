@@ -33,6 +33,11 @@ public class GameMasterFSM : MonoBehaviour
     public int attempts = 1;
     public GameObject boundary;
     public List<GameObject> playerChars = new List<GameObject>();
+	// touch handle
+	public bool latch = false;
+	public bool isVert = false;
+	public Vector2 offset;
+	public bool swiped;
 
     // audio:
     public AudioClip TileSlide1;
@@ -338,48 +343,56 @@ public class GameMasterFSM : MonoBehaviour
                 }
                 break;
 
-		case TouchPhase.Moved:
-			int row = 0;
-			int col = 0;
-			Vector2 offset = (Vector2)touchPosition - touchStart;
-			if (Math.Abs(offset.x) > 10 || Math.Abs(offset.y) > 10) {
-				bool isVert = Mathf.Abs (offset.y) > Mathf.Abs (offset.x);
-					
-				bool foundTile = false; 
-				for (int c = 0; c < numCols; c++) {
-					for (int r = 0; r < numRows; r++) {
-						if (tileGrid [c] [r].Equals (touchTarget)) {
-							row = r;
-							col = c;
-							foundTile = true;
+			case TouchPhase.Moved:
+				int row = 0;
+				int col = 0;
+				Vector2 os = (Vector2)touchPosition - touchStart;
+				if (Math.Abs(os.x) > 10 || Math.Abs(os.y) > 10) {
+					if (latch == false) {
+						offset = (Vector2)touchPosition - touchStart;
+						isVert = Mathf.Abs (offset.y) > Mathf.Abs (offset.x);
+						latch = true;
+					}
+					// look for a selected tile and it's row/col
+					bool foundTile = false; 
+					for (int c = 0; c < numCols; c++) {
+						for (int r = 0; r < numRows; r++) {
+							if (tileGrid [c] [r].Equals (touchTarget)) {
+								row = r;
+								col = c;
+								foundTile = true;
+								break;
+							}
 						}
 						if (foundTile) {
 							break;
 						}
 					}
+					// move the row or column 
+				    // with user touch
 					if (foundTile) {
-						break;
+						// moving horizontal:
+						if (!isVert) {
+							for (int c = 0; c < numCols; c++) {
+								tileGrid [c] [row].transform.position = new Vector2 (tileGrid [c] [row].transform.position.x + touchDelta.x * .02f, 
+																						tileGrid [c] [row].transform.position.y);
+							}
+							offset = (Vector2)touchPosition - touchStart;
+						} 
+						// moving vertical:
+						else {
+							for (int r = 0; r < numRows; r++) {
+								tileGrid [col] [r].transform.position = new Vector2 (tileGrid [col] [r].transform.position.x, 
+																						tileGrid [col] [r].transform.position.y + touchDelta.y * .02f);
+							}
+							offset = (Vector2)touchPosition - touchStart;
+						}
 					}
 				}
-				if (foundTile) {
-					if (isVert) {
-						for (int c = 0; c < numCols; ++c) {
-							tileGrid [row] [c].transform.position = 
-							new Vector2 (tileGrid [row] [c].transform.position.x, 
-									tileGrid [row] [c].transform.position.y + touchDelta.y * .02f);
-						}
-					} else {
-						for (int r = 0; r < numRows; ++r) {
-							tileGrid [r] [col].transform.position = 
-								new Vector2 (tileGrid [r] [col].transform.position.x + touchDelta.x * .02f, 
-								tileGrid [r] [col].transform.position.y);
-						}
-					}
-				}
-			}
 				break;
-            case TouchPhase.Ended:
-                touchSuccess = findTouchVector(touchTarget, ((Vector2)touchPosition) - touchStart);
+			case TouchPhase.Ended:
+				latch = false;
+				touchSuccess = findTouchVector(touchTarget, offset);
                 break;
 
             default:
@@ -388,6 +401,7 @@ public class GameMasterFSM : MonoBehaviour
         return touchSuccess;
     }
 
+	// find direction of swipe
     public bool findTouchVector(GameObject obj, Vector2 delta)
     {
         bool isVert;
@@ -508,11 +522,11 @@ public class GameMasterFSM : MonoBehaviour
                 for (int r = numRows - 1; r > 0; r--)
                 {
                     tileGrid[col][r] = tileGrid[col][r - 1];
-			tileGrid[col][r].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][r].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[col][r].GetComponent<TileFSM>().startPos.y);
+					tileGrid[col][r].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][r].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[col][r].GetComponent<TileFSM>().startPos.y);
                 }
                 tileGrid[col][0] = temp;
                 tileGrid[col][0].GetComponent<TileFSM>().offGrid = true;
-		tileGrid[col][0].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][0].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[col][0].GetComponent<TileFSM>().startPos.y);
+				tileGrid[col][0].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][0].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[col][0].GetComponent<TileFSM>().startPos.y);
                 tileGrid[col][0].GetComponent<TileFSM>().wrapPos = new Vector2(tileSize * col, -tileSize);
                 tileGrid[col][0].GetComponent<TileFSM>().wrapGoalPos = new Vector2(tileSize * col, 0);
 
@@ -523,11 +537,11 @@ public class GameMasterFSM : MonoBehaviour
                 for (int r = 0; r < numRows - 1; r++)
                 {
                     tileGrid[col][r] = tileGrid[col][r + 1];
-			tileGrid[col][r].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][r].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[col][r].GetComponent<TileFSM>().startPos.y);
+					tileGrid[col][r].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][r].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[col][r].GetComponent<TileFSM>().startPos.y);
                 }
                 tileGrid[col][numRows - 1] = temp;
                 tileGrid[col][numRows - 1].GetComponent<TileFSM>().offGrid = true;
-		tileGrid[col][numRows - 1].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][numRows - 1].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[col][numRows - 1].GetComponent<TileFSM>().startPos.y);
+				tileGrid[col][numRows - 1].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][numRows - 1].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[col][numRows - 1].GetComponent<TileFSM>().startPos.y);
                 tileGrid[col][numRows - 1].GetComponent<TileFSM>().wrapPos = new Vector2(tileSize * col, numRows * tileSize);
                 tileGrid[col][numRows - 1].GetComponent<TileFSM>().wrapGoalPos = new Vector2(tileSize * col, (numRows - 1) * tileSize);
                 break;
@@ -537,11 +551,11 @@ public class GameMasterFSM : MonoBehaviour
                 for (int c = numCols - 1; c > 0; c--)
                 {
                     tileGrid[c][row] = tileGrid[c - 1][row];
-			tileGrid[c][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[c][row].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[c][row].GetComponent<TileFSM>().startPos.y);
+					tileGrid[c][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[c][row].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[c][row].GetComponent<TileFSM>().startPos.y);
                 }
                 tileGrid[0][row] = temp;
                 tileGrid[0][row].GetComponent<TileFSM>().offGrid = true;
-		tileGrid[0][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[0][row].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[0][row].GetComponent<TileFSM>().startPos.y);
+				tileGrid[0][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[0][row].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[0][row].GetComponent<TileFSM>().startPos.y);
                 tileGrid[0][row].GetComponent<TileFSM>().wrapPos = new Vector2(-tileSize, tileSize * row);
                 tileGrid[0][row].GetComponent<TileFSM>().wrapGoalPos = new Vector2(0, tileSize * row);
                 break;
@@ -551,11 +565,11 @@ public class GameMasterFSM : MonoBehaviour
                 for (int c = 0; c < numCols - 1; c++)
                 {
                     tileGrid[c][row] = tileGrid[c + 1][row];
-			tileGrid[c][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[c][row].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[c][row].GetComponent<TileFSM>().startPos.y);
+					tileGrid[c][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[c][row].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid[c][row].GetComponent<TileFSM>().startPos.y);
                 }
                 tileGrid[numCols - 1][row] = temp;
                 tileGrid[numCols - 1][row].GetComponent<TileFSM>().offGrid = true;
-		tileGrid[numCols - 1][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[numCols - 1][row].transform.position.x, offset.y + tileGrid[numCols - 1][row].GetComponent<TileFSM>().startPos.y);
+				tileGrid[numCols - 1][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[numCols - 1][row].transform.position.x, offset.y + tileGrid[numCols - 1][row].GetComponent<TileFSM>().startPos.y);
                 tileGrid[numCols - 1][row].GetComponent<TileFSM>().wrapPos = new Vector2(numCols * tileSize, row * tileSize);
                 tileGrid[numCols - 1][row].GetComponent<TileFSM>().wrapGoalPos = new Vector2((numCols - 1) * tileSize, row * tileSize);
                 break;
@@ -716,26 +730,26 @@ public class LevelJuiceState : FSMState
 public class InputState : FSMState
 {
     public GameMasterFSM controlref;
-    private bool swiped;
+    //private bool swiped;
 
     public InputState(GameMasterFSM control)
     {
         stateID = StateID.Ready;
         controlref = control;
-        swiped = false;
+        controlref.swiped = false;
     }
 
     public override void Reason(GameObject gm, GameObject npc)
     {
-        if (swiped)
+        if (controlref.swiped)
         {
-            npc.GetComponent<GameMasterFSM>().SetTransition(Transition.InputReceived); //to Look
+           npc.GetComponent<GameMasterFSM>().SetTransition(Transition.InputReceived); //to Look
         }
     }
 
     public override void Act(GameObject gm, GameObject npc)
     {
-        swiped = false;
+        controlref.swiped = false;
         if (Input.touchCount == 0)
         {
             //Calls when mouse is first pressed(begin)
@@ -754,7 +768,7 @@ public class InputState : FSMState
             //called when mouse is lifted up(ended)
             if (Input.GetMouseButtonUp(0))
             {
-                swiped = controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Ended);
+                controlref.swiped = controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Ended);
                 //Debug.Log(swiped);
             }
         }
@@ -762,7 +776,7 @@ public class InputState : FSMState
         {
             //use the first touch registered
             Touch touch = Input.touches[0];
-			swiped = controlref.HandleTouch(touch.fingerId, touch.position, touch.phase, touch.deltaPosition);
+			controlref.swiped = controlref.HandleTouch(touch.fingerId, touch.position, touch.phase, touch.deltaPosition);
         }
     }
 
@@ -791,7 +805,7 @@ public class OrderTilesState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
-        if (!hasExecuted) { controlref.moveGrid(controlref.Column, controlref.Row, controlref.Direction); }
+		if (!hasExecuted) { controlref.moveGrid(controlref.Column, controlref.Row, controlref.Direction); }
         hasExecuted = true;
     }
 

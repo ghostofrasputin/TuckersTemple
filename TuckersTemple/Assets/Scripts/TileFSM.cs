@@ -29,9 +29,12 @@ public class TileFSM : MonoBehaviour
     public Sprite LPath;
     public Sprite VPath;
 
+	public GameMasterFSM gm_fsm;
+
     public void Start()
     {
-        goalPos = transform.position;
+		gm_fsm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameMasterFSM>();
+		goalPos = transform.position;
         offGrid = false;
         MakeFSM();
     }
@@ -277,9 +280,10 @@ public class IdleState : FSMState
 
     public override void Reason(GameObject gm, GameObject npc)
     {
-        if(npc.transform.position.x != controlref.goalPos.x || npc.transform.position.y != controlref.goalPos.y)
+		//if(npc.transform.position.x != controlref.goalPos.x || npc.transform.position.y != controlref.goalPos.y)
+		if(controlref.gm_fsm.swiped)
         {
-            npc.GetComponent<TileFSM>().SetTransition(Transition.UserSwiped);
+           npc.GetComponent<TileFSM>().SetTransition(Transition.UserSwiped);
         }
         
     }
