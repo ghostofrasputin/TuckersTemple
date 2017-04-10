@@ -33,7 +33,7 @@ public class GameMasterFSM : MonoBehaviour
     public int attempts = 1;
     public GameObject boundary;
     public List<GameObject> playerChars = new List<GameObject>();
-
+    public GameObject parentGrid;
     // audio:
     public AudioClip TileSlide1;
     public AudioClip TileSlide2;
@@ -254,7 +254,7 @@ public class GameMasterFSM : MonoBehaviour
                 List<string> row = tileInfo[numRows - r - 1];
                 string currentTileType = row[c];
                 //instantiate a tile at the proper grid position
-                tileGrid[c][r] = Instantiate(Tile, new Vector3(c * tileSize, r * tileSize, 0), Quaternion.identity);
+                tileGrid[c][r] = Instantiate(Tile, new Vector3(c * tileSize, r * tileSize, 0), Quaternion.identity, parentGrid.transform);
                 tiles.Add(tileGrid[c][r]);
                 // pass the tile object the type indicator string where it will
                 // create a tile based on that string
@@ -459,6 +459,10 @@ public class GameMasterFSM : MonoBehaviour
         //calculate normal offset vector and move the tiles
         Vector2 offset = new Vector2(0, 0);
         GameObject temp;
+        //screen shake
+        parentGrid.GetComponent<ScreenShake>().startShaking(.05f);
+        //haptics
+        Handheld.Vibrate();
         switch (dir)
         {
             /*
