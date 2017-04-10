@@ -18,6 +18,9 @@ public class MainMenuManager : MonoBehaviour {
 	public GameObject ani;
 	public GameObject panel;
 
+	// load screen
+	public GameObject loadingImage;
+
 	// audio
 	public AudioClip MenuSlide;
 	public AudioClip PlayStart;
@@ -65,6 +68,7 @@ public class MainMenuManager : MonoBehaviour {
 	// load scene by name
 	public void loadScene(string scene)
 	{
+		loadingImage.SetActive (true);
 		SoundController.instance.PlaySingle (PlayStart);
 		SceneManager.LoadScene(scene);
 	}
