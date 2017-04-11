@@ -1,0 +1,13 @@
+{
+	"scene1": {
+	  	"imageName": "test1",
+	 	"line1": {
+			"image": "RoyStandard",
+			"text": "I fight for my friends."
+		},
+		"line2": {
+			"image": "RoyStandard",
+			"text": "We can do this!"
+		}
+	}
+}
