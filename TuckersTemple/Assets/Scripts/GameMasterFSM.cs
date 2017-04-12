@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameMasterFSM : MonoBehaviour
 {
@@ -33,6 +34,7 @@ public class GameMasterFSM : MonoBehaviour
     public int attempts = 1;
     public GameObject boundary;
     public List<GameObject> playerChars = new List<GameObject>();
+    public Text deathText;
 
     // audio:
     public AudioClip TileSlide1;
