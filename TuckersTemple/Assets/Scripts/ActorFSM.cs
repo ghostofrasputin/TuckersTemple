@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ActorFSM : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class ActorFSM : MonoBehaviour
     public Sprite rightSprite;
     public Sprite downSprite;
     public Sprite leftSprite;
+    public String actorName;
 
     // audio:
     public AudioClip playerfootsteps1;
@@ -101,7 +103,7 @@ public class ActorFSM : MonoBehaviour
                 currDir += 4;
             }
             //RAYCAST LASER BEAMS ♫♫♫♫♫
-            Debug.Log(this+", "+currDir);
+            //Debug.Log(this+", "+currDir);
             RaycastHit2D ray = Physics2D.Raycast(transform.position, v2Dirs[currDir], GetComponentInParent<TileFSM>().GetComponent<Renderer>().bounds.size.x, LayerMask.GetMask("Wall"));
 
             if (ray.collider == null || !(ray.collider.tag == "Wall" || ray.collider.tag == "OuterWall"))
@@ -184,7 +186,7 @@ public class LookAState : FSMState
 {
 	ActorFSM controlref;
 
-	public LookAState(ActorFSM control)
+    public LookAState(ActorFSM control)
 	{
 		stateID = StateID.LookA;
 		controlref = control;
@@ -199,12 +201,38 @@ public class LookAState : FSMState
         {
             if(ray.collider.tag == "Trap")//both enemy and player
             {
+                int msg = UnityEngine.Random.Range(0,4);
+                switch (msg)
+                {
+                    case 0:
+                        gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " activated a trap card.";
+                        break;
+                    case 1:
+                        gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " spontaneously combusted.";
+                        break;
+                    case 2:
+                        gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " did not stop, drop, and roll.";
+                        break;
+                    case 3:
+                        gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " forgot to turn off the oven.";
+                        break;
+                }
                 npc.GetComponent<ActorFSM>().SetTransition(Transition.TrapFound); //to trapDeath
                 return;
             }
             if (npc.tag == "Player") {
                 if (ray.collider.tag == "Enemy")
                 {
+                    int msg = UnityEngine.Random.Range(0, 2);
+                    switch (msg)
+                    {
+                        case 0:
+                            gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " was swallowed by shadows.";
+                            break;
+                        case 1:
+                            gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " let the darkness consume them.";
+                            break;
+                    }
                     int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;
                     switch (controlref.direction)
                     {
