@@ -7,29 +7,25 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class CharacterLine {
-	public string Image { get; set; }
+	public Sprite characterImage { get; set; }
 	public string LineText { get; set; }
 	public AudioClip soundByte { get; set; }
 }
 
 public class CutScene {
-	public string Image { get; set; }
-	public Vector2 StartLocation { get; set; }
-	public Vector2 MoveOffset { get; set; }
-	public int MoveSpeed { get; set; }
+	public Sprite BackgroundImage { get; set; }
 	public List<CharacterLine> Lines { get; set; }
 }
 
 public class CutSceneManager : MonoBehaviour {
 
-	//Old variables for Elliot's code
-    Vector3 goalPos;
-    float speed;
+	//References to objects we need
 	public AudioSource sound;
 	public GameObject background;
 	public GameObject textBox;
 	public GameObject loadingImage;
 	public DialogueWriter dialogueWriter;
+	public GameObject tapPrompt;
 
 	//These hold the JSON file information
 	private string jsonString;
@@ -42,23 +38,36 @@ public class CutSceneManager : MonoBehaviour {
 	//Variables to keep track of where we are in the cutscene
 	private int sceneIndex;
 	private int lineIndex;
+	private float promptTimer;
 
-	Dictionary<string, AudioClip> sounds = new Dictionary<string, AudioClip> ();
-	public AudioClip royHmm;
+	Dictionary<string, AudioClip> sounds;
+	Dictionary<string, Sprite> backgrounds;
+	Dictionary<string, Sprite> actorImages;
 
 	// Use this for initialization
 	void Start () {
-		//fill the sound dictionary
-		sounds.Add("roy_hmm", (AudioClip)Resources.Load("CutScenes/Andre-Hmm"));
-		sounds.Add("roy_notsure", (AudioClip)Resources.Load("CutScenes/Andre-ImNotSureAboutThis"));
-		sounds.Add("roy_confused", (AudioClip)Resources.Load("CutScenes/Andre-WhatWasThat"));
+		//fill the dictionaries
+		actorImages = new Dictionary<string, Sprite> () {
+			{"RoyStandard", Resources.Load<Sprite>("CutScenes/RoyStandard")}
+		};
+		backgrounds = new Dictionary<string, Sprite> () {
+			{"test1", Resources.Load<Sprite>("CutScenes/cutscene_1")}
+		};
+		sounds = new Dictionary<string, AudioClip> () {
+			{"roy_hmm", Resources.Load<AudioClip>("CutScenes/Andre-Hmm")},
+			{"roy_notsure", Resources.Load<AudioClip>("CutScenes/Andre-ImNotSureAboutThis")},
+			{"roy_confused", Resources.Load<AudioClip>("CutScenes/Andre-WhatWasThat")}
+		};
+
 		//intialize GameObjects
 		background = transform.Find("Background").gameObject;
 		textBox = transform.Find ("TextBox").gameObject;
 		loadingImage = transform.Find ("LoadingImage").gameObject;
 		dialogueWriter = textBox.transform.Find("Text").GetComponent<DialogueWriter> ();
+		tapPrompt = transform.Find ("TapPrompt").gameObject;
 		sceneIndex = 0;
 		lineIndex = -1; //line index gets set to -1 since there is currently no line displayed at all
+		promptTimer = 0;
 		//load in the JSON file, the same way as levelReader
 		TextAsset cutSceneFile = Resources.Load("CutScene1") as TextAsset;
 		jsonString = cutSceneFile.ToString();
@@ -70,10 +79,7 @@ public class CutSceneManager : MonoBehaviour {
 		while(cutSceneData.Keys.Contains(iterString + i.ToString())) {
 			JsonData sceneInfo = cutSceneData[iterString + i.ToString()];
 			CutScene cutScene = new CutScene {
-				Image = (string)sceneInfo ["image"],
-				//StartLocation = (Vector2)sceneInfo["start"],
-				//MoveOffset = (Vector2)sceneInfo["offset"],
-				//MoveSpeed = (int)sceneInfo["s"],
+				BackgroundImage = backgrounds[(string)sceneInfo ["image"]],
 				Lines = new List<CharacterLine>()
 			};
 
@@ -81,7 +87,7 @@ public class CutSceneManager : MonoBehaviour {
 			while (sceneInfo.Keys.Contains(iterString2 + j.ToString())) {
 				JsonData lineInfo = sceneInfo [iterString2 + j.ToString()];
 				CharacterLine line = new CharacterLine {
-					Image = (string)lineInfo["image"],
+					characterImage = actorImages[(string)lineInfo["image"]],
 					LineText = (string)lineInfo["text"]
 				};
 				string soundName = (string)lineInfo ["sound"];
@@ -97,14 +103,9 @@ public class CutSceneManager : MonoBehaviour {
 			i++;
 		}
 
-		printCutScenes (); //test print
 		//set background to first image, and make the text box invisible
-		background.GetComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("CutScenes/" + cutScenes [0].Image);
+		background.GetComponent<SpriteRenderer> ().sprite = cutScenes[0].BackgroundImage;
 		textBox.GetComponent<CanvasGroup>().alpha = 0f;
-		//transforms, speed, etc.  This info should eventually be stored in the json file and read from there.
-		goalPos = background.transform.position;
-        goalPos.x -= 5;
-        speed = 0.05f;
     }
 	
 	// Update is called once per frame
@@ -116,10 +117,8 @@ public class CutSceneManager : MonoBehaviour {
 		}
 		if (Input.GetMouseButtonDown(0) || isTouchBegan) //or if the mouse was pressed down
         {
-			//if the background isn't there yet, move it there.
-			//TODO: this should also display the text box, as well as after a second when the move finishes
-			if (background.transform.position != goalPos) { 
-				background.transform.position = goalPos;
+			//If the textbox isn't displayed, call nextLine
+			if (textBox.GetComponent<CanvasGroup>().alpha == 0) { 
 				nextLine ();
 			}
 			//first check if the current line is done typing
@@ -140,8 +139,12 @@ public class CutSceneManager : MonoBehaviour {
 				endCutScene ();
             }
         }
-		//move the background image along.
-		background.transform.position = Vector2.MoveTowards(background.transform.position, goalPos, speed);
+		if (dialogueWriter.currentText.Equals (dialogueWriter.fullText)) {
+			tapPrompt.SetActive (true);
+		}
+		//blink prompt
+		promptTimer += Time.deltaTime * 2;
+		tapPrompt.GetComponent<CanvasGroup> ().alpha = (1 + Mathf.Sin (promptTimer)) / 2;
     }
 
 	//ends the cut scene and loads in the game
@@ -149,30 +152,22 @@ public class CutSceneManager : MonoBehaviour {
 		loadingImage.SetActive (true);
 		SceneManager.LoadScene ("main");
 	}
-
-	//Dubugging tool to see what the current cutscene is
-	void printCutScenes(){
-		print ("Loaded Cutscene:");
-		foreach (CutScene cs in cutScenes) {
-			print ("Background: " + cs.Image);
-			foreach (CharacterLine cl in cs.Lines) {
-				print (cl.Image + ": '" + cl.LineText + "'");
-			}
-		}
-	}
+		
 
 	//goes to the next scene
 	void nextScene (){
 		sceneIndex++;
 		lineIndex = -1; //reset line index
 		//load in the new image
-		background.GetComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("CutScenes/" + cutScenes [sceneIndex].Image);
+		background.GetComponent<SpriteRenderer> ().sprite = cutScenes [sceneIndex].BackgroundImage;
 		//turn off the text box
 		textBox.GetComponent<CanvasGroup>().alpha = 0f;
+		tapPrompt.SetActive (true);
 	}
 
 	//display the next line
 	void nextLine (){
+		tapPrompt.SetActive (false);
 		//if this is the first line to be shown, display the text box
 		if (lineIndex < 0) {
 			textBox.GetComponent<CanvasGroup>().alpha = 1f;
@@ -186,6 +181,6 @@ public class CutSceneManager : MonoBehaviour {
 			sound.PlayOneShot (cutScenes [sceneIndex].Lines [lineIndex].soundByte);
 		}
 		//set the appropriate image for the text box
-		textBox.GetComponent<Image>().sprite = Resources.Load<Sprite> ("CutScenes/" + cutScenes [sceneIndex].Lines [lineIndex].Image);
+		textBox.GetComponent<Image>().sprite = cutScenes [sceneIndex].Lines [lineIndex].characterImage;
 	}
 }
