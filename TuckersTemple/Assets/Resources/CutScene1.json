@@ -1,9 +1,6 @@
 {
 	"scene1": {
 	  	"image": "test1",
-		"start": [-207.31, -383.95],
-		"offset": [-5, 0],
-		"speed": 5,
 	 	"line1": {
 			"image": "RoyStandard",
 			"text": "This temple seems creepy...",
@@ -13,19 +10,6 @@
 			"image": "RoyStandard",
 			"text": "I hope nothing bad happens.",
 			"sound": ""
-		}
-	},
-	"scene2": {
-	  	"image": "test1",
-	 	"line1": {
-			"image": "RoyStandard",
-			"text": "What was that weird sound?",
-			"sound": ""
-		},
-		"line2": {
-			"image": "RoyStandard",
-			"text": "What do we do now...",
-			"sound": "roy_hmm"
 		}
 	}
 }
