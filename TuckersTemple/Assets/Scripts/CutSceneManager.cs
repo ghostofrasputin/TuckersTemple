@@ -104,7 +104,7 @@ public class CutSceneManager : MonoBehaviour {
 		}
 
 		//set background to first image, and make the text box invisible
-		background.GetComponent<SpriteRenderer> ().sprite = cutScenes[0].BackgroundImage;
+		background.GetComponent<Image> ().sprite = cutScenes[0].BackgroundImage;
 		textBox.GetComponent<CanvasGroup>().alpha = 0f;
     }
 	
@@ -159,7 +159,7 @@ public class CutSceneManager : MonoBehaviour {
 		sceneIndex++;
 		lineIndex = -1; //reset line index
 		//load in the new image
-		background.GetComponent<SpriteRenderer> ().sprite = cutScenes [sceneIndex].BackgroundImage;
+		background.GetComponent<Image> ().sprite = cutScenes [sceneIndex].BackgroundImage;
 		//turn off the text box
 		textBox.GetComponent<CanvasGroup>().alpha = 0f;
 		tapPrompt.SetActive (true);
