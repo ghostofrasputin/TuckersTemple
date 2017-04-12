@@ -547,10 +547,10 @@ public class GameMasterFSM : MonoBehaviour
         int idleCount = 0;
         foreach (GameObject tile in tiles)
         {
-                if ((tile.GetComponent<TileFSM>().fsm.CurrentStateID == StateID.Idle))
-                {
-                    ++idleCount;
-                }
+            if (tile.GetComponent<TileFSM>().fsm.CurrentStateID == StateID.Idle)
+            {
+                ++idleCount;
+            }
         }
         if (idleCount == numTiles)
         {
@@ -685,8 +685,8 @@ public class LevelJuiceState : FSMState
 		if (Input.touchCount > 0 || Input.GetMouseButtonDown(0)) {
 			controlref.skipAnimation();
 		}
-	    if(controlref.doneSliding()){
-           npc.GetComponent<GameMasterFSM>().SetTransition(Transition.DoneJuicing);
+		if(controlref.doneSliding()){
+			npc.GetComponent<GameMasterFSM>().SetTransition(Transition.DoneJuicing);
 		}
     }
 

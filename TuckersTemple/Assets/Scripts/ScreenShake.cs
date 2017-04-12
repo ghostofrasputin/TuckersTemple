@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class ScreenShake : MonoBehaviour {
     Vector3 originalPosition;
+    float shakeAmt = 0;
+    float xChange = 0;
+    float yChange = 0;
+    float counter = 0;
     // Use this for initialization
     void Start () {
 	}
@@ -14,7 +18,10 @@ public class ScreenShake : MonoBehaviour {
 	}
 
   public void startShaking(float speed){
+        shakeAmt = speed ;
         originalPosition = this.transform.position;
+        //xChange = xDifference;
+        //yChange = yDifference;
         InvokeRepeating("shake",0,.07f);
         Invoke("stopShaking", .5f);
     }
@@ -28,9 +35,19 @@ public class ScreenShake : MonoBehaviour {
         {
             this.transform.position = new Vector3(transform.position.x - quakeAmt, transform.position.y - quakeAmt, transform.position.z);
         }
+        /*            if (xChange == 0)
+                    {
+                        changedPos.x += quakeAmt;
+                    }
+                    if (yChange == 0)
+                    { 
+                        changedPos.y += quakeAmt;
+                    }*/
     }
     private void stopShaking(){
         CancelInvoke("shake");
         this.transform.position = originalPosition;
+        xChange = 0;
+        yChange = 0;
     }
 }
