@@ -54,6 +54,8 @@ public enum Transition
     NullTransition = 0,// Use this transition to represent a non-existing transition in your system
     UserSwiped,//tile
     ReachedGoal,
+	FinishedSnapping,
+	FinishedFollow,
     OffGrid,
     FinishedWrap,
 	FinishedSlide,//endtile
@@ -87,6 +89,8 @@ public enum StateID
     NullStateID = 0, // Use this ID to represent a non-existing State in your system
     Idle,//tile
     Moving,
+	Follow,
+	Snapping,
     Wrapping,//endtile
 	IdleA,//actor
 	LookA,

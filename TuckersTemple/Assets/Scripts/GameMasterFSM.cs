@@ -33,6 +33,7 @@ public class GameMasterFSM : MonoBehaviour
     public int attempts = 1;
     public GameObject boundary;
     public List<GameObject> playerChars = new List<GameObject>();
+
 	// touch handle
 	public bool latch = false;
 	public bool isVert = false;
@@ -63,7 +64,7 @@ public class GameMasterFSM : MonoBehaviour
 
     public void Update()
     {
-        print(tag + " == " + fsm.CurrentStateID);
+        //print(tag + " == " + fsm.CurrentStateID);
         fsm.CurrentState.Reason(gm, gameObject);
         fsm.CurrentState.Act(gm, gameObject);
     }
@@ -331,6 +332,8 @@ public class GameMasterFSM : MonoBehaviour
 	public bool HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase, Vector3 touchDelta = default(Vector3))
     {
         bool touchSuccess = false;
+		int row = 0;
+		int col = 0;
         switch (touchPhase)
         {
             case TouchPhase.Began:
@@ -344,8 +347,6 @@ public class GameMasterFSM : MonoBehaviour
                 break;
 
 			case TouchPhase.Moved:
-				int row = 0;
-				int col = 0;
 				Vector2 os = (Vector2)touchPosition - touchStart;
 				if (Math.Abs(os.x) > 10 || Math.Abs(os.y) > 10) {
 					if (latch == false) {
@@ -374,7 +375,7 @@ public class GameMasterFSM : MonoBehaviour
 						// moving horizontal:
 						if (!isVert) {
 							for (int c = 0; c < numCols; c++) {
-								tileGrid [c] [row].transform.position = new Vector2 (tileGrid [c] [row].transform.position.x + touchDelta.x * .02f, 
+								tileGrid [c] [row].GetComponent<TileFSM>().goalPos = new Vector2 (tileGrid [c] [row].transform.position.x + touchDelta.x * .02f, 
 																						tileGrid [c] [row].transform.position.y);
 							}
 							offset = (Vector2)touchPosition - touchStart;
@@ -382,7 +383,7 @@ public class GameMasterFSM : MonoBehaviour
 						// moving vertical:
 						else {
 							for (int r = 0; r < numRows; r++) {
-								tileGrid [col] [r].transform.position = new Vector2 (tileGrid [col] [r].transform.position.x, 
+								tileGrid [col] [r].GetComponent<TileFSM>().goalPos = new Vector2 (tileGrid [col] [r].transform.position.x, 
 																						tileGrid [col] [r].transform.position.y + touchDelta.y * .02f);
 							}
 							offset = (Vector2)touchPosition - touchStart;
@@ -391,6 +392,17 @@ public class GameMasterFSM : MonoBehaviour
 				}
 				break;
 			case TouchPhase.Ended:
+				if (!isVert) {
+					for (int c = 0; c < numCols; c++) {
+						tileGrid [c] [row].GetComponent<TileFSM> ().touchReleased = true;
+					}
+				} 
+				// moving vertical:
+				else {
+					for (int r = 0; r < numRows; r++) {
+						tileGrid [col] [r].GetComponent<TileFSM> ().touchReleased = true;
+					}
+				}
 				latch = false;
 				touchSuccess = findTouchVector(touchTarget, offset);
                 break;

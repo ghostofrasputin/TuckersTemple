@@ -12,6 +12,7 @@ public class TileFSM : MonoBehaviour
     public Vector2 wrapPos;
     public Vector2 wrapGoalPos;
     public bool offGrid;
+	public float offset;
     public void SetTransition(Transition t) { fsm.PerformTransition(t); }
 
     public GameObject Wall;
@@ -29,19 +30,23 @@ public class TileFSM : MonoBehaviour
     public Sprite LPath;
     public Sprite VPath;
 
-	public GameMasterFSM gm_fsm;
+	public float threshold;
+	public Vector2 currentDist;
+	public Vector2 maxDist;
+	public bool touchReleased;
 
     public void Start()
     {
-		gm_fsm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameMasterFSM>();
 		goalPos = transform.position;
         offGrid = false;
+		touchReleased = false;
         MakeFSM();
     }
 
     public void Update()
     {
-        fsm.CurrentState.Reason(gm, gameObject);
+		print(tag + " == " + fsm.CurrentStateID);
+		fsm.CurrentState.Reason(gm, gameObject);
         fsm.CurrentState.Act(gm, gameObject);
     }
 
@@ -52,19 +57,28 @@ public class TileFSM : MonoBehaviour
     // If it's on wrapping and finished wrap is fired, it changes to idle
     private void MakeFSM()
     {
-        MoveState moving = new MoveState(this);
+        /* moving = new MoveState(this);
         moving.AddTransition(Transition.ReachedGoal, StateID.Idle);
-        moving.AddTransition(Transition.OffGrid, StateID.Wrapping);
+        moving.AddTransition(Transition.OffGrid, StateID.Wrapping);*/
 
         IdleState idle = new IdleState(this);
-        idle.AddTransition(Transition.UserSwiped, StateID.Moving);
+		idle.AddTransition(Transition.UserSwiped, StateID.Follow);
+
+		FollowState follow = new FollowState (this);
+		follow.AddTransition (Transition.FinishedFollow, StateID.Snapping);
+
+		SnappingState snap = new SnappingState(this);
+		snap.AddTransition(Transition.FinishedSnapping, StateID.Idle);
+		snap.AddTransition (Transition.OffGrid, StateID.Wrapping);
 
         WrapState wrap = new WrapState(this);
         wrap.AddTransition(Transition.FinishedWrap, StateID.Idle);
 
         fsm = new FSMSystem();
         fsm.AddState(idle);
-        fsm.AddState(moving);
+        //fsm.AddState(moving);
+		fsm.AddState (follow);
+		fsm.AddState (snap);
         fsm.AddState(wrap);
     }
 
@@ -192,7 +206,7 @@ public class TileFSM : MonoBehaviour
                 wall = Instantiate(Wall, transform.position, Quaternion.identity, transform);
                 // wall.transform.localScale = new Vector3 (.01f, .05f, .1f);
                 SpriteRenderer sr = wall.GetComponent<SpriteRenderer>();
-                float offset = wall.GetComponent<Renderer>().bounds.size.x;
+                offset = wall.GetComponent<Renderer>().bounds.size.x;
                 // right wall:
                 if (i == 0)
                 {
@@ -223,7 +237,7 @@ public class TileFSM : MonoBehaviour
         }
     }
 }
-
+/*
 public class MoveState : FSMState
 {
     public TileFSM controlref;
@@ -260,7 +274,7 @@ public class MoveState : FSMState
         npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
     }
 
-} //MoveState
+} //MoveState*/
 
 public class IdleState : FSMState
 {
@@ -270,20 +284,24 @@ public class IdleState : FSMState
     {
         stateID = StateID.Idle;
         controlref = control;
+		controlref.startPos.x = controlref.transform.position.x;
+		controlref.startPos.y = controlref.transform.position.y;
+		controlref.maxDist = new Vector2(1.5f,1.5f);
     }
 
 	public override void DoBeforeEntering ()
 	{
 		controlref.startPos.x = controlref.transform.position.x;
 		controlref.startPos.y = controlref.transform.position.y;
+		controlref.maxDist = new Vector2(controlref.offset + controlref.transform.position.x, controlref.offset + controlref.transform.position.y);
+		//Debug.Log (controlref.maxDist);
 	}
 
     public override void Reason(GameObject gm, GameObject npc)
     {
-		//if(npc.transform.position.x != controlref.goalPos.x || npc.transform.position.y != controlref.goalPos.y)
-		if(controlref.gm_fsm.swiped)
+		if(npc.transform.position.x != controlref.goalPos.x || npc.transform.position.y != controlref.goalPos.y)
         {
-           npc.GetComponent<TileFSM>().SetTransition(Transition.UserSwiped);
+           npc.GetComponent<TileFSM>().SetTransition(Transition.UserSwiped); //to follow
         }
         
     }
@@ -293,6 +311,78 @@ public class IdleState : FSMState
     }
 
 } // IdleState
+
+public class FollowState : FSMState
+{
+	TileFSM controlref;
+
+	public FollowState(TileFSM control)
+	{
+		stateID = StateID.Follow;
+		controlref = control;
+	}
+
+	public override void DoBeforeLeaving(){
+		controlref.touchReleased = false;
+	}
+
+	public override void Reason(GameObject gm, GameObject npc)
+	{
+		if (controlref.touchReleased) {
+			npc.GetComponent<TileFSM>().SetTransition(Transition.FinishedFollow);
+		}
+	}
+
+	public override void Act(GameObject gm, GameObject npc)
+	{
+		controlref.currentDist.x = Mathf.Abs(controlref.goalPos.x - controlref.startPos.x);
+		controlref.currentDist.y = Mathf.Abs(controlref.goalPos.y - controlref.startPos.y);
+
+		if (controlref.currentDist.x < controlref.maxDist.x && controlref.currentDist.y < controlref.maxDist.y) {
+			npc.transform.position = new Vector2 (controlref.goalPos.x, controlref.goalPos.y);
+		}
+	}
+
+} // FollowState
+
+
+public class SnappingState : FSMState
+{
+	TileFSM controlref;
+	private float speed = 1f;
+
+	public SnappingState(TileFSM control)
+	{
+		stateID = StateID.Snapping;
+		controlref = control;
+	}
+
+	public override void Reason(GameObject gm, GameObject npc)
+	{
+		if (npc.transform.position.x == controlref.goalPos.x && npc.transform.position.y == controlref.goalPos.y)
+		{
+			if (controlref.offGrid)
+			{
+				//do before leaving
+				controlref.offGrid = false;
+				npc.transform.position = controlref.wrapPos;
+				controlref.goalPos = controlref.wrapGoalPos;
+				npc.GetComponent<TileFSM>().SetTransition(Transition.OffGrid);
+
+			}
+			else
+			{
+				npc.GetComponent<TileFSM>().SetTransition(Transition.FinishedSnapping);
+			}
+		}
+	}
+
+	public override void Act(GameObject gm, GameObject npc)
+	{
+		npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
+	}
+
+} // SnappingState
 
 public class WrapState : FSMState
 {
@@ -320,3 +410,4 @@ public class WrapState : FSMState
     }
 
 } // ChasePlayerState
+	
