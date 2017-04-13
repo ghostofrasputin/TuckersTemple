@@ -22,7 +22,7 @@ public class GameMasterFSM : MonoBehaviour
     public int Row;
     public int Direction;
     public Canvas winScreen;
-    public Canvas deathScreen;
+    public GameObject deathScreen;
     public List<GameObject> actors;
     public List<GameObject> characters;
     public List<GameObject> enemies;
@@ -119,7 +119,7 @@ public class GameMasterFSM : MonoBehaviour
     // it reloads the level, but the tiles will be different
     public void reset()
     {
-        setCanvas(deathScreen, false);
+		deathScreen.SetActive(false);
         attempts++;
         setupLevel(levelsList[currentLevel - 1]);
 		if (fsm.CurrentStateID == StateID.LevelDeath) {
@@ -172,7 +172,7 @@ public class GameMasterFSM : MonoBehaviour
     {
         SoundController.instance.PlaySingle(playerdeathSound);
         turnOffTileColliders();
-        setCanvas(deathScreen, true);
+		deathScreen.SetActive(true);
     }
 
     public void nextLevel()
