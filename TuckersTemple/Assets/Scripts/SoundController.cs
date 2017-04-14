@@ -54,8 +54,8 @@ public class SoundController : MonoBehaviour {
 		sfxSource.clip = clip;
 		sfxSource.Play ();
 
-		sfxSourceTiles.clip = clip;
-		sfxSourceTiles.Play ();
+		//sfxSourceTiles.clip = clip;
+		//sfxSourceTiles.Play ();
 	}
 
     // Play single audio clips with delay

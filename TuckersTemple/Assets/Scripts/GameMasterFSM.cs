@@ -456,7 +456,7 @@ public class GameMasterFSM : MonoBehaviour
         const int S = 2;
         const int W = 3;
         float tileSize = tileGrid[0][0].GetComponent<Renderer>().bounds.size.x;
-        SoundController.instance.RandomSfx(TileSlide1, TileSlide2);
+        SoundController.instance.RandomSfxTiles(TileSlide1, TileSlide2);
 
         //calculate normal offset vector and move the tiles
         Vector2 offset = new Vector2(0, 0);
