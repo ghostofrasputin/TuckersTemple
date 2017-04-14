@@ -34,10 +34,12 @@ public class TileFSM : MonoBehaviour
 	public Vector2 currentDist;
 	public Vector2 maxDist;
 	public bool touchReleased;
+	public bool incompleteMove;
 
     public void Start()
     {
 		goalPos = transform.position;
+		incompleteMove = false;
         offGrid = false;
 		touchReleased = false;
         MakeFSM();
@@ -349,12 +351,16 @@ public class FollowState : FSMState
 public class SnappingState : FSMState
 {
 	TileFSM controlref;
-	private float speed = 1f;
+	private float speed = .05f;
 
 	public SnappingState(TileFSM control)
 	{
 		stateID = StateID.Snapping;
 		controlref = control;
+	}
+
+	public override void DoBeforeLeaving() {
+		controlref.incompleteMove = false;
 	}
 
 	public override void Reason(GameObject gm, GameObject npc)
@@ -379,6 +385,9 @@ public class SnappingState : FSMState
 
 	public override void Act(GameObject gm, GameObject npc)
 	{
+		if (controlref.incompleteMove) {
+			controlref.goalPos = new Vector2 (controlref.startPos.x, controlref.startPos.y);
+		}
 		npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
 	}
 

@@ -39,6 +39,10 @@ public class GameMasterFSM : MonoBehaviour
 	public bool isVert = false;
 	public Vector2 offset;
 	public bool swiped;
+	const int N = 0;
+	const int E = 1;
+	const int S = 2;
+	const int W = 3;
 
     // audio:
     public AudioClip TileSlide1;
@@ -359,8 +363,8 @@ public class GameMasterFSM : MonoBehaviour
 					for (int c = 0; c < numCols; c++) {
 						for (int r = 0; r < numRows; r++) {
 							if (tileGrid [c] [r].Equals (touchTarget)) {
-								row = r;
-								col = c;
+								Row = row = r;
+								Column = col = c;
 								foundTile = true;
 								break;
 							}
@@ -372,39 +376,55 @@ public class GameMasterFSM : MonoBehaviour
 					// move the row or column 
 				    // with user touch
 					if (foundTile) {
-						// moving horizontal:
+						// moving horizontal rows:
 						if (!isVert) {
 							for (int c = 0; c < numCols; c++) {
 								tileGrid [c] [row].GetComponent<TileFSM>().goalPos = new Vector2 (tileGrid [c] [row].transform.position.x + touchDelta.x * .02f, 
 																						tileGrid [c] [row].transform.position.y);
 							}
-							offset = (Vector2)touchPosition - touchStart;
 						} 
-						// moving vertical:
+						// moving vertical cols:
 						else {
 							for (int r = 0; r < numRows; r++) {
 								tileGrid [col] [r].GetComponent<TileFSM>().goalPos = new Vector2 (tileGrid [col] [r].transform.position.x, 
 																						tileGrid [col] [r].transform.position.y + touchDelta.y * .02f);
 							}
-							offset = (Vector2)touchPosition - touchStart;
 						}
 					}
 				}
 				break;
 			case TouchPhase.Ended:
-				if (!isVert) {
-					for (int c = 0; c < numCols; c++) {
-						tileGrid [c] [row].GetComponent<TileFSM> ().touchReleased = true;
-					}
-				} 
-				// moving vertical:
-				else {
+				float swipeDist;
+				float tileSize = tileGrid[0][0].GetComponent<Renderer> ().bounds.size.x;
+				if (isVert) {
+					swipeDist = touchPosition.y - touchStart.y;
 					for (int r = 0; r < numRows; r++) {
-						tileGrid [col] [r].GetComponent<TileFSM> ().touchReleased = true;
+						if (Mathf.Abs (swipeDist) < tileSize/2) {
+							tileGrid [col] [r].GetComponent<TileFSM>().incompleteMove = true;
+						}
+						tileGrid [col] [r].GetComponent<TileFSM>().touchReleased = true;
+					}
+					if (swipeDist < 0) {
+						Direction = S;
+					} else {
+						Direction = N;
+					}
+				} else {
+					swipeDist = touchPosition.x - touchStart.x;
+					for (int c = 0; c < numCols; c++) {
+						if (Mathf.Abs (swipeDist) < tileSize/2) {
+							tileGrid [c] [row].GetComponent<TileFSM>().incompleteMove = true;
+						}
+						tileGrid [c] [row].GetComponent<TileFSM>().touchReleased = true;
+					}
+					if (swipeDist < 0) {
+						Direction = W;
+					} else {
+						Direction = E;
 					}
 				}
 				latch = false;
-				touchSuccess = findTouchVector(touchTarget, offset);
+				touchSuccess = true;
                 break;
 
             default:
@@ -414,7 +434,7 @@ public class GameMasterFSM : MonoBehaviour
     }
 
 	// find direction of swipe
-    public bool findTouchVector(GameObject obj, Vector2 delta)
+    /*public bool findTouchVector(GameObject obj, Vector2 delta)
     {
         bool isVert;
         const int N = 0;
@@ -425,7 +445,7 @@ public class GameMasterFSM : MonoBehaviour
         //check which direction had the greater offset
         isVert = Mathf.Abs(delta.y) > Mathf.Abs(delta.x);
         //check if touch vector is large enough to register as a swipe
-        if (isVert)
+		if (isVert)
         {
             if (Mathf.Abs(delta.y) < 20)
             {
@@ -441,6 +461,7 @@ public class GameMasterFSM : MonoBehaviour
                 return false;
             }
         }
+
         int dir = -1;
         //check if it is vertical or horizontal, then if it is positive or negative
         if (isVert)
@@ -492,18 +513,15 @@ public class GameMasterFSM : MonoBehaviour
             Direction = dir;
             return true;
             //moveGrid(col, row, dir);
-        } else
+        } 
+		else
         {
             return false;
         }
-    }
+    }*/
 
     public void moveGrid(int col, int row, int dir)
     {
-        const int N = 0;
-        const int E = 1;
-        const int S = 2;
-        const int W = 3;
         float tileSize = tileGrid[0][0].GetComponent<Renderer>().bounds.size.x;
         SoundController.instance.RandomSfx(TileSlide1, TileSlide2);
 
