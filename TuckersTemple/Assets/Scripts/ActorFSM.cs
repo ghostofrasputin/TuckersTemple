@@ -16,6 +16,7 @@ public class ActorFSM : MonoBehaviour
     public Sprite rightSprite;
     public Sprite downSprite;
     public Sprite leftSprite;
+    public string actorName;
 
     // audio:
     public AudioClip playerfootsteps1;
@@ -199,12 +200,38 @@ public class LookAState : FSMState
         {
             if(ray.collider.tag == "Trap")//both enemy and player
             {
+                int msg = UnityEngine.Random.Range(0, 4);
+                switch (msg)
+                {
+                    case 0:
+                        gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " activated a trap card.";
+                        break;
+                    case 1:
+                        gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " spontaneously combusted.";
+                        break;
+                    case 2:
+                        gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " did not stop, drop, and roll.";
+                        break;
+                    case 3:
+                        gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " forgot to turn off the oven.";
+                        break;
+                }
                 npc.GetComponent<ActorFSM>().SetTransition(Transition.TrapFound); //to trapDeath
                 return;
             }
             if (npc.tag == "Player") {
                 if (ray.collider.tag == "Enemy")
                 {
+                    int msg = UnityEngine.Random.Range(0, 2);
+                    switch (msg)
+                    {
+                        case 0:
+                            gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " was swallowed by shadows.";
+                            break;
+                        case 1:
+                            gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " let the darkness consume them.";
+                            break;
+                    }
                     int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;
                     switch (controlref.direction)
                     {
