@@ -72,7 +72,7 @@ public class GameMasterFSM : MonoBehaviour
 
         InputState ready = new InputState(this);
         ready.AddTransition(Transition.InputReceived, StateID.OrderTiles);
-		ready.AddTransition (Transition.RestartedLevel, StateID.Juice);
+		ready.AddTransition (Transition.RestartedLevel, StateID.InitLevel);
 
         OrderTilesState tile = new OrderTilesState(this);
         tile.AddTransition(Transition.TilesDone, StateID.OrderActors);
@@ -83,10 +83,10 @@ public class GameMasterFSM : MonoBehaviour
         actor.AddTransition(Transition.ActorDied, StateID.LevelDeath);
 
         LevelWonState win = new LevelWonState(this);
-        win.AddTransition(Transition.NextLevel, StateID.Juice);
+        win.AddTransition(Transition.NextLevel, StateID.InitLevel);
 
         LevelDeathState death = new LevelDeathState(this);
-        death.AddTransition(Transition.RestartedLevelFromDeath, StateID.Juice);
+        death.AddTransition(Transition.RestartedLevelFromDeath, StateID.InitLevel);
 
         LevelJuiceState juice = new LevelJuiceState(this);
         juice.AddTransition(Transition.DoneJuicing, StateID.Ready);

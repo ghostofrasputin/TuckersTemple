@@ -21,6 +21,7 @@ public class TileFSM : MonoBehaviour
 
     public GameObject corners;
     public GameObject pathOverlay;
+    public ParticleSystem dustParticle;
 
     public Sprite XPath;
     public Sprite TPath;
@@ -264,6 +265,7 @@ public class MoveState : FSMState
     public override void Act(GameObject gm, GameObject npc)
     {
         npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
+        TileFSM.Instantiate(controlref.dustParticle, npc.transform.position, Quaternion.identity);
     }
 
 } //MoveState
