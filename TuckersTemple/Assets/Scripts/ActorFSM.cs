@@ -18,6 +18,7 @@ public class ActorFSM : MonoBehaviour
     public Sprite downSprite;
     public Sprite leftSprite;
     public String actorName;
+	public bool visitedWalk = false;
 
     // audio:
     public AudioClip playerfootsteps1;
@@ -56,6 +57,7 @@ public class ActorFSM : MonoBehaviour
         WalkAState walk = new WalkAState(this);
         walk.AddTransition(Transition.FinishedWalk, StateID.IdleA);
         walk.AddTransition(Transition.EnemyCollide, StateID.EnemyDeadA);
+		walk.AddTransition(Transition.SecondMove, StateID.LookA);
 
         WinAState win = new WinAState(this);
         win.AddTransition(Transition.EnemyCollide1, StateID.EnemyDeadA);
@@ -298,6 +300,15 @@ public class WalkAState : FSMState
 		controlref = control;
 	}
 
+	public override void DoBeforeLeaving(){
+		Debug.Log ("visited = " + controlref.visitedWalk);
+		if (controlref.visitedWalk) {
+			controlref.visitedWalk = false;
+		} else {
+			controlref.visitedWalk = true;
+		}
+	}
+
 	public override void Reason(GameObject gm, GameObject npc)
 	{
         if (npc.transform.position.x == controlref.goalPos.x && npc.transform.position.y == controlref.goalPos.y)
@@ -312,7 +323,15 @@ public class WalkAState : FSMState
                 controlref.doneSlide = false;
                 //do before leaving
                 controlref.transform.parent = gm.GetComponent<GameMasterFSM>().getTile(controlref.transform.position).transform;
-                npc.GetComponent<ActorFSM>().SetTransition(Transition.FinishedWalk);
+				if (controlref.actorName == "Emily") {
+					if (controlref.visitedWalk) {
+						npc.GetComponent<ActorFSM>().SetTransition(Transition.FinishedWalk);
+					} else {
+						npc.GetComponent<ActorFSM>().SetTransition(Transition.SecondMove);
+					}
+				} else {
+					npc.GetComponent<ActorFSM>().SetTransition(Transition.FinishedWalk);
+				}
             }
         }
 

@@ -79,7 +79,7 @@ public enum Transition
     DoneJuicing,
     ActorsDone,
 	RestartedLevel,//endgamemaster
-
+	SecondMove,
 }
 
 /// <summary>
