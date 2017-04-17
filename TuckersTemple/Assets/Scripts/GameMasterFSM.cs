@@ -121,6 +121,12 @@ public class GameMasterFSM : MonoBehaviour
     {
 		deathScreen.SetActive(false);
         attempts++;
+		//check if last level
+		if (currentLevel > levelsList.Count) {
+			GameObject.Find("endOfDemo").GetComponent<InGameMenuManager>().playAnim("winEnter");
+			GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ().setLevel (1);
+			return;
+		}
         setupLevel(levelsList[currentLevel - 1]);
 		if (fsm.CurrentStateID == StateID.LevelDeath) {
 			GetComponent<GameMasterFSM> ().SetTransition (Transition.RestartedLevelFromDeath); //to ready
