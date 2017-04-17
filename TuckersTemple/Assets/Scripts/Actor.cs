@@ -28,6 +28,7 @@ public class Actor : MonoBehaviour {
     public Sprite downSprite;
     public Sprite leftSprite;
     public bool death;
+
     // private fields:
     protected bool isWalking;
     protected int enemyDir;

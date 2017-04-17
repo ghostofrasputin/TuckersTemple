@@ -72,7 +72,7 @@ public class GameMasterFSM : MonoBehaviour
 
         InputState ready = new InputState(this);
         ready.AddTransition(Transition.InputReceived, StateID.OrderTiles);
-		ready.AddTransition (Transition.RestartedLevel, StateID.Juice);
+		ready.AddTransition (Transition.RestartedLevel, StateID.InitLevel);
 
         OrderTilesState tile = new OrderTilesState(this);
         tile.AddTransition(Transition.TilesDone, StateID.OrderActors);
@@ -83,10 +83,10 @@ public class GameMasterFSM : MonoBehaviour
         actor.AddTransition(Transition.ActorDied, StateID.LevelDeath);
 
         LevelWonState win = new LevelWonState(this);
-        win.AddTransition(Transition.NextLevel, StateID.Juice);
+        win.AddTransition(Transition.NextLevel, StateID.InitLevel);
 
         LevelDeathState death = new LevelDeathState(this);
-        death.AddTransition(Transition.RestartedLevelFromDeath, StateID.Juice);
+        death.AddTransition(Transition.RestartedLevelFromDeath, StateID.InitLevel);
 
         LevelJuiceState juice = new LevelJuiceState(this);
         juice.AddTransition(Transition.DoneJuicing, StateID.Ready);
@@ -456,7 +456,7 @@ public class GameMasterFSM : MonoBehaviour
         const int S = 2;
         const int W = 3;
         float tileSize = tileGrid[0][0].GetComponent<Renderer>().bounds.size.x;
-        SoundController.instance.RandomSfx(TileSlide1, TileSlide2);
+        SoundController.instance.RandomSfxTiles(TileSlide1, TileSlide2);
 
         //calculate normal offset vector and move the tiles
         Vector2 offset = new Vector2(0, 0);
