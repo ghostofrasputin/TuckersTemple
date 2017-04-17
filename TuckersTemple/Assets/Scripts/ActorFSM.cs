@@ -18,7 +18,7 @@ public class ActorFSM : MonoBehaviour
     public Sprite downSprite;
     public Sprite leftSprite;
     public String actorName;
-	public bool visitedWalk = false;
+	public int visitedWalk = 0;
 
     // audio:
     public AudioClip playerfootsteps1;
@@ -300,15 +300,6 @@ public class WalkAState : FSMState
 		controlref = control;
 	}
 
-	public override void DoBeforeLeaving(){
-		Debug.Log ("visited = " + controlref.visitedWalk);
-		if (controlref.visitedWalk) {
-			controlref.visitedWalk = false;
-		} else {
-			controlref.visitedWalk = true;
-		}
-	}
-
 	public override void Reason(GameObject gm, GameObject npc)
 	{
         if (npc.transform.position.x == controlref.goalPos.x && npc.transform.position.y == controlref.goalPos.y)
@@ -324,10 +315,19 @@ public class WalkAState : FSMState
                 //do before leaving
                 controlref.transform.parent = gm.GetComponent<GameMasterFSM>().getTile(controlref.transform.position).transform;
 				if (controlref.actorName == "Emily") {
-					if (controlref.visitedWalk) {
-						npc.GetComponent<ActorFSM>().SetTransition(Transition.FinishedWalk);
-					} else {
+					if (controlref.visitedWalk == 0) {
+						//Debug.Log("first move");
+						controlref.visitedWalk++;
+						int temp = controlref.findNextMove(controlref.direction);//if -1, direction does not change and state stays idle, else update direction
+						if (temp >= 0) {//-1 means no move found
+							controlref.direction = temp;
+							controlref.walk ();
+						}
 						npc.GetComponent<ActorFSM>().SetTransition(Transition.SecondMove);
+					} else {
+						//Debug.Log("second move");
+						controlref.visitedWalk = 0;
+						npc.GetComponent<ActorFSM>().SetTransition(Transition.FinishedWalk);
 					}
 				} else {
 					npc.GetComponent<ActorFSM>().SetTransition(Transition.FinishedWalk);
