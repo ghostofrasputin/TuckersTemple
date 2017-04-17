@@ -24,11 +24,9 @@ public class ZombiePasser : MonoBehaviour {
 	private bool musicToggle = true;
 	private bool sfxToggle = true;
 	private bool vibToggle = true;
-<<<<<<< HEAD
-	private bool[] lockedLevels = {false,false,false,false,false,false};
-=======
+
 	private bool[] lockedLevels = {false, false, false, false, false, false };
->>>>>>> master
+
     private Dictionary<int,int> starRating = new Dictionary<int,int>();
     
 	// Make this game object and all its transform children
