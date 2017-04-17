@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ActorFSM : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class ActorFSM : MonoBehaviour
     public Sprite rightSprite;
     public Sprite downSprite;
     public Sprite leftSprite;
-    public string actorName;
+    public String actorName;
 
     // audio:
     public AudioClip playerfootsteps1;
@@ -102,7 +103,7 @@ public class ActorFSM : MonoBehaviour
                 currDir += 4;
             }
             //RAYCAST LASER BEAMS ♫♫♫♫♫
-            Debug.Log(this+", "+currDir);
+            //Debug.Log(this+", "+currDir);
             RaycastHit2D ray = Physics2D.Raycast(transform.position, v2Dirs[currDir], GetComponentInParent<TileFSM>().GetComponent<Renderer>().bounds.size.x, LayerMask.GetMask("Wall"));
 
             if (ray.collider == null || !(ray.collider.tag == "Wall" || ray.collider.tag == "OuterWall"))
@@ -185,7 +186,7 @@ public class LookAState : FSMState
 {
 	ActorFSM controlref;
 
-	public LookAState(ActorFSM control)
+    public LookAState(ActorFSM control)
 	{
 		stateID = StateID.LookA;
 		controlref = control;
@@ -200,7 +201,7 @@ public class LookAState : FSMState
         {
             if(ray.collider.tag == "Trap")//both enemy and player
             {
-                int msg = UnityEngine.Random.Range(0, 4);
+                int msg = UnityEngine.Random.Range(0,4);
                 switch (msg)
                 {
                     case 0:
@@ -453,5 +454,5 @@ public class EnterState : FSMState
 	{
 		npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
 	}
-
+		
 } // EnterState

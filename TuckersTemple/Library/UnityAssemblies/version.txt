@@ -1,5 +1,10 @@
+<<<<<<< HEAD
+5.5.1f1:3.1.0.0
+iOS
+=======
 5.5.0f3:2.8.0.0
 Android
+>>>>>>> master
 C:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll
 C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll
 C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll
