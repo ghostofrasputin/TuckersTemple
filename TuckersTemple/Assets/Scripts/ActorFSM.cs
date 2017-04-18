@@ -322,7 +322,7 @@ public class WalkAState : FSMState
                 controlref.doneSlide = false;
                 //do before leaving
                 controlref.transform.parent = gm.GetComponent<GameMasterFSM>().getTile(controlref.transform.position).transform;
-				if (controlref.actorName == "Emily") {
+				if (controlref.actorName == "Emily" || controlref.actorName == "Wraith") {
 					if (controlref.visitedWalk == 0) {
 						//Debug.Log("first move");
 						controlref.visitedWalk++;
