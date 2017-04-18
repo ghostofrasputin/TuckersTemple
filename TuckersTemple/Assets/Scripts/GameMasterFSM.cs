@@ -14,6 +14,7 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject Trap;
     public GameObject Enemy;
     public GameObject Goal;
+	public GameObject Laser;
     public FSMSystem fsm;
     public Vector2 lastPos = new Vector2(0, 0); //holds the last position for mouse input to calculate deltaPosition
     public int numRows; //number of tiles to size
@@ -26,6 +27,7 @@ public class GameMasterFSM : MonoBehaviour
     public List<GameObject> actors;
     public List<GameObject> characters;
     public List<GameObject> enemies;
+	public List<GameObject> lasers;
     public int currentLevel = 1; // progress this every time there's a win
     public List<Level> levelsList;
     public float tileSize;
@@ -319,13 +321,20 @@ public class GameMasterFSM : MonoBehaviour
                 Instantiate(Goal, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y,
                     tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
             }
-            if (key.Contains("trap"))
+            if (key.Equals("trap"))
             {
                 int x = value[0];
                 int y = value[1];
                 Instantiate(Trap, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y,
                     tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
             }
+			if (key.Equals ("laser")) {
+				int x = value [0];
+				int y = value [1];
+				float offset = Tile.GetComponent<SpriteRenderer> ().bounds.size.x / 3;
+				lasers.Add(Instantiate(Laser, new Vector3(tileGrid[x][y].transform.position.x - offset, tileGrid[x][y].transform.position.y,
+					tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform));
+			}
         }
         //Add in outer walls to the grid
         boundary = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
@@ -699,6 +708,15 @@ public class LevelJuiceState : FSMState
 
     }
 
+	public override void DoBeforeLeaving ()
+	{
+		foreach (GameObject child in controlref.lasers) {
+			if (child.tag == "Laser") {
+				child.GetComponent<LaserScript> ().setEye (true);
+			}
+		}
+	}
+
 } // LevelJuiceState
 
 public class InputState : FSMState
@@ -781,6 +799,24 @@ public class OrderTilesState : FSMState
         if (!hasExecuted) { controlref.moveGrid(controlref.Column, controlref.Row, controlref.Direction); }
         hasExecuted = true;
     }
+
+	public override void DoBeforeEntering ()
+	{
+		foreach (GameObject child in controlref.lasers) {
+			if (child.tag == "Laser") {
+				child.GetComponent<LaserScript> ().setEye (false);
+			}
+		}
+	}
+
+	public override void DoBeforeLeaving ()
+	{
+		foreach (GameObject child in controlref.lasers) {
+			if (child.tag == "Laser") {
+				child.GetComponent<LaserScript> ().setEye (true);
+			}
+		}
+	}
 
 } // OrderTilesState
 

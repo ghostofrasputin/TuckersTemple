@@ -265,7 +265,8 @@ public class MoveState : FSMState
     public override void Act(GameObject gm, GameObject npc)
     {
         npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
-        TileFSM.Instantiate(controlref.dustParticle, npc.transform.position, Quaternion.identity);
+		ParticleSystem dust = TileFSM.Instantiate(controlref.dustParticle, npc.transform.position, Quaternion.identity);
+		GameObject.Destroy (dust.gameObject, controlref.dustParticle.main.duration);
     }
 
 } //MoveState
