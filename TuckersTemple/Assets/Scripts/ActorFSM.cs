@@ -201,6 +201,7 @@ public class LookAState : FSMState
 
         if (ray.collider != null)
         {
+			//Debug.Log ("Found something.");
             if(ray.collider.tag == "Trap")//both enemy and player
             {
                 int msg = UnityEngine.Random.Range(0,4);
@@ -225,40 +226,45 @@ public class LookAState : FSMState
             if (npc.tag == "Player") {
                 if (ray.collider.tag == "Enemy")
                 {
-                    int msg = UnityEngine.Random.Range(0, 2);
-                    switch (msg)
-                    {
-                        case 0:
-                            gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " was swallowed by shadows.";
-                            break;
-                        case 1:
-                            gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " let the darkness consume them.";
-                            break;
-                    }
-                    int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;
-                    switch (controlref.direction)
-                    {
-                        case 0:
-                            {
-                                if (enemyDir == 2) { isDead = true; }
-                                break;
-                            }
-                        case 1:
-                            {
-                                if (enemyDir == 3) { isDead = true; }
-                                break;
-                            }
-                        case 2:
-                            {
-                                if (enemyDir == 0) { isDead = true; }
-                                break;
-                            }
-                        case 3:
-                            {
-                                if (enemyDir == 1) { isDead = true; }
-                                break;
-                            }
-                    }
+					if (controlref.actorName == "Emily" && controlref.visitedWalk == 1) {
+						npc.GetComponent<ActorFSM> ().SetTransition (Transition.EnemyFound);
+					} else {
+						//Debug.Log ("Found an enemy.");
+						int msg = UnityEngine.Random.Range(0, 2);
+						switch (msg)
+						{
+						case 0:
+							gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " was swallowed by shadows.";
+							break;
+						case 1:
+							gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " let the darkness consume them.";
+							break;
+						}
+						int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;
+						switch (controlref.direction)
+						{
+						case 0:
+							{
+								if (enemyDir == 2) { isDead = true; }
+								break;
+							}
+						case 1:
+							{
+								if (enemyDir == 3) { isDead = true; }
+								break;
+							}
+						case 2:
+							{
+								if (enemyDir == 0) { isDead = true; }
+								break;
+							}
+						case 3:
+							{
+								if (enemyDir == 1) { isDead = true; }
+								break;
+							}
+						}
+					}
                 }
                 else if (ray.collider.tag == "Goal")
                 {
@@ -267,6 +273,7 @@ public class LookAState : FSMState
                 }
                 if (isDead)
                 {
+					//Debug.Log ("Now I'm dead!");
                     npc.GetComponent<ActorFSM>().SetTransition(Transition.EnemyFound); //to Dead
                     return;//needed to skip pathfound transition from firing, current logic structure is a bit iffy
                 }
@@ -284,6 +291,7 @@ public class LookAState : FSMState
 
 	public override void Act(GameObject gm, GameObject npc)
 	{
+		//Debug.Log ("in Look.Act()");
         //shouldn't ever be called, which is a sign that this state is questionable, but the reason function is resolving alot of collision logic
 	}
 
