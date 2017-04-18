@@ -35,7 +35,7 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject boundary;
     public List<GameObject> playerChars = new List<GameObject>();
     public Text deathText;
-
+    public GameObject parentGrid;
     // audio:
     public AudioClip TileSlide1;
     public AudioClip TileSlide2;
@@ -150,7 +150,22 @@ public class GameMasterFSM : MonoBehaviour
         {
             Debug.Log(error);
         }
+
+        if (moves >= 4)
+        {
+            GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setStars(currentLevel - 1, 1);
+            GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+
+        }
+        else 
+        {
+            GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setStars(currentLevel - 1, 2);
+            GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+            GameObject.Find("Star2").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        }
+
         turnOffTileColliders();
+
         winScreen.GetComponent<InGameMenuManager>().playAnim("winEnter");
         ticking = false;
         using (System.IO.StreamWriter file =
@@ -188,6 +203,7 @@ public class GameMasterFSM : MonoBehaviour
         ticking = true;
         SoundController.instance.PlaySingle(nextLevelSound);
         GetComponent<GameMasterFSM>().SetTransition(Transition.NextLevel); //to ready
+
     }
 
     public void turnOffTileColliders()
@@ -226,6 +242,7 @@ public class GameMasterFSM : MonoBehaviour
                 Destroy(tileGrid[i][j]);
             }
         }
+
         actors.Clear();
         enemies.Clear();
         characters.Clear();
@@ -233,7 +250,9 @@ public class GameMasterFSM : MonoBehaviour
         tileGrid = new GameObject[numCols][];
         generateLevel(level);
         Destroy(boundary);
-        turnOnTileColliders();
+        turnOnTileColliders();    
+
+
     }
 
     // takes in the current level and creates it:
@@ -262,7 +281,7 @@ public class GameMasterFSM : MonoBehaviour
                 List<string> row = tileInfo[numRows - r - 1];
                 string currentTileType = row[c];
                 //instantiate a tile at the proper grid position
-                tileGrid[c][r] = Instantiate(Tile, new Vector3(c * tileSize, r * tileSize, 0), Quaternion.identity);
+                tileGrid[c][r] = Instantiate(Tile, new Vector3(c * tileSize, r * tileSize, 0), Quaternion.identity,parentGrid.transform);
                 tiles.Add(tileGrid[c][r]);
                 // pass the tile object the type indicator string where it will
                 // create a tile based on that string
@@ -467,6 +486,10 @@ public class GameMasterFSM : MonoBehaviour
         //calculate normal offset vector and move the tiles
         Vector2 offset = new Vector2(0, 0);
         GameObject temp;
+        //screen shake
+        parentGrid.GetComponent<ScreenShake>().startShaking(.05f);
+        //haptics
+        Handheld.Vibrate();
         switch (dir)
         {
             /*
@@ -699,6 +722,12 @@ public class LevelJuiceState : FSMState
 
     }
 
+    public override void DoBeforeLeaving()
+    {
+        GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+        GameObject.Find("Star2").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+        GameObject.Find("Star3").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+    }
 } // LevelJuiceState
 
 public class InputState : FSMState

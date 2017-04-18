@@ -199,24 +199,26 @@ public class LookAState : FSMState
 
         if (ray.collider != null)
         {
+            string deathMsg =controlref.actorName + " Died.";
             if(ray.collider.tag == "Trap")//both enemy and player
             {
                 int msg = UnityEngine.Random.Range(0,4);
                 switch (msg)
                 {
                     case 0:
-                        gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " activated a trap card.";
+                        deathMsg = controlref.actorName + " activated a trap card.";
                         break;
                     case 1:
-                        gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " spontaneously combusted.";
+                        deathMsg = controlref.actorName + " spontaneously combusted.";
                         break;
                     case 2:
-                        gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " did not stop, drop, and roll.";
+                        deathMsg = controlref.actorName + " did not stop, drop, and roll.";
                         break;
                     case 3:
-                        gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " forgot to turn off the oven.";
+                        deathMsg = controlref.actorName + " forgot to turn off the oven.";
                         break;
                 }
+                gm.GetComponent<GameMasterFSM>().deathText.text = deathMsg;
                 npc.GetComponent<ActorFSM>().SetTransition(Transition.TrapFound); //to trapDeath
                 return;
             }
@@ -227,12 +229,13 @@ public class LookAState : FSMState
                     switch (msg)
                     {
                         case 0:
-                            gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " was swallowed by shadows.";
+                            deathMsg = controlref.actorName + " was swallowed by shadows.";
                             break;
                         case 1:
-                            gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " let the darkness consume them.";
+                            deathMsg = controlref.actorName + " let the darkness consume them.";
                             break;
                     }
+                    gm.GetComponent<GameMasterFSM>().deathText.text = deathMsg;
                     int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;
                     switch (controlref.direction)
                     {
