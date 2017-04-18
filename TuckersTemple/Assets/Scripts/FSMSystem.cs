@@ -76,6 +76,7 @@ public enum Transition
     NextLevel,
     LevelLoaded,
     DoneJuicing,
+	Incomplete,
     ActorsDone,//endgamemaster
 
 }

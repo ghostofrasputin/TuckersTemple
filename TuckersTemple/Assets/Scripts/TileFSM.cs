@@ -13,6 +13,8 @@ public class TileFSM : MonoBehaviour
     public Vector2 wrapGoalPos;
     public bool offGrid;
 	public float offset;
+	public float tileSize;
+
     public void SetTransition(Transition t) { fsm.PerformTransition(t); }
 
     public GameObject Wall;
@@ -42,12 +44,13 @@ public class TileFSM : MonoBehaviour
 		incompleteMove = false;
         offGrid = false;
 		touchReleased = false;
+		tileSize = gameObject.GetComponent<Renderer> ().bounds.size.x;
         MakeFSM();
     }
 
     public void Update()
     {
-		print(tag + " == " + fsm.CurrentStateID);
+		//print(tag + " == " + fsm.CurrentStateID);
 		fsm.CurrentState.Reason(gm, gameObject);
         fsm.CurrentState.Act(gm, gameObject);
     }
@@ -288,14 +291,15 @@ public class IdleState : FSMState
         controlref = control;
 		controlref.startPos.x = controlref.transform.position.x;
 		controlref.startPos.y = controlref.transform.position.y;
-		controlref.maxDist = new Vector2(1.5f,1.5f);
+		controlref.maxDist = new Vector2(controlref.tileSize, controlref.tileSize);
     }
 
 	public override void DoBeforeEntering ()
 	{
+		controlref.goalPos = controlref.transform.position;
 		controlref.startPos.x = controlref.transform.position.x;
 		controlref.startPos.y = controlref.transform.position.y;
-		controlref.maxDist = new Vector2(controlref.offset + controlref.transform.position.x, controlref.offset + controlref.transform.position.y);
+		controlref.maxDist = new Vector2(controlref.tileSize, controlref.tileSize);
 		//Debug.Log (controlref.maxDist);
 	}
 
@@ -330,6 +334,7 @@ public class FollowState : FSMState
 
 	public override void Reason(GameObject gm, GameObject npc)
 	{
+		//Debug.Log ("Follow: " + controlref.touchReleased);
 		if (controlref.touchReleased) {
 			npc.GetComponent<TileFSM>().SetTransition(Transition.FinishedFollow);
 		}
@@ -367,6 +372,9 @@ public class SnappingState : FSMState
 	{
 		if (npc.transform.position.x == controlref.goalPos.x && npc.transform.position.y == controlref.goalPos.y)
 		{
+			if (controlref.incompleteMove) {
+				controlref.offGrid = false;
+			}
 			if (controlref.offGrid)
 			{
 				//do before leaving
