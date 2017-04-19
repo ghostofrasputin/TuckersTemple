@@ -423,7 +423,7 @@ public class WrapState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
-        npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, spd);
+        npc.transform.position = new Vector2(controlref.goalPos.x, controlref.goalPos.y);
     }
 
 } // ChasePlayerState

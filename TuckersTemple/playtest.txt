@@ -174,3 +174,5 @@
 "Teach Walking" beaten in 2 moves in 0 seconds in 1 attempts.
 "Teach Walking" beaten in 2 moves in 0 seconds in 1 attempts.
 "Teach Walking" beaten in 2 moves in 0 seconds in 1 attempts.
+"Teach Walking" beaten in 0 moves in 0 seconds in 1 attempts.
+"Walking is Hard" beaten in 0 moves in 0 seconds in 1 attempts.

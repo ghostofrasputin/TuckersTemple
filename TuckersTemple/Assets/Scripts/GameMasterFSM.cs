@@ -44,6 +44,11 @@ public class GameMasterFSM : MonoBehaviour
 	const int E = 1;
 	const int S = 2;
 	const int W = 3;
+    public GameObject wrapTile;
+    public GameObject wrapCopy1;
+    public GameObject wrapCopy2;
+    public bool wrapLatch;
+
 
     // audio:
     public AudioClip TileSlide1;
@@ -65,6 +70,8 @@ public class GameMasterFSM : MonoBehaviour
     public void Start()
     {
         MakeFSM();
+        wrapLatch = false;
+        tileSize = 0;
     }
 
     public void Update()
@@ -237,7 +244,7 @@ public class GameMasterFSM : MonoBehaviour
         Destroy(boundary);
         turnOnTileColliders();
     }
-
+    
     // takes in the current level and creates it:
     public void generateLevel(Level currentLevel)
     {
@@ -349,6 +356,7 @@ public class GameMasterFSM : MonoBehaviour
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Tile")))
                 {
                     touchTarget = hit.collider.gameObject;
+                    Debug.Log(touchTarget);
                 }
                 break;
 
@@ -375,6 +383,49 @@ public class GameMasterFSM : MonoBehaviour
 							break;
 						}
 					}
+                      
+                    float tileS = touchTarget.GetComponent<SpriteRenderer> ().bounds.size.x;
+                    /* Debug.Log("spriterenderer" + tileS); */
+                    Vector3 origScale;
+                    // ******************** MAGIC NUMBER ZONE BEWARE ***********************
+                    if(isVert){
+                        if(!wrapLatch) {
+                                wrapTile = tileGrid[Column][numRows-1];
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy1 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, 10f * -1.5f, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy1.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+                                
+                                wrapTile = tileGrid[Column][0];
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy2 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, 12f * 1.5f, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy2.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+                                
+                                wrapLatch = true;
+                            }
+                    } else {
+                        if(!wrapLatch) {
+                                wrapTile = tileGrid[numCols-1][Row];                                
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy1 = Instantiate(wrapTile, new Vector3(10f * -1.5f, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy1.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+                                
+                                wrapTile = tileGrid[0][Row];                                
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy2 = Instantiate(wrapTile, new Vector3(12f * 1.5f, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy2.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+                                
+                                wrapLatch = true;
+                            }
+                    }
+                    
 					// move the row or column 
 				    // with user touch
 					if (foundTile) {
@@ -400,6 +451,10 @@ public class GameMasterFSM : MonoBehaviour
 				float swipeDist;
 				float tileSize = tileGrid [0] [0].GetComponent<Renderer> ().bounds.size.x;
 				bool validSwipe;
+                Destroy(wrapCopy1, 1);
+                Destroy(wrapCopy2, 1);
+                wrapLatch = false;
+                
 				Debug.Log (isVert);
 					if (isVert) {
 						swipeDist = (touchPosition.y - touchStart.y) * .02f;
@@ -534,7 +589,7 @@ public class GameMasterFSM : MonoBehaviour
 				}
 				tileGrid [numCols - 1] [row] = temp;
 				tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().offGrid = true;
-				tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [numCols - 1] [row].transform.position.x, offset.y + tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().startPos.y);
+				tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [numCols - 1] [row].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().startPos.y);
 				tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().wrapPos = new Vector2 (numCols * tileSize, row * tileSize);
 				tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().wrapGoalPos = new Vector2 ((numCols - 1) * tileSize, row * tileSize);
 				break;
