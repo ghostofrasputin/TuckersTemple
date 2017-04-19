@@ -87,16 +87,16 @@ public class GameMasterFSM : MonoBehaviour
         InitState init = new InitState(this);
         init.AddTransition(Transition.LevelLoaded, StateID.Juice);
 	
-	LevelJuiceState juice = new LevelJuiceState(this);
-	juice.AddTransition(Transition.DoneJuicing, StateID.Ready);
+        LevelJuiceState juice = new LevelJuiceState(this);
+        juice.AddTransition(Transition.DoneJuicing, StateID.Ready);
 	
         InputState ready = new InputState(this);
         ready.AddTransition(Transition.InputReceived, StateID.OrderTiles);
-	ready.AddTransition (Transition.RestartedLevel, StateID.InitLevel);
+        ready.AddTransition (Transition.RestartedLevel, StateID.InitLevel);
 
         OrderTilesState tile = new OrderTilesState(this);
         tile.AddTransition(Transition.TilesDone, StateID.OrderActors);
-	tile.AddTransition (Transition.Incomplete, StateID.Ready);
+        tile.AddTransition (Transition.Incomplete, StateID.Ready);
 
         OrderActorsState actor = new OrderActorsState(this);
         actor.AddTransition(Transition.ActorsDone, StateID.Ready);
@@ -107,7 +107,7 @@ public class GameMasterFSM : MonoBehaviour
         win.AddTransition(Transition.NextLevel, StateID.InitLevel);
 
         LevelDeathState death = new LevelDeathState(this);
-	death.AddTransition(Transition.RestartedLevel, StateID.Juice);
+        death.AddTransition(Transition.RestartedLevel, StateID.Juice);
 
         fsm = new FSMSystem();
         fsm.AddState(init);
@@ -350,7 +350,17 @@ public class GameMasterFSM : MonoBehaviour
         boundary.transform.localScale = new Vector3((numCols + 1) * tileSize, (numRows + 1) * tileSize, 0);
         boundary.transform.position = new Vector3((numCols + 1) * tileSize / 4, (numRows + 1) * tileSize / 4, 0);
     }
-
+    
+   //called to skip animations
+	public void skipAnimation(){
+		//Level Juicing
+		foreach (GameObject[] a in tileGrid) {
+			foreach (GameObject t in a) {
+				t.transform.position = t.GetComponent<TileFSM>().goalPos;
+			}
+		}
+	} 
+    
    public bool HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase, Vector3 touchDelta = default(Vector3))
     {
         bool touchSuccess = false;
@@ -392,52 +402,51 @@ public class GameMasterFSM : MonoBehaviour
 							break;
 						}
 					}
-                      
-                    float tileS = touchTarget.GetComponent<SpriteRenderer> ().bounds.size.x;
-                    /* Debug.Log("spriterenderer" + tileS); */
-                    Vector3 origScale;
-                    // ******************** MAGIC NUMBER ZONE BEWARE ***********************
-                    if(isVert){
-                        if(!wrapLatch) {
-                                wrapTile = tileGrid[Column][numRows-1];
-                                origScale = wrapTile.transform.localScale;
-                                wrapTile.transform.localScale = Vector3.one;
-                                wrapCopy1 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, 10f * -1.5f, 0), Quaternion.identity, wrapTile.transform);
-                                Destroy(wrapCopy1.GetComponent<TileFSM>());
-                                wrapTile.transform.localScale = origScale;
-                                
-                                wrapTile = tileGrid[Column][0];
-                                origScale = wrapTile.transform.localScale;
-                                wrapTile.transform.localScale = Vector3.one;
-                                wrapCopy2 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, 12f * 1.5f, 0), Quaternion.identity, wrapTile.transform);
-                                Destroy(wrapCopy2.GetComponent<TileFSM>());
-                                wrapTile.transform.localScale = origScale;
-                                
-                                wrapLatch = true;
-                            }
-                    } else {
-                        if(!wrapLatch) {
-                                wrapTile = tileGrid[numCols-1][Row];                                
-                                origScale = wrapTile.transform.localScale;
-                                wrapTile.transform.localScale = Vector3.one;
-                                wrapCopy1 = Instantiate(wrapTile, new Vector3(10f * -1.5f, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
-                                Destroy(wrapCopy1.GetComponent<TileFSM>());
-                                wrapTile.transform.localScale = origScale;
-                                
-                                wrapTile = tileGrid[0][Row];                                
-                                origScale = wrapTile.transform.localScale;
-                                wrapTile.transform.localScale = Vector3.one;
-                                wrapCopy2 = Instantiate(wrapTile, new Vector3(12f * 1.5f, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
-                                Destroy(wrapCopy2.GetComponent<TileFSM>());
-                                wrapTile.transform.localScale = origScale;
-                                
-                                wrapLatch = true;
-                            }
-                    }
                     
 					// move the row or column 
 				    // with user touch
 					if (foundTile) {
+						float tileS = touchTarget.GetComponent<SpriteRenderer> ().bounds.size.x;
+						/* Debug.Log("spriterenderer" + tileS); */
+						Vector3 origScale;
+						// ******************** MAGIC NUMBER ZONE BEWARE ***********************
+						if(isVert){
+							if(!wrapLatch) {
+								wrapTile = tileGrid[Column][numRows-1];
+								origScale = wrapTile.transform.localScale;
+								wrapTile.transform.localScale = Vector3.one;
+								wrapCopy1 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, 10f * -1.5f, 0), Quaternion.identity, wrapTile.transform);
+								Destroy(wrapCopy1.GetComponent<TileFSM>());
+								wrapTile.transform.localScale = origScale;
+
+								wrapTile = tileGrid[Column][0];
+								origScale = wrapTile.transform.localScale;
+								wrapTile.transform.localScale = Vector3.one;
+								wrapCopy2 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, 12f * 1.5f, 0), Quaternion.identity, wrapTile.transform);
+								Destroy(wrapCopy2.GetComponent<TileFSM>());
+								wrapTile.transform.localScale = origScale;
+
+								wrapLatch = true;
+							}
+						} else {
+							if(!wrapLatch) {
+								wrapTile = tileGrid[numCols-1][Row];                                
+								origScale = wrapTile.transform.localScale;
+								wrapTile.transform.localScale = Vector3.one;
+								wrapCopy1 = Instantiate(wrapTile, new Vector3(10f * -1.5f, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
+								Destroy(wrapCopy1.GetComponent<TileFSM>());
+								wrapTile.transform.localScale = origScale;
+
+								wrapTile = tileGrid[0][Row];                                
+								origScale = wrapTile.transform.localScale;
+								wrapTile.transform.localScale = Vector3.one;
+								wrapCopy2 = Instantiate(wrapTile, new Vector3(12f * 1.5f, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
+								Destroy(wrapCopy2.GetComponent<TileFSM>());
+								wrapTile.transform.localScale = origScale;
+
+								wrapLatch = true;
+							}
+						}
 						// moving horizontal rows:
 						if (!isVert) {
 							for (int c = 0; c < numCols; c++) {
@@ -796,8 +805,8 @@ public class InputState : FSMState
             //called when mouse his held down(moved)
             if (Input.GetMouseButton(0))
             {
-		controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Moved, Input.mousePosition - (Vector3)controlref.lastPos);
-		controlref.lastPos = Input.mousePosition;
+                controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Moved, Input.mousePosition - (Vector3)controlref.lastPos);
+                controlref.lastPos = Input.mousePosition;
             }
             //called when mouse is lifted up(ended)
             if (Input.GetMouseButtonUp(0))
@@ -831,13 +840,13 @@ public class OrderTilesState : FSMState
     {
         if (hasExecuted && controlref.doneSliding())
         {
-                hasExecuted = false;
-		if (controlref.incompleteTouch) {
-			npc.GetComponent<GameMasterFSM>().SetTransition(Transition.Incomplete); //to Input
-		} else {
-			npc.GetComponent<GameMasterFSM>().SetTransition(Transition.TilesDone); //to orderactors
-		}
-	}
+            hasExecuted = false;
+            if (controlref.incompleteTouch) {
+                npc.GetComponent<GameMasterFSM>().SetTransition(Transition.Incomplete); //to Input
+            } else {
+                npc.GetComponent<GameMasterFSM>().SetTransition(Transition.TilesDone); //to orderactors
+            }
+        }
     }
 
     public override void Act(GameObject gm, GameObject npc)

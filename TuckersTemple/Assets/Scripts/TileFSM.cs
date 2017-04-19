@@ -67,19 +67,16 @@ public class TileFSM : MonoBehaviour
     // If it's on wrapping and finished wrap is fired, it changes to idle
     private void MakeFSM()
     {
-        MoveState moving = new MoveState(this);
-        moving.AddTransition(Transition.ReachedGoal, StateID.Idle);
-        moving.AddTransition(Transition.OffGrid, StateID.Wrapping);
 
         IdleState idle = new IdleState(this);
         idle.AddTransition(Transition.UserSwiped, StateID.Follow);
 
-	FollowState follow = new FollowState (this);
-	follow.AddTransition (Transition.FinishedFollow, StateID.Snapping);
+        FollowState follow = new FollowState (this);
+        follow.AddTransition (Transition.FinishedFollow, StateID.Snapping);
 
-	SnappingState snap = new SnappingState(this);
-	snap.AddTransition(Transition.FinishedSnapping, StateID.Idle);
-	snap.AddTransition (Transition.OffGrid, StateID.Wrapping);
+        SnappingState snap = new SnappingState(this);
+        snap.AddTransition(Transition.FinishedSnapping, StateID.Idle);
+        snap.AddTransition (Transition.OffGrid, StateID.Wrapping);
 
         WrapState wrap = new WrapState(this);
         wrap.AddTransition(Transition.FinishedWrap, StateID.Idle);

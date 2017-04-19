@@ -79,6 +79,7 @@ public enum Transition
     NextLevel,
     LevelLoaded,
     DoneJuicing,
+    Incomplete,
     ActorsDone,
     RestartedLevel,//endgamemaster
 
@@ -109,7 +110,6 @@ public enum StateID
     LevelWon,
     LevelDeath,
     Juice,
-    Incomplete,
     OrderActors,//endgamemaster
 }
 
