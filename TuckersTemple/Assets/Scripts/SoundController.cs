@@ -8,6 +8,7 @@ public class SoundController : MonoBehaviour {
 	public AudioSource sfxSource;
 	public AudioSource musicSource;
 	public AudioSource sfxSourceTiles;
+	public AudioSource gameOver;
 
 	public static SoundController instance = null;
 
@@ -56,6 +57,11 @@ public class SoundController : MonoBehaviour {
 
 		//sfxSourceTiles.clip = clip;
 		//sfxSourceTiles.Play ();
+	}
+
+	public void PlaySingleGameOver (AudioClip clip){
+		gameOver.clip = clip;
+		gameOver.Play ();
 	}
 
     // Play single audio clips with delay

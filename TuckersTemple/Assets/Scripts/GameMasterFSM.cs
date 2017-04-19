@@ -56,6 +56,7 @@ public class GameMasterFSM : MonoBehaviour
     public AudioClip TileSlide2;
     public AudioClip nextLevelSound;
     public AudioClip playerdeathSound;
+	public AudioClip gameOverSound;
 
     // private:
     private RaycastHit hit;
@@ -137,6 +138,7 @@ public class GameMasterFSM : MonoBehaviour
     // it reloads the level, but the tiles will be different
     public void reset()
     {
+		SoundController.instance.gameOver.Stop ();
 		deathScreen.SetActive(false);
         attempts++;
 		//check if last level
@@ -194,9 +196,11 @@ public class GameMasterFSM : MonoBehaviour
     // displays death screen:
     public void levelDeath()
     {
+		//SoundController.instance.musicSource.Stop ();
         SoundController.instance.PlaySingle(playerdeathSound);
         turnOffTileColliders();
 		deathScreen.SetActive(true);
+		SoundController.instance.PlaySingleGameOver (gameOverSound);
     }
 
     public void nextLevel()
