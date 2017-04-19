@@ -54,21 +54,23 @@ public enum Transition
     NullTransition = 0,// Use this transition to represent a non-existing transition in your system
     UserSwiped,//tile
     ReachedGoal,
+    FinishedSnapping,
+    FinishedFollow,
     OffGrid,
     FinishedWrap,
-	FinishedSlide,
-	FinishedSetup,//endtile
-	NoMoves,//actor
-	FoundMove,
-	GoalFound,
-	TrapFound,
-	EnemyFound,
+    FinishedSlide,
+    FinishedSetup,//endtile
+    NoMoves,//actor
+    FoundMove,
+    GoalFound,
+    TrapFound,
+    EnemyFound,
     EnemyCollide,
     EnemyCollide1,
-	PathFound,
-	FinishedWalk,
-	FinishedEnter,
-	EnterLevel,//endactor
+    PathFound,
+    FinishedWalk,
+    FinishedEnter,
+    EnterLevel,//endactor
     LevelDone,//gamemaster
     RestartedLevelFromDeath,
     InputReceived,
@@ -78,7 +80,7 @@ public enum Transition
     LevelLoaded,
     DoneJuicing,
     ActorsDone,
-	RestartedLevel,//endgamemaster
+    RestartedLevel,//endgamemaster
 
 }
 
@@ -90,22 +92,24 @@ public enum StateID
 {
     NullStateID = 0, // Use this ID to represent a non-existing State in your system
     Idle,//tile
-    Moving,
+    Follow,
+    Snapping,
     Wrapping,
-	Setup,//endtile
-	IdleA,//actor
-	LookA,
-	TrapDeadA,
-	EnemyDeadA,
-	WalkA,
-	WinA,
-	EnterA,//endactor
+    Setup,//endtile
+    IdleA,//actor
+    LookA,
+    TrapDeadA,
+    EnemyDeadA,
+    WalkA,
+    WinA,
+    EnterA,//endactor
     Ready,//gamemaster
     InitLevel,
     OrderTiles,
     LevelWon,
     LevelDeath,
     Juice,
+    Incomplete,
     OrderActors,//endgamemaster
 }
 
