@@ -213,3 +213,20 @@
 "Close Call" beaten in 3 moves in 0 seconds in 1 attempts.
 "Trap Room" beaten in 6 moves in 0 seconds in 1 attempts.
 "Trapping" beaten in 2 moves in 0 seconds in 1 attempts.
+"Teach Walking" beaten in 3 moves in 0 seconds in 1 attempts.
+"Teach Walking" beaten in 3 moves in 0 seconds in 1 attempts.
+"Walking is Hard" beaten in 3 moves in 0 seconds in 1 attempts.
+"Enemy Appears" beaten in 9 moves in 0 seconds in 3 attempts.
+"Close Call" beaten in 3 moves in 0 seconds in 1 attempts.
+"Teach Walking" beaten in 3 moves in 0 seconds in 1 attempts.
+"Walking is Hard" beaten in 4 moves in 0 seconds in 1 attempts.
+"Enemy Appears" beaten in 9 moves in 0 seconds in 3 attempts.
+"Teach Walking" beaten in 3 moves in 0 seconds in 1 attempts.
+"Walking is Hard" beaten in 4 moves in 0 seconds in 1 attempts.
+"Enemy Appears" beaten in 4 moves in 0 seconds in 1 attempts.
+"Teach Walking" beaten in 3 moves in 0 seconds in 1 attempts.
+"Walking is Hard" beaten in 4 moves in 0 seconds in 1 attempts.
+"Teach Walking" beaten in 3 moves in 0 seconds in 1 attempts.
+"Walking is Hard" beaten in 4 moves in 0 seconds in 1 attempts.
+"Enemy Appears" beaten in 6 moves in 0 seconds in 2 attempts.
+"Close Call" beaten in 5 moves in 0 seconds in 2 attempts.
