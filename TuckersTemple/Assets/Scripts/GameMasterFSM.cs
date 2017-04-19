@@ -35,7 +35,22 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject boundary;
     public List<GameObject> playerChars = new List<GameObject>();
     public Text deathText;
-
+    
+    // touch handle
+    public bool latch = false;
+    public bool isVert = false;
+    public Vector2 offset;
+    public bool swiped;
+    public bool incompleteTouch = false;
+    const int N = 0;
+    const int E = 1;
+    const int S = 2;
+    const int W = 3;
+    public GameObject wrapTile;
+    public GameObject wrapCopy1;
+    public GameObject wrapCopy2;
+    public bool wrapLatch;
+    
     // audio:
     public AudioClip TileSlide1;
     public AudioClip TileSlide2;
@@ -56,6 +71,8 @@ public class GameMasterFSM : MonoBehaviour
     public void Start()
     {
         MakeFSM();
+	wrapLatch = false;
+        tileSize = 0;
     }
 
     public void Update()
@@ -69,13 +86,17 @@ public class GameMasterFSM : MonoBehaviour
     {
         InitState init = new InitState(this);
         init.AddTransition(Transition.LevelLoaded, StateID.Juice);
-
+	
+	LevelJuiceState juice = new LevelJuiceState(this);
+	juice.AddTransition(Transition.DoneJuicing, StateID.Ready);
+	
         InputState ready = new InputState(this);
         ready.AddTransition(Transition.InputReceived, StateID.OrderTiles);
-		ready.AddTransition (Transition.RestartedLevel, StateID.InitLevel);
+	ready.AddTransition (Transition.RestartedLevel, StateID.InitLevel);
 
         OrderTilesState tile = new OrderTilesState(this);
         tile.AddTransition(Transition.TilesDone, StateID.OrderActors);
+	tile.AddTransition (Transition.Incomplete, StateID.Ready);
 
         OrderActorsState actor = new OrderActorsState(this);
         actor.AddTransition(Transition.ActorsDone, StateID.Ready);
@@ -86,10 +107,7 @@ public class GameMasterFSM : MonoBehaviour
         win.AddTransition(Transition.NextLevel, StateID.InitLevel);
 
         LevelDeathState death = new LevelDeathState(this);
-        death.AddTransition(Transition.RestartedLevelFromDeath, StateID.InitLevel);
-
-        LevelJuiceState juice = new LevelJuiceState(this);
-        juice.AddTransition(Transition.DoneJuicing, StateID.Ready);
+	death.AddTransition(Transition.RestartedLevel, StateID.Juice);
 
         fsm = new FSMSystem();
         fsm.AddState(init);
@@ -333,9 +351,11 @@ public class GameMasterFSM : MonoBehaviour
         boundary.transform.position = new Vector3((numCols + 1) * tileSize / 4, (numRows + 1) * tileSize / 4, 0);
     }
 
-    public bool HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase)
+   public bool HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase, Vector3 touchDelta = default(Vector3))
     {
         bool touchSuccess = false;
+		int row = 0;
+		int col = 0;
         switch (touchPhase)
         {
             case TouchPhase.Began:
@@ -345,204 +365,245 @@ public class GameMasterFSM : MonoBehaviour
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Tile")))
                 {
                     touchTarget = hit.collider.gameObject;
+                    Debug.Log(touchTarget);
                 }
                 break;
 
-            case TouchPhase.Moved:
-                break;
+			case TouchPhase.Moved:
+				Vector2 offsetLocal = (Vector2)touchPosition - touchStart;
+				if (Math.Abs(offsetLocal.x) > 10 || Math.Abs(offsetLocal.y) > 10) {
+					if (latch == false) {
+						offset = (Vector2)touchPosition - touchStart;
+						isVert = Mathf.Abs (offset.y) > Mathf.Abs (offset.x);
+						latch = true;
+					}
+					// look for a selected tile and it's row/col
+					bool foundTile = false; 
+					for (int c = 0; c < numCols; c++) {
+						for (int r = 0; r < numRows; r++) {
+							if (tileGrid [c] [r].Equals (touchTarget)) {
+								Row = row = r;
+								Column = col = c;
+								foundTile = true;
+								break;
+							}
+						}
+						if (foundTile) {
+							break;
+						}
+					}
+                      
+                    float tileS = touchTarget.GetComponent<SpriteRenderer> ().bounds.size.x;
+                    /* Debug.Log("spriterenderer" + tileS); */
+                    Vector3 origScale;
+                    // ******************** MAGIC NUMBER ZONE BEWARE ***********************
+                    if(isVert){
+                        if(!wrapLatch) {
+                                wrapTile = tileGrid[Column][numRows-1];
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy1 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, 10f * -1.5f, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy1.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+                                
+                                wrapTile = tileGrid[Column][0];
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy2 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, 12f * 1.5f, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy2.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+                                
+                                wrapLatch = true;
+                            }
+                    } else {
+                        if(!wrapLatch) {
+                                wrapTile = tileGrid[numCols-1][Row];                                
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy1 = Instantiate(wrapTile, new Vector3(10f * -1.5f, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy1.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+                                
+                                wrapTile = tileGrid[0][Row];                                
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy2 = Instantiate(wrapTile, new Vector3(12f * 1.5f, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy2.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+                                
+                                wrapLatch = true;
+                            }
+                    }
+                    
+					// move the row or column 
+				    // with user touch
+					if (foundTile) {
+						// moving horizontal rows:
+						if (!isVert) {
+							for (int c = 0; c < numCols; c++) {
+								tileGrid [c] [row].GetComponent<TileFSM>().goalPos = new Vector2 (tileGrid [c] [row].transform.position.x + touchDelta.x * .02f, 
+																						tileGrid [c] [row].transform.position.y);
+								//Debug.Log (tileGrid [c] [row].GetComponent<TileFSM> ().goalPos);
+							}
+						} 
+						// moving vertical cols:
+						else {
+							for (int r = 0; r < numRows; r++) {
+								tileGrid [col] [r].GetComponent<TileFSM>().goalPos = new Vector2 (tileGrid [col] [r].transform.position.x, 
+																						tileGrid [col] [r].transform.position.y + touchDelta.y * .02f);
+							}
+						}
+					}
+				}
+				break;
+			case TouchPhase.Ended:
+				float swipeDist;
+				float tileSize = tileGrid [0] [0].GetComponent<Renderer> ().bounds.size.x;
+				bool validSwipe;
+                Destroy(wrapCopy1, 1);
+                Destroy(wrapCopy2, 1);
+                wrapLatch = false;
+                
+				Debug.Log (isVert);
+					if (isVert) {
+						swipeDist = (touchPosition.y - touchStart.y) * .02f;
+						if (Mathf.Abs (swipeDist) < tileSize / 2) {
+							validSwipe = false;
+							incompleteTouch = true;
+						} else {
+							validSwipe = true;
+							incompleteTouch = false;
+						}
+						for (int r = 0; r < numRows; r++) {
+							Debug.Log(swipeDist);
+							if (!validSwipe) {
+								tileGrid [Column] [r].GetComponent<TileFSM>().incompleteMove = true;
+							}
+							tileGrid [Column] [r].GetComponent<TileFSM>().touchReleased = true;
+						}
+						if (swipeDist < 0) {
+							Direction = S;
+						} else {
+							Direction = N;
+						}
+					} else {
+						swipeDist = (touchPosition.x - touchStart.x) * .02f;
+						if (Mathf.Abs (swipeDist) < tileSize / 2) {
+							validSwipe = false;
+							incompleteTouch = true;
+						} else {
+							validSwipe = true;
+							incompleteTouch = false;
+						}
+						for (int c = 0; c < numCols; c++) {
+							if (!validSwipe) {
+								tileGrid [c] [Row].GetComponent<TileFSM>().incompleteMove = true;
+							}
+							tileGrid [c] [Row].GetComponent<TileFSM>().touchReleased = true;
+						}
+						if (swipeDist < 0) {
+							Direction = W;
+						} else {
+							Direction = E;
+						}
+					}
+					latch = false;
+					touchSuccess = true;
 
-            case TouchPhase.Ended:
-                touchSuccess = findTouchVector(touchTarget, ((Vector2)touchPosition) - touchStart);
-                break;
+					for(int i = 0; i < 3; ++i){
+						for (int j = 0; j < 3; ++j) {
+							//Debug.Log("Tile: " + i + ", " + j + " released: " + tileGrid[i][j].GetComponent<TileFSM>().touchReleased);
+						}
+					}
+	                break;
 
-            default:
-                break;
+	            default:
+	                break;
         }
         return touchSuccess;
     }
 
-	//called to skip animations
-	public void skipAnimation(){
-		//Level Juicing
-		foreach (GameObject[] a in tileGrid) {
-			foreach (GameObject t in a) {
-				t.transform.position = t.GetComponent<TileFSM>().goalPos;
-			}
-		}
-	}
-
-    public bool findTouchVector(GameObject obj, Vector2 delta)
-    {
-        bool isVert;
-        const int N = 0;
-        const int E = 1;
-        const int S = 2;
-        const int W = 3;
-
-        //check which direction had the greater offset
-        isVert = Mathf.Abs(delta.y) > Mathf.Abs(delta.x);
-        //check if touch vector is large enough to register as a swipe
-        if (isVert)
-        {
-            if (Mathf.Abs(delta.y) < 20)
-            {
-                //print("Touch too short to be swipe (delta: " + delta.y + ").");
-                return false;
-            }
-        }
-        else
-        {
-            if (Mathf.Abs(delta.x) < 20)
-            {
-                //print("Touch too short to be swipe (delta: " + delta.x + ").");
-                return false;
-            }
-        }
-        int dir = -1;
-        //check if it is vertical or horizontal, then if it is positive or negative
-        if (isVert)
-        {
-            dir = N;
-            if (delta.y < 0)
-            {
-                dir = S;
-            }
-        }
-        else
-        {
-            dir = E;
-            if (delta.x < 0)
-            {
-                dir = W;
-            }
-        }
-
-        int row = -1;
-        int col = -1;
-
-        //get row, col from obj
-        //Loop through the tiles until you find the right one
-        //This can probably be optimized
-        bool isSelected = false;
-        for (int c = 0; c < numCols; c++)
-        {
-            for (int r = 0; r < numRows; r++)
-            {
-                if (tileGrid[c][r].Equals(obj))
-                {
-                    row = r;
-                    col = c;
-                    isSelected = true;
-                    break;
-                }
-            }
-        }
-        //Tell the grid to move with the information we now have!
-        // only if a tile is selected
-        //Debug.Log("isselected" + isSelected);
-        if (isSelected == true)
-        {
-            //print("isSelected " + isSelected);
-            moves++;
-            Column = col;
-            Row = row;
-            Direction = dir;
-            return true;
-            //moveGrid(col, row, dir);
-        } else
-        {
-            return false;
-        }
-    }
-
     public void moveGrid(int col, int row, int dir)
     {
-        const int N = 0;
-        const int E = 1;
-        const int S = 2;
-        const int W = 3;
         float tileSize = tileGrid[0][0].GetComponent<Renderer>().bounds.size.x;
-        SoundController.instance.RandomSfxTiles(TileSlide1, TileSlide2);
+        SoundController.instance.RandomSfx(TileSlide1, TileSlide2);
 
         //calculate normal offset vector and move the tiles
         Vector2 offset = new Vector2(0, 0);
         GameObject temp;
-        switch (dir)
-        {
-            /*
-             * What follows is a bunch of suprisingly straightforward 2D array logic.  It will be explained once here instead of in each loop individually
-             * offset = tileSize //Set the offset vector to the appropriate direction based on dir(which we know from the switch)
-             * temp = tilegrid //Save one of the tiles to a temp variable, so we don't lose it when shifting things
-             * for() //Iterate through the designated column or row.  Some of these are negative because thats the direction we have to go
-             *          //note that we stop or start a little early
-             * tilegrid = tilegrid //replace the current index with the next index, in whatever direction we are moving
-             * tilegrid...SlideTo //tell a tile to slide to its new position
-             * }
-             * tilegrid = temp // return temp to its new position
-             * tileGrid...WrapPosition //That temp tile needs to wrap around to the other side, so this is what does it.  Note the positional vector, and how it uses no offsets
-             *                          //This is because we are bad programmers, so currently the world's (0,0) needs to be the bottom left of the tile grid
-             * tileGrid...SlideTo //Tell that last tile to slide
-             * //We did it!  If you have any questions, ask Andrew or Elliot, but they probably don't understand it any more than was written here.
-             * //We sacrificied a few animals to make the numbers work, so don't change them unless you know what you're doing!
-             */
-            case N:
-                offset.y = tileSize;
-                temp = tileGrid[col][numRows - 1];
-                for (int r = numRows - 1; r > 0; r--)
-                {
-                    tileGrid[col][r] = tileGrid[col][r - 1];
-                    tileGrid[col][r].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][r].transform.position.x, offset.y + tileGrid[col][r].transform.position.y);
-                }
-                tileGrid[col][0] = temp;
-                tileGrid[col][0].GetComponent<TileFSM>().offGrid = true;
-                tileGrid[col][0].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][0].transform.position.x, offset.y + tileGrid[col][0].transform.position.y);
-                tileGrid[col][0].GetComponent<TileFSM>().wrapPos = new Vector2(tileSize * col, -tileSize);
-                tileGrid[col][0].GetComponent<TileFSM>().wrapGoalPos = new Vector2(tileSize * col, 0);
+	if (!incompleteTouch) {
+		switch (dir) {
+		/*
+     * What follows is a bunch of suprisingly straightforward 2D array logic.  It will be explained once here instead of in each loop individually
+     * offset = tileSize //Set the offset vector to the appropriate direction based on dir(which we know from the switch)
+     * temp = tilegrid //Save one of the tiles to a temp variable, so we don't lose it when shifting things
+     * for() //Iterate through the designated column or row.  Some of these are negative because thats the direction we have to go
+     *          //note that we stop or start a little early
+     * tilegrid = tilegrid //replace the current index with the next index, in whatever direction we are moving
+     * tilegrid...SlideTo //tell a tile to slide to its new position
+     * }
+     * tilegrid = temp // return temp to its new position
+     * tileGrid...WrapPosition //That temp tile needs to wrap around to the other side, so this is what does it.  Note the positional vector, and how it uses no offsets
+     *                          //This is because we are bad programmers, so currently the world's (0,0) needs to be the bottom left of the tile grid
+     * tileGrid...SlideTo //Tell that last tile to slide
+     * //We did it!  If you have any questions, ask Andrew or Elliot, but they probably don't understand it any more than was written here.
+     * //We sacrificied a few animals to make the numbers work, so don't change them unless you know what you're doing!
+     */
+		case N:
+			offset.y = tileSize;
+			temp = tileGrid [col] [numRows - 1];
+			for (int r = numRows - 1; r > 0; r--) {
+				tileGrid [col] [r] = tileGrid [col] [r - 1];
+				tileGrid [col] [r].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [col] [r].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [col] [r].GetComponent<TileFSM> ().startPos.y);
+			}
+			tileGrid [col] [0] = temp;
+			tileGrid [col] [0].GetComponent<TileFSM> ().offGrid = true;
+			tileGrid [col] [0].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [col] [0].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [col] [0].GetComponent<TileFSM> ().startPos.y);
+			tileGrid [col] [0].GetComponent<TileFSM> ().wrapPos = new Vector2 (tileSize * col, -tileSize);
+			tileGrid [col] [0].GetComponent<TileFSM> ().wrapGoalPos = new Vector2 (tileSize * col, 0);
 
-                break;
-            case S:
-                offset.y = -tileSize;
-                temp = tileGrid[col][0];
-                for (int r = 0; r < numRows - 1; r++)
-                {
-                    tileGrid[col][r] = tileGrid[col][r + 1];
-                    tileGrid[col][r].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][r].transform.position.x, offset.y + tileGrid[col][r].transform.position.y);
-                }
-                tileGrid[col][numRows - 1] = temp;
-                tileGrid[col][numRows - 1].GetComponent<TileFSM>().offGrid = true;
-                tileGrid[col][numRows - 1].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[col][numRows - 1].transform.position.x, offset.y + tileGrid[col][numRows - 1].transform.position.y);
-                tileGrid[col][numRows - 1].GetComponent<TileFSM>().wrapPos = new Vector2(tileSize * col, numRows * tileSize);
-                tileGrid[col][numRows - 1].GetComponent<TileFSM>().wrapGoalPos = new Vector2(tileSize * col, (numRows - 1) * tileSize);
-                break;
-            case E:
-                offset.x = tileSize;
-                temp = tileGrid[numCols - 1][row];
-                for (int c = numCols - 1; c > 0; c--)
-                {
-                    tileGrid[c][row] = tileGrid[c - 1][row];
-                    tileGrid[c][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[c][row].transform.position.x, offset.y + tileGrid[c][row].transform.position.y);
-                }
-                tileGrid[0][row] = temp;
-                tileGrid[0][row].GetComponent<TileFSM>().offGrid = true;
-                tileGrid[0][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[0][row].transform.position.x, offset.y + tileGrid[0][row].transform.position.y);
-                tileGrid[0][row].GetComponent<TileFSM>().wrapPos = new Vector2(-tileSize, tileSize * row);
-                tileGrid[0][row].GetComponent<TileFSM>().wrapGoalPos = new Vector2(0, tileSize * row);
-                break;
-            case W:
-                offset.x = -tileSize;
-                temp = tileGrid[0][row];
-                for (int c = 0; c < numCols - 1; c++)
-                {
-                    tileGrid[c][row] = tileGrid[c + 1][row];
-                    tileGrid[c][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[c][row].transform.position.x, offset.y + tileGrid[c][row].transform.position.y);
-                }
-                tileGrid[numCols - 1][row] = temp;
-                tileGrid[numCols - 1][row].GetComponent<TileFSM>().offGrid = true;
-                tileGrid[numCols - 1][row].GetComponent<TileFSM>().goalPos = new Vector2(offset.x + tileGrid[numCols - 1][row].transform.position.x, offset.y + tileGrid[numCols - 1][row].transform.position.y);
-                tileGrid[numCols - 1][row].GetComponent<TileFSM>().wrapPos = new Vector2(numCols * tileSize, row * tileSize);
-                tileGrid[numCols - 1][row].GetComponent<TileFSM>().wrapGoalPos = new Vector2((numCols - 1) * tileSize, row * tileSize);
-                break;
-        }
+			break;
+		case S:
+			offset.y = -tileSize;
+			temp = tileGrid [col] [0];
+			for (int r = 0; r < numRows - 1; r++) {
+				tileGrid [col] [r] = tileGrid [col] [r + 1];
+				tileGrid [col] [r].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [col] [r].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [col] [r].GetComponent<TileFSM> ().startPos.y);
+			}
+			tileGrid [col] [numRows - 1] = temp;
+			tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().offGrid = true;
+			tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().startPos.y);
+			tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().wrapPos = new Vector2 (tileSize * col, numRows * tileSize);
+			tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().wrapGoalPos = new Vector2 (tileSize * col, (numRows - 1) * tileSize);
+			break;
+		case E:
+			offset.x = tileSize;
+			temp = tileGrid [numCols - 1] [row];
+			for (int c = numCols - 1; c > 0; c--) {
+				tileGrid [c] [row] = tileGrid [c - 1] [row];
+				tileGrid [c] [row].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [c] [row].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [c] [row].GetComponent<TileFSM> ().startPos.y);
+			}
+			tileGrid [0] [row] = temp;
+			tileGrid [0] [row].GetComponent<TileFSM> ().offGrid = true;
+			tileGrid [0] [row].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [0] [row].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [0] [row].GetComponent<TileFSM> ().startPos.y);
+			tileGrid [0] [row].GetComponent<TileFSM> ().wrapPos = new Vector2 (-tileSize, tileSize * row);
+			tileGrid [0] [row].GetComponent<TileFSM> ().wrapGoalPos = new Vector2 (0, tileSize * row);
+			break;
+		case W:
+			offset.x = -tileSize;
+			temp = tileGrid [0] [row];
+			for (int c = 0; c < numCols - 1; c++) {
+				tileGrid [c] [row] = tileGrid [c + 1] [row];
+				tileGrid [c] [row].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [c] [row].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [c] [row].GetComponent<TileFSM> ().startPos.y);
+			}
+			tileGrid [numCols - 1] [row] = temp;
+			tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().offGrid = true;
+			tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [numCols - 1] [row].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().startPos.y);
+			tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().wrapPos = new Vector2 (numCols * tileSize, row * tileSize);
+			tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().wrapGoalPos = new Vector2 ((numCols - 1) * tileSize, row * tileSize);
+			break;
+		}
+	}
     }
 
     public bool doneSliding()
@@ -704,18 +765,17 @@ public class LevelJuiceState : FSMState
 public class InputState : FSMState
 {
     public GameMasterFSM controlref;
-    private bool swiped;
 
     public InputState(GameMasterFSM control)
     {
         stateID = StateID.Ready;
         controlref = control;
-        swiped = false;
+        controlref.swiped = false;
     }
 
     public override void Reason(GameObject gm, GameObject npc)
     {
-        if (swiped)
+        if (controlref.swiped)
         {
             npc.GetComponent<GameMasterFSM>().SetTransition(Transition.InputReceived); //to Look
         }
@@ -723,7 +783,7 @@ public class InputState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
-        swiped = false;
+        controlref.swiped = false;
         if (Input.touchCount == 0)
         {
             //Calls when mouse is first pressed(begin)
@@ -736,20 +796,20 @@ public class InputState : FSMState
             //called when mouse his held down(moved)
             if (Input.GetMouseButton(0))
             {
-
+		controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Moved, Input.mousePosition - (Vector3)controlref.lastPos);
+		controlref.lastPos = Input.mousePosition;
             }
             //called when mouse is lifted up(ended)
             if (Input.GetMouseButtonUp(0))
             {
-                swiped = controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Ended);
-                //Debug.Log(swiped);
+                 controlref.swiped = controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Ended);
             }
         }
         else
         {
             //use the first touch registered
             Touch touch = Input.touches[0];
-            swiped = controlref.HandleTouch(touch.fingerId, touch.position, touch.phase);
+            controlref.swiped = controlref.HandleTouch(touch.fingerId, touch.position, touch.phase, touch.deltaPosition);
         }
     }
 
@@ -771,9 +831,13 @@ public class OrderTilesState : FSMState
     {
         if (hasExecuted && controlref.doneSliding())
         {
-            hasExecuted = false;
-            npc.GetComponent<GameMasterFSM>().SetTransition(Transition.TilesDone); //to Look
-        }
+                hasExecuted = false;
+		if (controlref.incompleteTouch) {
+			npc.GetComponent<GameMasterFSM>().SetTransition(Transition.Incomplete); //to Input
+		} else {
+			npc.GetComponent<GameMasterFSM>().SetTransition(Transition.TilesDone); //to orderactors
+		}
+	}
     }
 
     public override void Act(GameObject gm, GameObject npc)
