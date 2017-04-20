@@ -80,6 +80,7 @@ public enum Transition
     ActorsDone,
 	RestartedLevel,//endgamemaster
 	SecondMove,
+	RunOver,
 }
 
 /// <summary>

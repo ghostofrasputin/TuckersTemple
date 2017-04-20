@@ -47,6 +47,7 @@ public class ActorFSM : MonoBehaviour
         IdleAState idle = new IdleAState(this);
         idle.AddTransition(Transition.FoundMove, StateID.LookA);
 		idle.AddTransition (Transition.EnterLevel, StateID.EnterA);
+		idle.AddTransition (Transition.RunOver, StateID.EnemyDeadA);
 
         LookAState look = new LookAState(this);
         look.AddTransition(Transition.EnemyFound, StateID.EnemyDeadA);
@@ -161,7 +162,21 @@ public class IdleAState : FSMState
 
 	public override void Reason(GameObject gm, GameObject npc)
 	{
-        if (controlref.doneSlide)
+		if (gm.GetComponent<GameMasterFSM>().sameTileCollide())
+		{
+			int msg = UnityEngine.Random.Range(0, 2);
+			switch (msg)
+			{
+			case 0:
+				gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " was swallowed by shadows.";
+				break;
+			case 1:
+				gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " let the darkness consume them.";
+				break;
+			}
+			npc.GetComponent<ActorFSM>().SetTransition(Transition.RunOver); //to enemyDead
+		}
+        else if (controlref.doneSlide)
         {
             int temp = controlref.findNextMove(controlref.direction);//if -1, direction does not change and state stays idle, else update direction
             if (temp >= 0)//-1 means no move found
