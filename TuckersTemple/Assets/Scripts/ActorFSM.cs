@@ -19,6 +19,8 @@ public class ActorFSM : MonoBehaviour
     public Sprite leftSprite;
     public String actorName;
 	public int visitedWalk = 0;
+	public String enemyDeath = "";
+	public String trapDeath = "";
 
     // audio:
     public AudioClip playerfootsteps1;
@@ -33,6 +35,32 @@ public class ActorFSM : MonoBehaviour
         goalPos = transform.position;
         sr = GetComponent<SpriteRenderer>();
         MakeFSM();
+		int msg = UnityEngine.Random.Range(0, 2);
+		switch (msg)
+		{
+		case 0:
+			enemyDeath = actorName + " was swallowed by shadows.";
+			break;
+		case 1:
+			enemyDeath = actorName + " let the darkness consume them.";
+			break;
+		}
+		msg = UnityEngine.Random.Range(0,4);
+		switch (msg)
+		{
+		case 0:
+			trapDeath = actorName + " activated a trap card.";
+			break;
+		case 1:
+			trapDeath = actorName + " spontaneously combusted.";
+			break;
+		case 2:
+			trapDeath = actorName + " did not stop, drop, and roll.";
+			break;
+		case 3:
+			trapDeath = actorName + " forgot to turn off the oven.";
+			break;
+		}
     }
 
     public void Update()
@@ -164,16 +192,7 @@ public class IdleAState : FSMState
 	{
 		if (gm.GetComponent<GameMasterFSM>().sameTileCollide())
 		{
-			int msg = UnityEngine.Random.Range(0, 2);
-			switch (msg)
-			{
-			case 0:
-				gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " was swallowed by shadows.";
-				break;
-			case 1:
-				gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " let the darkness consume them.";
-				break;
-			}
+			gm.GetComponent<GameMasterFSM> ().deathText.text = controlref.enemyDeath;
 			npc.GetComponent<ActorFSM>().SetTransition(Transition.RunOver); //to enemyDead
 		}
         else if (controlref.doneSlide)
@@ -219,22 +238,7 @@ public class LookAState : FSMState
 			//Debug.Log ("Found something.");
             if(ray.collider.tag == "Trap")//both enemy and player
             {
-                int msg = UnityEngine.Random.Range(0,4);
-                switch (msg)
-                {
-                    case 0:
-                        gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " activated a trap card.";
-                        break;
-                    case 1:
-                        gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " spontaneously combusted.";
-                        break;
-                    case 2:
-                        gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " did not stop, drop, and roll.";
-                        break;
-                    case 3:
-                        gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " forgot to turn off the oven.";
-                        break;
-                }
+				gm.GetComponent<GameMasterFSM>().deathText.text = controlref.trapDeath;
                 npc.GetComponent<ActorFSM>().SetTransition(Transition.TrapFound); //to trapDeath
                 return;
             }
@@ -245,16 +249,7 @@ public class LookAState : FSMState
 						npc.GetComponent<ActorFSM> ().SetTransition (Transition.EnemyFound);
 					} else {
 						//Debug.Log ("Found an enemy.");
-						int msg = UnityEngine.Random.Range(0, 2);
-						switch (msg)
-						{
-						case 0:
-							gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " was swallowed by shadows.";
-							break;
-						case 1:
-							gm.GetComponent<GameMasterFSM>().deathText.text = controlref.actorName + " let the darkness consume them.";
-							break;
-						}
+						gm.GetComponent<GameMasterFSM>().deathText.text = controlref.enemyDeath;
 						int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;
 						switch (controlref.direction)
 						{
