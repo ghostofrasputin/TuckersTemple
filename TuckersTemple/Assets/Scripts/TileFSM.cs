@@ -41,8 +41,9 @@ public class TileFSM : MonoBehaviour
     public void Start()
     {
 	gm = GameObject.FindGameObjectWithTag ("GameController").gameObject;
-        goalPos = transform.position;
-	if (goalPos.y/GetComponent<SpriteRenderer>().bounds.size.y % 2 == 0) {
+    goalPos = transform.position;
+	tileSize = gm.GetComponent<GameMasterFSM>().tileSize;
+	if (goalPos.y/tileSize % 2 == 0) {
 		transform.position = new Vector2 (goalPos.x - 3, goalPos.y);
 	} else {
 		transform.position = new Vector2 (goalPos.x + 3, goalPos.y);
@@ -50,7 +51,7 @@ public class TileFSM : MonoBehaviour
         incompleteMove = false;
         offGrid = false;
 	touchReleased = false;
-	tileSize = gameObject.GetComponent<Renderer> ().bounds.size.x;
+
         MakeFSM();
     }
 

@@ -35,6 +35,8 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject boundary;
     public List<GameObject> playerChars = new List<GameObject>();
     public Text deathText;
+	public GameObject RootTile;
+	public float gridScale = 0.25f;
     
     // touch handle
     public bool latch = false;
@@ -72,8 +74,10 @@ public class GameMasterFSM : MonoBehaviour
     public void Start()
     {
         MakeFSM();
-	wrapLatch = false;
-        tileSize = 0;
+		wrapLatch = false;
+		tileSize = Tile.GetComponent<SpriteRenderer>().bounds.size.x * gridScale;
+		RootTile = GameObject.Find ("Tiles").gameObject;
+		RootTile.transform.localScale = new Vector3(gridScale, gridScale, 1f);
     }
 
     public void Update()
@@ -270,7 +274,7 @@ public class GameMasterFSM : MonoBehaviour
         Dictionary<string, List<int>> staticObjectInfo = currentLevel.StaticObjects;
 
         // Create the Tile Grid:
-        tileSize = Tile.GetComponent<Renderer>().bounds.size.x; //get the size of the tile (1.6)
+        //tileSize = Tile.GetComponent<Renderer>().bounds.size.x * gridScale; //get the size of the tile (1.6)
                                                                 //initialize the first array
         tileGrid = new GameObject[numCols][];
         //iterate through columns
@@ -284,7 +288,7 @@ public class GameMasterFSM : MonoBehaviour
                 List<string> row = tileInfo[numRows - r - 1];
                 string currentTileType = row[c];
                 //instantiate a tile at the proper grid position
-                tileGrid[c][r] = Instantiate(Tile, new Vector3(c * tileSize, r * tileSize, 0), Quaternion.identity);
+                tileGrid[c][r] = Instantiate(Tile, new Vector3(c * tileSize, r * tileSize, 0), Quaternion.identity, RootTile.transform);
                 tiles.Add(tileGrid[c][r]);
                 // pass the tile object the type indicator string where it will
                 // create a tile based on that string
@@ -410,7 +414,7 @@ public class GameMasterFSM : MonoBehaviour
 					// move the row or column 
 				    // with user touch
 					if (foundTile) {
-						float tileS = touchTarget.GetComponent<SpriteRenderer> ().bounds.size.x;
+						float tileS = touchTarget.GetComponent<SpriteRenderer> ().bounds.size.x * gridScale;
 						/* Debug.Log("spriterenderer" + tileS); */
 						Vector3 origScale;
 						// ******************** MAGIC NUMBER ZONE BEWARE ***********************
@@ -419,14 +423,14 @@ public class GameMasterFSM : MonoBehaviour
 								wrapTile = tileGrid[Column][numRows-1];
 								origScale = wrapTile.transform.localScale;
 								wrapTile.transform.localScale = Vector3.one;
-								wrapCopy1 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, 10f * -1.5f, 0), Quaternion.identity, wrapTile.transform);
+								wrapCopy1 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, -tileSize, 0), Quaternion.identity, wrapTile.transform);
 								Destroy(wrapCopy1.GetComponent<TileFSM>());
 								wrapTile.transform.localScale = origScale;
 
 								wrapTile = tileGrid[Column][0];
 								origScale = wrapTile.transform.localScale;
 								wrapTile.transform.localScale = Vector3.one;
-								wrapCopy2 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, 12f * 1.5f, 0), Quaternion.identity, wrapTile.transform);
+								wrapCopy2 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, tileSize * numRows, 0), Quaternion.identity, wrapTile.transform);
 								Destroy(wrapCopy2.GetComponent<TileFSM>());
 								wrapTile.transform.localScale = origScale;
 
@@ -437,14 +441,14 @@ public class GameMasterFSM : MonoBehaviour
 								wrapTile = tileGrid[numCols-1][Row];                                
 								origScale = wrapTile.transform.localScale;
 								wrapTile.transform.localScale = Vector3.one;
-								wrapCopy1 = Instantiate(wrapTile, new Vector3(10f * -1.5f, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
+								wrapCopy1 = Instantiate(wrapTile, new Vector3(-tileSize, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
 								Destroy(wrapCopy1.GetComponent<TileFSM>());
 								wrapTile.transform.localScale = origScale;
 
 								wrapTile = tileGrid[0][Row];                                
 								origScale = wrapTile.transform.localScale;
 								wrapTile.transform.localScale = Vector3.one;
-								wrapCopy2 = Instantiate(wrapTile, new Vector3(12f * 1.5f, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
+							wrapCopy2 = Instantiate(wrapTile, new Vector3(tileSize * numCols, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
 								Destroy(wrapCopy2.GetComponent<TileFSM>());
 								wrapTile.transform.localScale = origScale;
 
@@ -471,7 +475,7 @@ public class GameMasterFSM : MonoBehaviour
 				break;
 			case TouchPhase.Ended:
 				float swipeDist;
-				float tileSize = tileGrid [0] [0].GetComponent<Renderer> ().bounds.size.x;
+				//float tileSize = tileGrid [0] [0].GetComponent<Renderer> ().bounds.size.x * gridScale;
 				bool validSwipe;
                 Destroy(wrapCopy1, 1);
                 Destroy(wrapCopy2, 1);
@@ -538,7 +542,7 @@ public class GameMasterFSM : MonoBehaviour
 
     public void moveGrid(int col, int row, int dir)
     {
-        float tileSize = tileGrid[0][0].GetComponent<Renderer>().bounds.size.x;
+        //float tileSize = tileGrid[0][0].GetComponent<Renderer>().bounds.size.x * gridScale;
         SoundController.instance.RandomSfx(TileSlide1, TileSlide2);
 
         //calculate normal offset vector and move the tiles
