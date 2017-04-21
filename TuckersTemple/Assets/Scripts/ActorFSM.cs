@@ -41,6 +41,29 @@ public class ActorFSM : MonoBehaviour
         fsm.CurrentState.Act(gm, gameObject);
     }
 
+    public void setDirection(int dir)
+    {
+        direction = dir;
+        sr = GetComponent<SpriteRenderer>();
+        switch (direction)
+        {
+            case 0:
+                sr.sprite = upSprite;
+                break;
+            case 1:
+                sr.sprite = rightSprite;
+                break;
+            case 2:
+                sr.sprite = downSprite;
+                break;
+            case 3:
+                sr.sprite = leftSprite;
+                break;
+            default:
+                break;
+        }
+    }
+
     private void MakeFSM()
     {
         IdleAState idle = new IdleAState(this);
@@ -117,7 +140,7 @@ public class ActorFSM : MonoBehaviour
     public void walk()
     {
         //decide where to move and call WalkTo based on direction
-        float walkDistance = GetComponentInParent<TileFSM>().GetComponent<Renderer>().bounds.size.x;
+        float walkDistance = gm.GetComponent<GameMasterFSM>().tileSize;
         switch (direction)
         {
             case 0:

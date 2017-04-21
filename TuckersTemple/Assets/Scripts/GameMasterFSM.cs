@@ -112,7 +112,7 @@ public class GameMasterFSM : MonoBehaviour
         win.AddTransition(Transition.NextLevel, StateID.InitLevel);
 
         LevelDeathState death = new LevelDeathState(this);
-        death.AddTransition(Transition.RestartedLevel, StateID.Juice);
+        death.AddTransition(Transition.RestartedLevelFromDeath, StateID.InitLevel);
 
         fsm = new FSMSystem();
         fsm.AddState(init);
@@ -124,10 +124,10 @@ public class GameMasterFSM : MonoBehaviour
         fsm.AddState(juice);
     }
 
-    public GameObject spawnActor(GameObject actor, int x, int y, int direction)
+    public GameObject spawnActor(GameObject actor, int x, int y, int dir)
     {
         GameObject newActor = Instantiate(actor, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y, tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
-        //newActor.GetComponent<Actor>().setDirection(direction);
+        newActor.GetComponent<ActorFSM>().setDirection(dir);
         return newActor;
     }
 
