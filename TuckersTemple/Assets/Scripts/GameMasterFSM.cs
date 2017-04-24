@@ -175,6 +175,22 @@ public class GameMasterFSM : MonoBehaviour
         {
             Debug.Log(error);
         }
+        //setting Stars for level
+        if (moves >= 4)
+        {
+            GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setStars(currentLevel - 1, 1);
+            GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+
+        }
+        else
+        {
+            GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setStars(currentLevel - 1, 2);
+            GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+            GameObject.Find("Star2").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        }
+        print("Num of Moves : " + moves);
+        print(GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getStars(currentLevel - 1));
+
         turnOffTileColliders();
         winScreen.GetComponent<InGameMenuManager>().playAnim("winEnter");
         ticking = false;
@@ -550,7 +566,11 @@ public class GameMasterFSM : MonoBehaviour
         //calculate normal offset vector and move the tiles
         Vector2 offset = new Vector2(0, 0);
         GameObject temp;
-	if (!incompleteTouch) {
+        //Camera Shake
+        GameObject.Find("Main Camera").GetComponent<ScreenShake>().startShaking();
+        //haptics
+        Handheld.Vibrate();
+        if (!incompleteTouch) {
 		switch (dir) {
 		/*
      * What follows is a bunch of suprisingly straightforward 2D array logic.  It will be explained once here instead of in each loop individually
@@ -623,6 +643,7 @@ public class GameMasterFSM : MonoBehaviour
 			break;
 		}
 	}
+        moves++;
     }
 
     public bool doneSliding()
@@ -778,7 +799,12 @@ public class LevelJuiceState : FSMState
     {
 
     }
-
+    public override void DoBeforeLeaving()
+    {
+        GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+        GameObject.Find("Star2").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+        GameObject.Find("Star3").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+    }
 } // LevelJuiceState
 
 public class InputState : FSMState
