@@ -65,6 +65,7 @@ public enum Transition
 	EnemyFound,
     EnemyCollide,
     EnemyCollide1,
+	LaserCollide,
 	PathFound,
 	FinishedWalk,
 	FinishedEnter,
@@ -73,6 +74,7 @@ public enum Transition
     RestartedLevelFromDeath,
     InputReceived,
     ActorDied,
+	ActorDiedInInput,
     TilesDone,
     NextLevel,
     LevelLoaded,
@@ -97,6 +99,7 @@ public enum StateID
 	LookA,
 	TrapDeadA,
 	EnemyDeadA,
+	LaserDeadA,
 	WalkA,
 	WinA,
 	EnterA,//endactor

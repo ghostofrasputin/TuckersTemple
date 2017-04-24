@@ -75,6 +75,7 @@ public class GameMasterFSM : MonoBehaviour
         InputState ready = new InputState(this);
         ready.AddTransition(Transition.InputReceived, StateID.OrderTiles);
 		ready.AddTransition (Transition.RestartedLevel, StateID.InitLevel);
+		ready.AddTransition (Transition.ActorDiedInInput, StateID.LevelDeath);
 
         OrderTilesState tile = new OrderTilesState(this);
         tile.AddTransition(Transition.TilesDone, StateID.OrderActors);
@@ -232,6 +233,7 @@ public class GameMasterFSM : MonoBehaviour
         enemies.Clear();
         characters.Clear();
         tiles.Clear();
+		lasers.Clear ();
         tileGrid = new GameObject[numCols][];
         generateLevel(level);
         Destroy(boundary);
@@ -331,9 +333,11 @@ public class GameMasterFSM : MonoBehaviour
 			if (key.Equals ("laser")) {
 				int x = value [0];
 				int y = value [1];
-				float offset = Tile.GetComponent<SpriteRenderer> ().bounds.size.x / 3;
-				lasers.Add(Instantiate(Laser, new Vector3(tileGrid[x][y].transform.position.x - offset, tileGrid[x][y].transform.position.y,
-					tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform));
+				float offset = tileSize / 3;
+				GameObject las = Instantiate(Laser, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y,
+					tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
+				lasers.Add (las);
+				las.GetComponent<LaserScript> ().setDir (value [2], offset);
 			}
         }
         //Add in outer walls to the grid
@@ -606,7 +610,8 @@ public class GameMasterFSM : MonoBehaviour
     {
         foreach (GameObject character in characters)
         {
-            if (character.GetComponent<ActorFSM>().fsm.CurrentStateID == StateID.EnemyDeadA || character.GetComponent<ActorFSM>().fsm.CurrentStateID == StateID.TrapDeadA)
+			StateID currState = character.GetComponent<ActorFSM> ().fsm.CurrentStateID;
+            if (currState == StateID.EnemyDeadA || currState == StateID.TrapDeadA || currState == StateID.LaserDeadA)
             {
                 return true;
             }
@@ -733,6 +738,10 @@ public class InputState : FSMState
 
     public override void Reason(GameObject gm, GameObject npc)
     {
+		if (controlref.characterDied())
+		{
+			npc.GetComponent<GameMasterFSM>().SetTransition(Transition.ActorDiedInInput); //to leveldeath
+		}
         if (swiped)
         {
             npc.GetComponent<GameMasterFSM>().SetTransition(Transition.InputReceived); //to Look
@@ -809,15 +818,6 @@ public class OrderTilesState : FSMState
 		}
 	}
 
-	public override void DoBeforeLeaving ()
-	{
-		foreach (GameObject child in controlref.lasers) {
-			if (child.tag == "Laser") {
-				child.GetComponent<LaserScript> ().setEye (true);
-			}
-		}
-	}
-
 } // OrderTilesState
 
 public class OrderActorsState : FSMState
@@ -862,6 +862,15 @@ public class OrderActorsState : FSMState
     public override void Act(GameObject gm, GameObject npc)
     {
     }
+
+	public override void DoBeforeLeaving ()
+	{
+		foreach (GameObject child in controlref.lasers) {
+			if (child.tag == "Laser") {
+				child.GetComponent<LaserScript> ().setEye (true);
+			}
+		}
+	}
 
 } // OrderActorsState
 

@@ -46,6 +46,7 @@ public class ActorFSM : MonoBehaviour
         IdleAState idle = new IdleAState(this);
         idle.AddTransition(Transition.FoundMove, StateID.LookA);
 		idle.AddTransition (Transition.EnterLevel, StateID.EnterA);
+		idle.AddTransition (Transition.LaserCollide, StateID.LaserDeadA);
 
         LookAState look = new LookAState(this);
         look.AddTransition(Transition.EnemyFound, StateID.EnemyDeadA);
@@ -64,6 +65,8 @@ public class ActorFSM : MonoBehaviour
 
         EnemyDeadAState enemy = new EnemyDeadAState(this);
 
+		LaserDeadAState laser = new LaserDeadAState (this);
+
 		EnterState enter = new EnterState (this);
 		enter.AddTransition (Transition.FinishedEnter, StateID.IdleA);
 
@@ -75,6 +78,7 @@ public class ActorFSM : MonoBehaviour
         fsm.AddState(win);
         fsm.AddState(trap);
         fsm.AddState(enemy);
+		fsm.AddState(laser);
     }
 
     public void destroyObj()
@@ -145,6 +149,17 @@ public class ActorFSM : MonoBehaviour
     {
         goalPos = new Vector2(pos.x + transform.position.x, pos.y + transform.position.y);
     }
+
+	public void setDeathText(string cause){
+		int msg = UnityEngine.Random.Range(0,0);
+		switch (msg)
+		{
+		case 0:
+			gm.GetComponent<GameMasterFSM>().deathText.text = actorName + " walked into a laser.";
+			break;
+		}
+	}
+
 }
 
 public class IdleAState : FSMState
@@ -173,6 +188,21 @@ public class IdleAState : FSMState
                 controlref.doneSlide = false;
             }
         }
+		List<GameObject> lasers = gm.GetComponent<GameMasterFSM> ().lasers;
+		if (lasers.Count > 0) {
+			foreach (GameObject laser in lasers) {
+				RaycastHit2D[] actorRay = laser.GetComponent<LaserScript>().actorRay;
+				if (actorRay != null) {
+					foreach (RaycastHit2D actorHit in actorRay) {
+						if (actorHit.transform.Equals (npc.transform)) {
+							npc.GetComponent<ActorFSM> ().SetTransition (Transition.LaserCollide);
+							npc.GetComponent<ActorFSM> ().setDeathText ("laser");
+							return;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public override void Act(GameObject gm, GameObject npc)
@@ -429,6 +459,39 @@ public class EnemyDeadAState : FSMState
         }
     }
 } // EnemyDeadState
+
+public class LaserDeadAState : FSMState
+{
+	ActorFSM controlref;
+
+	public LaserDeadAState(ActorFSM control)
+	{
+		stateID = StateID.LaserDeadA;
+		controlref = control;
+	}
+
+	public override void Reason(GameObject gm, GameObject npc)
+	{
+
+	}
+
+	public override void Act(GameObject gm, GameObject npc)
+	{
+		if (npc.tag == "Player")
+		{
+			//gm.GetComponent<GameMasterFSM>().characters.Remove(npc);
+			//gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
+			//controlref.destroyObj();
+			controlref.sr.enabled = false;
+		}
+		else if (npc.tag == "Enemy")
+		{
+			//gm.GetComponent<GameMasterFSM>().enemies.Remove(npc);
+			//gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
+			//controlref.destroyObj();
+		}
+	}
+} // LaserDeadAState
 
 public class EnterState : FSMState
 {
