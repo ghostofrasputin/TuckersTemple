@@ -275,9 +275,11 @@ public class GameMasterFSM : MonoBehaviour
         Dictionary<string, List<int>> actorInfo = currentLevel.Actors;
         Dictionary<string, List<int>> staticObjectInfo = currentLevel.StaticObjects;
 
-        // Create the Tile Grid:
-        //tileSize = Tile.GetComponent<Renderer>().bounds.size.x * gridScale; //get the size of the tile (1.6)
-                                                                //initialize the first array
+		//change scale/tileSize
+		float tempGridScale = gridScale * 3f/numCols;
+		tileSize = Tile.GetComponent<SpriteRenderer>().bounds.size.x * tempGridScale;
+		RootTile.transform.localScale = new Vector3(tempGridScale, tempGridScale, 1f);
+
         tileGrid = new GameObject[numCols][];
         //iterate through columns
         for (int c = 0; c < numCols; c++)
