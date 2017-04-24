@@ -70,7 +70,9 @@ public enum Transition
     PathFound,
     FinishedWalk,
     FinishedEnter,
-    EnterLevel,//endactor
+    EnterLevel,
+	SecondMove,
+	IdleDeath,//endactor
     LevelDone,//gamemaster
     RestartedLevelFromDeath,
     InputReceived,
@@ -82,7 +84,7 @@ public enum Transition
     Incomplete,
     ActorsDone,
     RestartedLevel,//endgamemaster
-
+	
 }
 
 /// <summary>
