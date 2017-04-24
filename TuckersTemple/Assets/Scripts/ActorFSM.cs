@@ -216,7 +216,7 @@ public class IdleAState : FSMState
 		if (gm.GetComponent<GameMasterFSM>().sameTileCollide())
 		{
 			gm.GetComponent<GameMasterFSM> ().deathText.text = controlref.enemyDeath;
-			npc.GetComponent<ActorFSM>().SetTransition(Transition.RunOver); //to enemyDead
+			npc.GetComponent<ActorFSM>().SetTransition(Transition.IdleDeath); //to enemyDead
 		}
         else if (controlref.doneSlide)
         {
@@ -292,7 +292,6 @@ public class LookAState : FSMState
                                 	break;
                             	}
                     	}
-                	}
 				}	
                 else if (ray.collider.tag == "Goal")
                 {

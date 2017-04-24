@@ -37,6 +37,7 @@ public class GameMasterFSM : MonoBehaviour
     public Text deathText;
 	public GameObject RootTile;
 	public float gridScale = 0.25f;
+	public GameObject TutorialButton;
     
     // touch handle
     public bool latch = false;
@@ -214,6 +215,7 @@ public class GameMasterFSM : MonoBehaviour
         ticking = true;
         SoundController.instance.PlaySingle(nextLevelSound);
         GetComponent<GameMasterFSM>().SetTransition(Transition.NextLevel); //to ready
+		TutorialButton.SetActive(false);
     }
 
     public void turnOffTileColliders()
