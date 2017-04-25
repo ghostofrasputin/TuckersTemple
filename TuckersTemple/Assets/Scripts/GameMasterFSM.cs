@@ -11,8 +11,10 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject outerWall;
     public GameObject Tile; //The tile prefab to spawn in
     public GameObject Character;
+    public GameObject Emily;
     public GameObject Trap;
     public GameObject Enemy;
+    public GameObject Wraith;
     public GameObject Goal;
     public FSMSystem fsm;
     public Vector2 lastPos = new Vector2(0, 0); //holds the last position for mouse input to calculate deltaPosition
@@ -311,7 +313,7 @@ public class GameMasterFSM : MonoBehaviour
             }
             if (key.Equals("emily"))
             {
-                GameObject emily = spawnActor(Character, value[0], value[1], value[2]);
+                GameObject emily = spawnActor(Emily, value[0], value[1], value[2]);
                 actors.Add(emily);
                 characters.Add(emily);
             }
@@ -332,6 +334,12 @@ public class GameMasterFSM : MonoBehaviour
                 GameObject shadow = spawnActor(Enemy, value[0], value[1], value[2]);
                 actors.Add(shadow);
                 enemies.Add(shadow);
+            }
+            if (key.Contains("wraith"))
+            {
+                GameObject wraith = spawnActor(Wraith, value[0], value[1], value[2]);
+                actors.Add(wraith);
+                enemies.Add(wraith);
             }
         }
 
