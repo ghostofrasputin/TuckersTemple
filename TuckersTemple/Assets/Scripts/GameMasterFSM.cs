@@ -279,9 +279,20 @@ public class GameMasterFSM : MonoBehaviour
         Dictionary<string, List<int>> actorInfo = currentLevel.Actors;
         Dictionary<string, List<int>> staticObjectInfo = currentLevel.StaticObjects;
 
-        // Create the Tile Grid:
-        //tileSize = Tile.GetComponent<Renderer>().bounds.size.x * gridScale; //get the size of the tile (1.6)
-                                                                //initialize the first array
+		//zoom the camera and scale the background
+		GameObject mainCamera = GameObject.Find("Main Camera");
+		if (numCols == 4) {
+			mainCamera.transform.localScale = new Vector3 (1.31f, 1.333f, 1);
+			mainCamera.transform.position = new Vector3 (2.25f, 1.6f, -10);
+			mainCamera.GetComponent<Camera> ().orthographicSize = 7;
+		}
+		if (numCols == 3) {
+			mainCamera.transform.localScale = new Vector3 (1f, 1f, 1);
+			mainCamera.transform.position = new Vector3 (1.5f, 1f, -10);
+			mainCamera.GetComponent<Camera> ().orthographicSize = 5;
+		}
+
+
         tileGrid = new GameObject[numCols][];
         //iterate through columns
         for (int c = 0; c < numCols; c++)
@@ -429,7 +440,6 @@ public class GameMasterFSM : MonoBehaviour
 						float tileS = touchTarget.GetComponent<SpriteRenderer> ().bounds.size.x * gridScale;
 						/* Debug.Log("spriterenderer" + tileS); */
 						Vector3 origScale;
-						// ******************** MAGIC NUMBER ZONE BEWARE ***********************
 						if(isVert){
 							if(!wrapLatch) {
 								wrapTile = tileGrid[Column][numRows-1];
@@ -489,8 +499,8 @@ public class GameMasterFSM : MonoBehaviour
 				float swipeDist;
 				//float tileSize = tileGrid [0] [0].GetComponent<Renderer> ().bounds.size.x * gridScale;
 				bool validSwipe;
-                Destroy(wrapCopy1, 1);
-                Destroy(wrapCopy2, 1);
+                Destroy(wrapCopy1, 0.5f);
+                Destroy(wrapCopy2, 0.5f);
                 wrapLatch = false;
                 
 				Debug.Log (isVert);
