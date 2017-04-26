@@ -65,7 +65,7 @@ public class ActorFSM : MonoBehaviour
 
     public void Update()
     {
-        //print(tag + " == " + fsm.CurrentStateID);
+        print(tag + " == " + fsm.CurrentStateID);
         fsm.CurrentState.Reason(gm, gameObject);
         fsm.CurrentState.Act(gm, gameObject);
     }

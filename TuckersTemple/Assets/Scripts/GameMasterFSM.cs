@@ -138,6 +138,13 @@ public class GameMasterFSM : MonoBehaviour
         actors.Remove(actor);
     }
 
+	//Shift view changes the camera and background, so the grid properly fits
+	//offset is how far to move everything
+	public void shiftView(Vector3 offset){
+		GameObject mainCamera = GameObject.Find ("Main Camera");
+		mainCamera.transform.position = mainCamera.transform.position + offset;
+	}
+
     // this will load the current level scene 
     // as of right now, levels are being generated, so
     // it reloads the level, but the tiles will be different
@@ -275,10 +282,19 @@ public class GameMasterFSM : MonoBehaviour
         Dictionary<string, List<int>> actorInfo = currentLevel.Actors;
         Dictionary<string, List<int>> staticObjectInfo = currentLevel.StaticObjects;
 
-		//change scale/tileSize
-		float tempGridScale = gridScale * 3f/numCols;
-		tileSize = Tile.GetComponent<SpriteRenderer>().bounds.size.x * tempGridScale;
-		RootTile.transform.localScale = new Vector3(tempGridScale, tempGridScale, 1f);
+		//zoom the camera and scale the background
+		GameObject mainCamera = GameObject.Find("Main Camera");
+		if (numCols == 4) {
+			mainCamera.transform.localScale = new Vector3 (1.31f, 1.333f, 1);
+			mainCamera.transform.position = new Vector3 (2.25f, 1.6f, -10);
+			mainCamera.GetComponent<Camera> ().orthographicSize = 7;
+		}
+		if (numCols == 3) {
+			mainCamera.transform.localScale = new Vector3 (1f, 1f, 1);
+			mainCamera.transform.position = new Vector3 (1.5f, 1f, -10);
+			mainCamera.GetComponent<Camera> ().orthographicSize = 5;
+		}
+
 
         tileGrid = new GameObject[numCols][];
         //iterate through columns
@@ -421,7 +437,6 @@ public class GameMasterFSM : MonoBehaviour
 						float tileS = touchTarget.GetComponent<SpriteRenderer> ().bounds.size.x * gridScale;
 						/* Debug.Log("spriterenderer" + tileS); */
 						Vector3 origScale;
-						// ******************** MAGIC NUMBER ZONE BEWARE ***********************
 						if(isVert){
 							if(!wrapLatch) {
 								wrapTile = tileGrid[Column][numRows-1];
@@ -481,8 +496,8 @@ public class GameMasterFSM : MonoBehaviour
 				float swipeDist;
 				//float tileSize = tileGrid [0] [0].GetComponent<Renderer> ().bounds.size.x * gridScale;
 				bool validSwipe;
-                Destroy(wrapCopy1, 1);
-                Destroy(wrapCopy2, 1);
+                Destroy(wrapCopy1, 0.5f);
+                Destroy(wrapCopy2, 0.5f);
                 wrapLatch = false;
                 
 				Debug.Log (isVert);
