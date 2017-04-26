@@ -159,7 +159,9 @@ public class GameMasterFSM : MonoBehaviour
 			GetComponent<GameMasterFSM> ().SetTransition (Transition.RestartedLevelFromDeath); //to ready
 		} else if (fsm.CurrentStateID == StateID.Ready) {
 			GetComponent<GameMasterFSM> ().SetTransition (Transition.RestartedLevel);
-		} 
+		} else if(fsm.CurrentStateID == StateID.LevelWon) {
+            GetComponent<GameMasterFSM>().SetTransition(Transition.NextLevel);
+        }
     }
 
 
