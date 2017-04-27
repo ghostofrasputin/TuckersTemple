@@ -215,7 +215,6 @@ public class IdleAState : FSMState
 	{
 		if (gm.GetComponent<GameMasterFSM>().sameTileCollide())
 		{
-			gm.GetComponent<GameMasterFSM> ().deathText.text = controlref.enemyDeath;
 			npc.GetComponent<ActorFSM>().SetTransition(Transition.IdleDeath); //to enemyDead
 		}
         else if (controlref.doneSlide)
@@ -260,14 +259,12 @@ public class LookAState : FSMState
         {
             if(ray.collider.tag == "Trap")//both enemy and player
             {
-                gm.GetComponent<GameMasterFSM>().deathText.text = controlref.trapDeath;
                 npc.GetComponent<ActorFSM>().SetTransition(Transition.TrapFound); //to trapDeath
                 return;
             }
             if (npc.tag == "Player") {
                 if (ray.collider.tag == "Enemy")
                 {
-						gm.GetComponent<GameMasterFSM>().deathText.text = controlref.enemyDeath;
                     	int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;
                     	switch (controlref.direction)
                     	{
@@ -422,6 +419,14 @@ public class TrapDeadAState : FSMState
         controlref = control;
     }
 
+    public override void DoBeforeEntering()
+    {
+        if (controlref.actorName == "Roy" || controlref.actorName == "Emily")
+        {
+            controlref.gm.GetComponent<GameMasterFSM>().deathText.text = controlref.trapDeath;
+        }
+    }
+
     public override void Reason(GameObject gm, GameObject npc)
     {
         if (npc.transform.position.x == controlref.goalPos.x && npc.transform.position.y == controlref.goalPos.y)
@@ -461,7 +466,15 @@ public class EnemyDeadAState : FSMState
 
     public override void Reason(GameObject gm, GameObject npc)
     {
+        
+    }
 
+    public override void DoBeforeEntering()
+    {
+        if (controlref.actorName == "Roy" || controlref.actorName == "Emily")
+        {
+            controlref.gm.GetComponent<GameMasterFSM>().deathText.text = controlref.enemyDeath;
+        }
     }
 
     public override void Act(GameObject gm, GameObject npc)
@@ -493,7 +506,7 @@ public class EnterState : FSMState
 		controlref = control;
 	}
 
-	public override void Reason(GameObject gm, GameObject npc)
+    public override void Reason(GameObject gm, GameObject npc)
 	{
 		if (controlref.transform.position.x == controlref.goalPos.x && npc.transform.position.y == controlref.goalPos.y)
 		{
