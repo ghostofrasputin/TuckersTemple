@@ -1,4 +1,14 @@
-﻿using System.Collections;
+﻿/***
+ * CutSceneManager.cs
+ * 
+ * Reads in from CutScene json files to create and display cutscenes.
+ * 
+ * Andrew Cousins
+ * Last Modified: 4/27/17
+ * Version: 1.1
+ ***/
+
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -6,12 +16,22 @@ using LitJson;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/*
+ * Class CharacterLine holds information about a single line
+ * characterImage is the sprite of the character for this line
+ * LineText is the string to display
+ * soundByte is the sound effect to play
+ */
 public class CharacterLine {
 	public Sprite characterImage { get; set; }
 	public string LineText { get; set; }
 	public AudioClip soundByte { get; set; }
 }
 
+/* Class CutScene holds information about a 'scene'
+ * BackgroundImage is the image for this scene
+ * Lines is a list of the CharacterLines, in order, to be shown
+ */
 public class CutScene {
 	public Sprite BackgroundImage { get; set; }
 	public List<CharacterLine> Lines { get; set; }
@@ -40,6 +60,8 @@ public class CutSceneManager : MonoBehaviour {
 	private int lineIndex;
 	private float promptTimer;
 
+	Dictionary<int, string> cutSceneFiles; //holds the list of cutscene jsons
+
 	Dictionary<string, AudioClip> sounds;
 	Dictionary<string, Sprite> backgrounds;
 	Dictionary<string, Sprite> actorImages;
@@ -59,6 +81,11 @@ public class CutSceneManager : MonoBehaviour {
 			{"roy_confused", Resources.Load<AudioClip>("CutScenes/Andre-WhatWasThat")}
 		};
 
+		cutSceneFiles = new Dictionary<int, string>(){
+			{1, "CutScene1"}, //these cutscenes play before the level
+			{3, "CutScene2"}
+		};
+
 		//intialize GameObjects
 		background = transform.Find("Background").gameObject;
 		textBox = transform.Find ("TextBox").gameObject;
@@ -68,8 +95,12 @@ public class CutSceneManager : MonoBehaviour {
 		sceneIndex = 0;
 		lineIndex = -1; //line index gets set to -1 since there is currently no line displayed at all
 		promptTimer = 0;
+
+		//get the current level
+		int currLevel = GameObject.Find("ZombiePasser").GetComponent<ZombiePasser>().getLevel();
+
 		//load in the JSON file, the same way as levelReader
-		TextAsset cutSceneFile = Resources.Load("CutScene1") as TextAsset;
+		TextAsset cutSceneFile = Resources.Load(cutSceneFiles[currLevel]) as TextAsset;
 		jsonString = cutSceneFile.ToString();
 		cutSceneData = JsonMapper.ToObject(jsonString);
 		cutScenes = new List<CutScene> ();

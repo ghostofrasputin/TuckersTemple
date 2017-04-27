@@ -32,6 +32,9 @@ public class ZombiePasser : MonoBehaviour {
 	// Make this game object and all its transform children
 	// survive when loading a new scene.
 	private void Awake () {
+		//set the screen orientation.  We do this in ZombiePasser since it exists in
+		//every screen. This is untested and needs to be tried in an apk. -Andrew
+		Screen.orientation = ScreenOrientation.Portrait;
 		// extract level JSON file here:
 		levelData = Camera.main.GetComponent<LevelReader>();
 		levelsList = levelData.getLevels();
@@ -108,6 +111,7 @@ public class ZombiePasser : MonoBehaviour {
 	public void setLockedLevelBool(int index){
 		if (index > lockedLevels.Length-1 || index < 0) {
 			Debug.Log ("error: index out of range");
+			return;
 		}
 		lockedLevels [index] = false;
 	}

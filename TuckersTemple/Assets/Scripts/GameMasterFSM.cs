@@ -26,6 +26,7 @@ public class GameMasterFSM : MonoBehaviour
     public int Direction;
     public Canvas winScreen;
     public GameObject deathScreen;
+	public GameObject loadingScreen;
     public List<GameObject> actors;
     public List<GameObject> characters;
     public List<GameObject> enemies;
@@ -41,6 +42,7 @@ public class GameMasterFSM : MonoBehaviour
 	public GameObject RootTile;
 	public float gridScale = 0.25f;
 	public GameObject TutorialButton;
+	public List<GameObject> lasers;
     
     // touch handle
     public bool latch = false;
@@ -71,8 +73,7 @@ public class GameMasterFSM : MonoBehaviour
     private int moves = 0;
     private GameObject[][] tileGrid;
     private List<GameObject> tiles = new List<GameObject>();
-	public List<GameObject> lasers;
-
+	private List<int> cutscenes; //holds which levels have cutscenes
 
     public void SetTransition(Transition t) { fsm.PerformTransition(t); }
 
@@ -83,6 +84,10 @@ public class GameMasterFSM : MonoBehaviour
 		tileSize = Tile.GetComponent<SpriteRenderer>().bounds.size.x * gridScale;
 		RootTile = GameObject.Find ("Tiles").gameObject;
 		RootTile.transform.localScale = new Vector3(gridScale, gridScale, 1f);
+
+		//intitialize cutscenes, after the first
+		cutscenes = new List<int>();
+		cutscenes.Add (3);
     }
 
     public void Update()
@@ -151,12 +156,6 @@ public class GameMasterFSM : MonoBehaviour
 		SoundController.instance.gameOver.Stop ();
 		deathScreen.SetActive(false);
         attempts++;
-		//check if last level
-		if (currentLevel > levelsList.Count) {
-			GameObject.Find("endOfDemo").GetComponent<InGameMenuManager>().playAnim("winEnter");
-			GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ().setLevel (1);
-			return;
-		}
         setupLevel(levelsList[currentLevel - 1]);
 		if (fsm.CurrentStateID == StateID.LevelDeath) {
 			GetComponent<GameMasterFSM> ().SetTransition (Transition.RestartedLevelFromDeath); //to ready
@@ -172,6 +171,7 @@ public class GameMasterFSM : MonoBehaviour
     //Displays win screen
     public void levelWin()
     {
+		
         try
         {
             // unlocks the next level. 
@@ -218,9 +218,27 @@ public class GameMasterFSM : MonoBehaviour
     public void nextLevel()
     {
         currentLevel++;
+
+		//check if there is a cutscene before next level
+		if (cutscenes.Contains(currentLevel)) {
+			loadingScreen.SetActive (true);
+			GameObject.Find("ZombiePasser").GetComponent<ZombiePasser>().setLevel(currentLevel);
+			GameObject.Find("pauseScreen").GetComponent<InGameMenuManager>().loadScene ("cutScene");
+		}
+
+		//check if last level
+		if (currentLevel > levelsList.Count) {
+			Debug.Log ("End of Demo Screen");
+			GameObject.Find("endOfDemo").GetComponent<InGameMenuManager>().playAnim("winEnter");
+			GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ().setLevel (1);
+			return;
+		}
+
         reset();
         ticking = true;
         SoundController.instance.PlaySingle(nextLevelSound);
+
+		//reset already sets a transition, so this is throwing an error.  Not sure why it was here? -Andrew
         GetComponent<GameMasterFSM>().SetTransition(Transition.NextLevel); //to ready
 		TutorialButton.SetActive(false);
     }
