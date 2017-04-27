@@ -16,6 +16,7 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject Enemy;
     public GameObject Wraith;
     public GameObject Goal;
+	public GameObject Laser;
     public FSMSystem fsm;
     public Vector2 lastPos = new Vector2(0, 0); //holds the last position for mouse input to calculate deltaPosition
     public int numRows; //number of tiles to size
@@ -70,6 +71,7 @@ public class GameMasterFSM : MonoBehaviour
     private int moves = 0;
     private GameObject[][] tileGrid;
     private List<GameObject> tiles = new List<GameObject>();
+	public List<GameObject> lasers;
 
 
     public void SetTransition(Transition t) { fsm.PerformTransition(t); }
@@ -101,6 +103,7 @@ public class GameMasterFSM : MonoBehaviour
         InputState ready = new InputState(this);
         ready.AddTransition(Transition.InputReceived, StateID.OrderTiles);
         ready.AddTransition (Transition.RestartedLevel, StateID.InitLevel);
+		ready.AddTransition (Transition.ActorDiedInInput, StateID.LevelDeath);
 
         OrderTilesState tile = new OrderTilesState(this);
         tile.AddTransition(Transition.TilesDone, StateID.OrderActors);
@@ -262,6 +265,7 @@ public class GameMasterFSM : MonoBehaviour
         enemies.Clear();
         characters.Clear();
         tiles.Clear();
+		lasers.Clear ();
         tileGrid = new GameObject[numCols][];
         generateLevel(level);
         Destroy(boundary);
@@ -368,13 +372,22 @@ public class GameMasterFSM : MonoBehaviour
                 Instantiate(Goal, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y,
                     tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
             }
-            if (key.Contains("trap"))
+            if (key.Equals("trap"))
             {
                 int x = value[0];
                 int y = value[1];
                 Instantiate(Trap, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y,
                     tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
             }
+			if (key.Equals ("laser")) {
+				int x = value [0];
+				int y = value [1];
+				float offset = tileSize / 3;
+				GameObject las = Instantiate(Laser, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y,
+					tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
+				lasers.Add (las);
+				las.GetComponent<LaserScript> ().setDir (value [2], offset);
+			}
         }
         //Add in outer walls to the grid
         boundary = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
@@ -697,8 +710,8 @@ public class GameMasterFSM : MonoBehaviour
     {
         foreach (GameObject character in characters)
         {
-            if (character.GetComponent<ActorFSM>().fsm.CurrentStateID == StateID.EnemyDeadA || character.GetComponent<ActorFSM>().fsm.CurrentStateID == StateID.TrapDeadA)
-            {
+		StateID currState = character.GetComponent<ActorFSM> ().fsm.CurrentStateID;
+		if (currState == StateID.EnemyDeadA || currState == StateID.TrapDeadA || currState == StateID.LaserDeadA)            {
                 return true;
             }
         }
@@ -799,6 +812,15 @@ public class LevelJuiceState : FSMState
 
     }
 
+	public override void DoBeforeLeaving ()
+	{
+		foreach (GameObject child in controlref.lasers) {
+			if (child.tag == "Laser") {
+				child.GetComponent<LaserScript> ().setEye (true);
+			}
+		}
+	}
+
 } // LevelJuiceState
 
 public class InputState : FSMState
@@ -814,10 +836,27 @@ public class InputState : FSMState
 
     public override void Reason(GameObject gm, GameObject npc)
     {
+		if (controlref.characterDied())
+		{
+			npc.GetComponent<GameMasterFSM>().SetTransition(Transition.ActorDiedInInput); //to leveldeath
+		}
         if (controlref.swiped)
         {
             npc.GetComponent<GameMasterFSM>().SetTransition(Transition.InputReceived); //to Look
         }
+		if (controlref.doneSliding()) {
+			foreach (GameObject child in controlref.lasers) {
+				if (child.tag == "Laser") {
+					child.GetComponent<LaserScript> ().setEye (true);
+				}
+			}
+		} else {
+			foreach (GameObject child in controlref.lasers) {
+				if (child.tag == "Laser") {
+					child.GetComponent<LaserScript> ().setEye (false);
+				}
+			}
+		}
     }
 
     public override void Act(GameObject gm, GameObject npc)
@@ -885,6 +924,15 @@ public class OrderTilesState : FSMState
         hasExecuted = true;
     }
 
+	public override void DoBeforeEntering ()
+	{
+		foreach (GameObject child in controlref.lasers) {
+			if (child.tag == "Laser") {
+				child.GetComponent<LaserScript> ().setEye (false);
+			}
+		}
+	}
+
 } // OrderTilesState
 
 public class OrderActorsState : FSMState
@@ -904,6 +952,11 @@ public class OrderActorsState : FSMState
         {
             actor.GetComponent<ActorFSM>().doneSlide = true;
         }
+		foreach (GameObject child in controlref.lasers) {
+			if (child.tag == "Laser") {
+				child.GetComponent<LaserScript> ().setEye (false);
+			}
+		}
     }
 
     public override void Reason(GameObject gm, GameObject npc)
@@ -929,6 +982,15 @@ public class OrderActorsState : FSMState
     public override void Act(GameObject gm, GameObject npc)
     {
     }
+		
+	public override void DoBeforeLeaving ()
+	{
+		foreach (GameObject child in controlref.lasers) {
+			if (child.tag == "Laser") {
+				child.GetComponent<LaserScript> ().setEye (true);
+			}
+		}
+	}
 
 } // OrderActorsState
 
