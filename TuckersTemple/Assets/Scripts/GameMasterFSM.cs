@@ -511,7 +511,7 @@ public class GameMasterFSM : MonoBehaviour
 						// moving horizontal rows:
 						if (!isVert) {
 							for (int c = 0; c < numCols; c++) {
-								tileGrid [c] [row].GetComponent<TileFSM>().goalPos = new Vector2 (tileGrid [c] [row].transform.position.x + touchDelta.x * .02f, 
+								tileGrid [c] [row].GetComponent<TileFSM>().goalPos = new Vector2 (tileGrid [c] [row].transform.position.x + touchDelta.x * .006f, 
 																						tileGrid [c] [row].transform.position.y);
 								//Debug.Log (tileGrid [c] [row].GetComponent<TileFSM> ().goalPos);
 							}
@@ -520,7 +520,7 @@ public class GameMasterFSM : MonoBehaviour
 						else {
 							for (int r = 0; r < numRows; r++) {
 								tileGrid [col] [r].GetComponent<TileFSM>().goalPos = new Vector2 (tileGrid [col] [r].transform.position.x, 
-																						tileGrid [col] [r].transform.position.y + touchDelta.y * .02f);
+																						tileGrid [col] [r].transform.position.y + touchDelta.y * .006f);
 							}
 						}
 					}
@@ -579,12 +579,6 @@ public class GameMasterFSM : MonoBehaviour
 					}
 					latch = false;
 					touchSuccess = true;
-
-					for(int i = 0; i < 3; ++i){
-						for (int j = 0; j < 3; ++j) {
-							//Debug.Log("Tile: " + i + ", " + j + " released: " + tileGrid[i][j].GetComponent<TileFSM>().touchReleased);
-						}
-					}
 	                break;
 
 	            default:
@@ -880,6 +874,7 @@ public class InputState : FSMState
     public override void Act(GameObject gm, GameObject npc)
     {
         controlref.swiped = false;
+        
         if (Input.touchCount == 0)
         {
             //Calls when mouse is first pressed(begin)
@@ -898,7 +893,7 @@ public class InputState : FSMState
             //called when mouse is lifted up(ended)
             if (Input.GetMouseButtonUp(0))
             {
-                 controlref.swiped = controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Ended);
+                controlref.swiped = controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Ended);
             }
         }
         else
@@ -907,6 +902,7 @@ public class InputState : FSMState
             Touch touch = Input.touches[0];
             controlref.swiped = controlref.HandleTouch(touch.fingerId, touch.position, touch.phase, touch.deltaPosition);
         }
+        
     }
 
 } //InputState
