@@ -1049,11 +1049,6 @@ public class LevelDeathState : FSMState
         controlref = control;
     }
 
-    public override void DoBeforeEntering()
-    {
-        controlref.levelDeath();
-    }
-
     public override void Reason(GameObject gm, GameObject npc)
     {
 
@@ -1061,7 +1056,7 @@ public class LevelDeathState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
-
+        controlref.levelDeath();
     }
 
 } // LevelDeathState
