@@ -87,7 +87,7 @@ public class GameMasterFSM : MonoBehaviour
 
 		//intitialize cutscenes, after the first
 		cutscenes = new List<int>();
-		cutscenes.Add (3);
+		//cutscenes.Add (3);
     }
 
     public void Update()
