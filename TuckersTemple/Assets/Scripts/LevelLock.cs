@@ -17,6 +17,7 @@ public class LevelLock : MonoBehaviour {
 	private int levelNum;
 	private bool isLocked;
     private int numOfStars;
+    private string target;
 	// Use this for initialization
 	void Start () {
 		levelNum = System.Convert.ToInt32(gameObject.name);
@@ -39,10 +40,22 @@ public class LevelLock : MonoBehaviour {
 				Text buttonText = this.gameObject.GetComponent<Button>().GetComponentsInChildren<Text>()[0];
 				buttonText.text = ""+levelNum+"";
                 numOfStars = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getStars(levelNum-1);
-                string target = "UI/" +numOfStars+ " star";
-                Sprite threeStars = Resources.Load(target, typeof(Sprite)) as Sprite;
-                this.gameObject.transform.Find("stars").GetComponent<Image>().sprite = threeStars;
-			}
+                // string target = "UI/" +numOfStars+ " star";
+                // Sprite threeStars = Resources.Load(target, typeof(Sprite)) as Sprite;
+                //this.gameObject.transform.Find("stars").GetComponent<Image>().sprite = threeStars;
+                if(numOfStars>0)
+                {
+                    this.gameObject.transform.Find("Stars").GetChild(0).GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+                }
+                if (numOfStars > 1)
+                {
+                    this.gameObject.transform.Find("Stars").GetChild(1).GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+                }
+                if (numOfStars > 2)
+                {
+                    this.gameObject.transform.Find("Stars").GetChild(2).GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+                }
+            }
 		} catch(System.Exception){}
 	}
 }

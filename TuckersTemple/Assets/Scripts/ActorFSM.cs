@@ -135,7 +135,12 @@ public class ActorFSM : MonoBehaviour
     {
         Destroy(gameObject);
     }
-
+    public void foundItem(GameObject Item)
+    {
+        GameObject.Find("GameMaster").GetComponent<GameMasterFSM>().foundItem = true;
+        print(GameObject.Find("GameMaster").GetComponent<GameMasterFSM>().foundItem = true);
+        Destroy(Item);
+    }
     public virtual int findNextMove(int dir)
     {
         //order to try in is straight->right->left->back
@@ -265,6 +270,7 @@ public class LookAState : FSMState
                 return;
             }
             if (npc.tag == "Player") {
+                Debug.Log(ray.collider.tag);
                 if (ray.collider.tag == "Enemy")
                 {
 						gm.GetComponent<GameMasterFSM>().deathText.text = controlref.enemyDeath;
@@ -296,6 +302,11 @@ public class LookAState : FSMState
                 else if (ray.collider.tag == "Goal")
                 {
                     npc.GetComponent<ActorFSM>().SetTransition(Transition.GoalFound); //to Win
+                    return;
+                }
+                else if (ray.collider.tag == "Item")
+                {
+                    npc.GetComponent<ActorFSM>().foundItem(ray.collider.gameObject);
                     return;
                 }
                 if (isDead)

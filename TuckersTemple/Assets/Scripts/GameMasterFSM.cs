@@ -14,6 +14,7 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject Trap;
     public GameObject Enemy;
     public GameObject Goal;
+    public GameObject Item;
     public FSMSystem fsm;
     public Vector2 lastPos = new Vector2(0, 0); //holds the last position for mouse input to calculate deltaPosition
     public int numRows; //number of tiles to size
@@ -38,7 +39,8 @@ public class GameMasterFSM : MonoBehaviour
 	public GameObject RootTile;
 	public float gridScale = 0.25f;
 	public GameObject TutorialButton;
-    
+    public bool foundItem = false;
+
     // touch handle
     public bool latch = false;
     public bool isVert = false;
@@ -176,19 +178,20 @@ public class GameMasterFSM : MonoBehaviour
             Debug.Log(error);
         }
         //setting Stars for level
-        if (moves >= 4)
+        GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setStars(currentLevel - 1, 1);
+        GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        if (moves < 4)
         {
-            GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setStars(currentLevel - 1, 1);
-            GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
-
-        }
-        else
-        {
-            GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setStars(currentLevel - 1, 2);
-            GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+            GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setStars(currentLevel - 1, GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getStars(currentLevel - 1) + 1);
             GameObject.Find("Star2").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
         }
+        if (foundItem)
+        {
+            GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setStars(currentLevel - 1, GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getStars(currentLevel-1)+1);
+            GameObject.Find("Star3").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        }
         print("Num of Moves : " + moves);
+        print("foundItem: " + foundItem);
         print(GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getStars(currentLevel - 1));
 
         turnOffTileColliders();
@@ -345,9 +348,10 @@ public class GameMasterFSM : MonoBehaviour
             }
             if (key.Contains("shadow"))
             {
-                GameObject shadow = spawnActor(Enemy, value[0], value[1], value[2]);
-                actors.Add(shadow);
-                enemies.Add(shadow);
+                //GameObject shadow = spawnActor(Enemy, value[0], value[1], value[2]);
+                //actors.Add(shadow);
+                //enemies.Add(shadow);
+                GameObject Items = Instantiate(Item, new Vector3(tileGrid[value[0]][value[1]].transform.position.x, tileGrid[value[0]][value[1]].transform.position.y, tileGrid[value[0]][value[1]].transform.position.z), Quaternion.identity, tileGrid[value[0]][value[1]].transform);
             }
         }
 
@@ -566,12 +570,12 @@ public class GameMasterFSM : MonoBehaviour
         //calculate normal offset vector and move the tiles
         Vector2 offset = new Vector2(0, 0);
         GameObject temp;
-        //Camera Shake
-        GameObject.Find("Main Camera").GetComponent<ScreenShake>().startShaking();
-        //haptics
-        Handheld.Vibrate();
         if (!incompleteTouch) {
-		switch (dir) {
+            //Camera Shake
+            GameObject.Find("Main Camera").GetComponent<ScreenShake>().startShaking();
+            //haptics
+            Handheld.Vibrate();
+            switch (dir) {
 		/*
      * What follows is a bunch of suprisingly straightforward 2D array logic.  It will be explained once here instead of in each loop individually
      * offset = tileSize //Set the offset vector to the appropriate direction based on dir(which we know from the switch)
@@ -804,6 +808,7 @@ public class LevelJuiceState : FSMState
         GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
         GameObject.Find("Star2").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
         GameObject.Find("Star3").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+        GameObject.Find("GameMaster").GetComponent<GameMasterFSM>().foundItem = false;
     }
 } // LevelJuiceState
 
