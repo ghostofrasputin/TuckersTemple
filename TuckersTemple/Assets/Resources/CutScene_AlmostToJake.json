@@ -1,0 +1,20 @@
+{
+	"scene1": {
+	  "image": "templeInside",
+	 	"line1": {
+			"image": "RoyScared",
+			"text": "Roy: This temple is way more dangerous than I could have imagined.  I need to find everyone soon.",
+			"sound": ""
+		},
+		"line2": {
+			"image": "JakeScared",
+			"text": "Jake: Hello!?  Is anyone there!?",
+			"sound": ""
+		},
+		"line3": {
+			"image": "RoyHappy",
+			"text": "Roy: Jake!? Hold on, I'm coming!",
+			"sound": ""
+		}
+	}
+}

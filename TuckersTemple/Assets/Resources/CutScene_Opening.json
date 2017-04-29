@@ -1,0 +1,69 @@
+{
+  "scene1": {
+    "image": "templeInfront",
+    "line1": {
+      "image": "blank",
+      "text": "They had traversed the jungle through the night, yet their fatigue had not deterred them from their quest.",
+      "sound":  ""
+    }
+  },
+  "scene2": {
+    "image": "templeOutside",
+    "line1": {
+      "image": "RoyStandard",
+      "text": "Roy: Doesn't look like much...",
+      "sound": ""
+    },
+    "line2": {
+      "image": "EmilyCurious",
+      "text": "Emily: From Dad's archives and mappings, it looks as if the temple descends deep into the Earth.",
+      "sound": ""
+    },
+    "line3": {
+      "image": "JakeScared",
+      "text": "Jake: Well, where's the entrance?",
+      "sound": ""
+    },
+    "line4": {
+      "image": "RoyDetermined",
+      "text": "Roy: If Dad found it, then so can we.  We have to... for his sake.",
+      "sound": ""
+    }
+  },
+  "scene3": {
+    "image": "templeStairs",
+    "line1": {
+      "image": "blank",
+      "text": "Roy trekked up the cracked stairs to the Temple's entrance as Emily, Jake, and Tank lagged behind.",
+      "sound": ""
+    }
+  },
+  "scene4": {
+    "image":  "templeCollapse",
+    "line1": {
+      "image": "EmilyScared",
+      "text": "Emily: AHHHHH, WHAT'S HAPPENING",
+      "sound": ""
+    },
+    "line2": {
+      "image": "JakeScared",
+      "text": "Jake: -Screams-",
+      "sound": ""
+    },
+    "line3": {
+      "image": "blank",
+      "text": "Before Roy could act,  the temple had devoured his family.  All Roy could do was stare into the dark abyss.",
+      "sound": ""
+    },
+    "line4": {
+      "image": "RoyScared",
+      "text": "Roy: Emily?!!  Jake?!!  I'll save you!",
+      "sound": ""
+    },
+    "line5": {
+      "image": "blank",
+      "text": "With only a moment's hesitation, Roy leaped into the abyss.",
+      "sound": ""
+    }
+  }
+}
