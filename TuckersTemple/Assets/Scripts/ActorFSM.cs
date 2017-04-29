@@ -305,30 +305,37 @@ public class LookAState : FSMState
             if (npc.tag == "Player") {
                 if (ray.collider.tag == "Enemy")
                 {
-                    	int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;
-                    	switch (controlref.direction)
-                    	{
-                        	case 0:
-                            	{
-                                	if (enemyDir == 2) { isDead = true; }
-                               		break;
-                            	}
-                        	case 1:
-                            	{
-                                	if (enemyDir == 3) { isDead = true; }
-                                	break;
-                            	}
-                        	case 2:
-                            	{
-                                	if (enemyDir == 0) { isDead = true; }
-                                	break;
-                            	}
-                        	case 3:
-                            	{
-                                	if (enemyDir == 1) { isDead = true; }
-                                	break;
-                            	}
-                    	}
+                    if(controlref.actorName == "Emily" && controlref.visitedWalk == 1)
+                    {
+                        npc.GetComponent<ActorFSM>().SetTransition(Transition.PathFound);
+                    }
+                    else
+                    {
+                        int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;
+                        switch (controlref.direction)
+                        {
+                            case 0:
+                                {
+                                    if (enemyDir == 2) { isDead = true; }
+                                    break;
+                                }
+                            case 1:
+                                {
+                                    if (enemyDir == 3) { isDead = true; }
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    if (enemyDir == 0) { isDead = true; }
+                                    break;
+                                }
+                            case 3:
+                                {
+                                    if (enemyDir == 1) { isDead = true; }
+                                    break;
+                                }
+                        }
+                    }
 				}	
                 else if (ray.collider.tag == "Goal")
                 {
