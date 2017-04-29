@@ -13,6 +13,8 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject Character;
     public GameObject Emily;
     public GameObject Trap;
+    public Sprite idleFire;
+    public Sprite activeFire;
     public GameObject Enemy;
     public GameObject Wraith;
     public GameObject Goal;
@@ -92,7 +94,7 @@ public class GameMasterFSM : MonoBehaviour
 
     public void Update()
     {
-        //print(tag + " == " + fsm.CurrentStateID);
+        print(tag + " == " + fsm.CurrentStateID);
         fsm.CurrentState.Reason(gm, gameObject);
         fsm.CurrentState.Act(gm, gameObject);
     }
@@ -753,6 +755,23 @@ public class GameMasterFSM : MonoBehaviour
         }
         return false;
     }
+
+    public void resetTraps()
+    {
+        for (int i = 0; i < numCols; i++)
+        {
+            for (int j = 0; j < numRows; j++)
+            {
+                foreach(Transform child in tileGrid[i][j].transform)
+                {
+                    if(child.tag == "Trap")
+                    {
+                        child.GetComponent<SpriteRenderer>().sprite = idleFire;
+                    }
+                }
+            }
+        }
+    }
 }
 
 public class InitState : FSMState
@@ -940,7 +959,8 @@ public class OrderTilesState : FSMState
 
 	public override void DoBeforeEntering ()
 	{
-		foreach (GameObject child in controlref.lasers) {
+        controlref.resetTraps();
+        foreach (GameObject child in controlref.lasers) {
 			if (child.tag == "Laser") {
 				child.GetComponent<LaserScript> ().setEye (false);
 			}
