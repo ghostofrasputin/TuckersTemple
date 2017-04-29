@@ -136,6 +136,16 @@ public class ActorFSM : MonoBehaviour
 		fsm.AddState (laser);
     }
 
+	/* foundItem is called when actors collide into an item.
+	 * it sets found item to true
+	 * and destroys the item - Justin
+	 */ 
+	public void foundItem(GameObject Item)
+	{
+		GameObject.Find("GameMaster").GetComponent<GameMasterFSM>().foundItem = true;
+		Destroy(Item);
+	}
+
     public void destroyObj()
     {
         Destroy(gameObject);
@@ -288,6 +298,7 @@ public class LookAState : FSMState
         {
             if(ray.collider.tag == "Trap")//both enemy and player
             {
+				ray.transform.gameObject.GetComponent<FireSystem> ().setOn ();
                 npc.GetComponent<ActorFSM>().SetTransition(Transition.TrapFound); //to trapDeath
                 return;
             }
@@ -323,7 +334,12 @@ public class LookAState : FSMState
                 {
                     npc.GetComponent<ActorFSM>().SetTransition(Transition.GoalFound); //to Win
                     return;
-                }
+				}
+				else if (ray.collider.tag == "Item")
+				{
+					npc.GetComponent<ActorFSM>().foundItem(ray.collider.gameObject);
+					return;
+				}
                 if (isDead)
                 {
                     npc.GetComponent<ActorFSM>().SetTransition(Transition.EnemyFound); //to Dead

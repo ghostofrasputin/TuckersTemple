@@ -89,7 +89,7 @@ public class CutSceneManager : MonoBehaviour {
 		//intialize GameObjects
 		background = transform.Find("Background").gameObject;
 		textBox = transform.Find ("TextBox").gameObject;
-		loadingImage = transform.Find ("LoadingImage").gameObject;
+		//loadingImage = GameObject.Find ("LoadingImage").gameObject; //set manually
 		dialogueWriter = textBox.transform.Find("Text").GetComponent<DialogueWriter> ();
 		tapPrompt = transform.Find ("TapPrompt").gameObject;
 		sceneIndex = 0;

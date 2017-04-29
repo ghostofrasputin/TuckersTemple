@@ -40,23 +40,32 @@
 	},
 	"level2": {
 	  "name": "In the way",
-	  "rows": 3,
-	  "cols": 3,
+	  "rows": 4,
+	  "cols": 4,
 	  "tiles": [
 	    [
 	      "x",
 	      "x",
-	      "x"
+	      "x",
+		  "x"
 	    ],
 	    [
 	      "x",
 	      "I0",
+		  "x",
 		  "x"
 	    ],
 	    [
 	      "x",
 	      "x",
-	      "x"
+	      "x",
+		  "x"
+	    ],
+	    [
+	      "x",
+	      "x",
+	      "x",
+		  "x"
 	    ]
 	  ],
 	  "actors": {
