@@ -89,7 +89,9 @@ public class GameMasterFSM : MonoBehaviour
 
 		//intitialize cutscenes
 		cutscenes = new List<int>();
-		//cutscenes.Add (3);
+        //cutscenes.Add (3);
+
+        boundary = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
     }
 
     public void Update()
@@ -310,7 +312,7 @@ public class GameMasterFSM : MonoBehaviour
 		lasers.Clear ();
         tileGrid = new GameObject[numCols][];
         generateLevel(level);
-        Destroy(boundary);
+        //Destroy(boundary.gameObject);
         turnOnTileColliders();
     }
 
@@ -438,9 +440,9 @@ public class GameMasterFSM : MonoBehaviour
 			}
         }
         //Add in outer walls to the grid
-        boundary = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
-        boundary.transform.localScale = new Vector3((numCols + 1) * tileSize, (numRows + 1) * tileSize, 0);
-        boundary.transform.position = new Vector3((numCols + 1) * tileSize / 4, (numRows + 1) * tileSize / 4, 0);
+        boundary.transform.localScale = new Vector3((numCols * 4/3) * tileSize, (numRows * 4/3) * tileSize, 1);
+        boundary.transform.position = new Vector3((numCols * 4/3) * tileSize / 4, (numRows * 4/3) * tileSize / 4, 0);
+        Debug.Log(boundary.transform.localScale.ToString());
     }
     
    //called to skip animations
