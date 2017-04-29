@@ -288,7 +288,7 @@ public class LookAState : FSMState
         {
             if(ray.collider.tag == "Trap")//both enemy and player
             {
-                //ray.transform.gameObject.GetComponent<SpriteRenderer>().sprite = Sprite.activeTrap;
+                ray.transform.gameObject.GetComponent<SpriteRenderer>().sprite = gm.GetComponent<GameMasterFSM>().activeFire;
                 npc.GetComponent<ActorFSM>().SetTransition(Transition.TrapFound); //to trapDeath
                 return;
             }
