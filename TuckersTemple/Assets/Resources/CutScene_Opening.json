@@ -28,6 +28,16 @@
       "image": "RoyDetermined",
       "text": "Roy: If Dad found it, then so can we.  We have to... for his sake.",
       "sound": ""
+    },
+    "line5": {
+      "image": "TankStandard",
+      "text": "Tank: (Low growl)",
+      "sound": ""
+    },
+    "line6": {
+      "image": "JakeHappy",
+      "text": "Jake: See, Tank knows we'll find Dad!",
+      "sound": ""
     }
   },
   "scene3": {

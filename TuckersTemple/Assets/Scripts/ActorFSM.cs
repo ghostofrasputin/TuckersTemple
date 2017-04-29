@@ -414,7 +414,7 @@ public class WalkAState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
 	{
-        SoundController.instance.PlaySingleDelay(controlref.playerfootsteps1);
+    //    SoundController.instance.PlaySingleDelay(controlref.playerfootsteps1);
         npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
     }
 

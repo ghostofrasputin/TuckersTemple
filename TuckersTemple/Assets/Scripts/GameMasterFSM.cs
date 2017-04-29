@@ -159,7 +159,9 @@ public class GameMasterFSM : MonoBehaviour
     public void reset()
     {
 		SoundController.instance.gameOver.Stop ();
-		deathScreen.SetActive(false);
+        deathScreen.GetComponent<CanvasGroup>().interactable = false;
+        deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
+
         attempts++;
         setupLevel(levelsList[currentLevel - 1]);
 		if (fsm.CurrentStateID == StateID.LevelDeath) {
@@ -236,10 +238,12 @@ public class GameMasterFSM : MonoBehaviour
     public void levelDeath()
     {
 		//SoundController.instance.musicSource.Stop ();
-        SoundController.instance.PlaySingle(playerdeathSound);
+        //SoundController.instance.PlaySingle(playerdeathSound);
         turnOffTileColliders();
-		deathScreen.SetActive(true);
-		SoundController.instance.PlaySingleGameOver (gameOverSound);
+		deathScreen.GetComponent<Animator>().Play("DeathFadeIn");
+        deathScreen.GetComponent<CanvasGroup>().interactable = true;
+        deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
+        //SoundController.instance.PlaySingleGameOver (gameOverSound);
     }
 
     public void nextLevel()
@@ -623,7 +627,7 @@ public class GameMasterFSM : MonoBehaviour
     public void moveGrid(int col, int row, int dir)
     {
         //float tileSize = tileGrid[0][0].GetComponent<Renderer>().bounds.size.x * gridScale;
-        SoundController.instance.RandomSfx(TileSlide1, TileSlide2);
+        //SoundController.instance.RandomSfx(TileSlide1, TileSlide2);
 
         //calculate normal offset vector and move the tiles
         Vector2 offset = new Vector2(0, 0);
@@ -985,6 +989,11 @@ public class OrderTilesState : FSMState
 			}
 		}
 	}
+
+    public override void DoBeforeLeaving()
+    {
+        SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
+    }
 
 } // OrderTilesState
 

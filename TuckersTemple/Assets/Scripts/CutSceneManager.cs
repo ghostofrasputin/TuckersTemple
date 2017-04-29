@@ -79,7 +79,8 @@ public class CutSceneManager : MonoBehaviour {
             {"EmilyScared", Resources.Load<Sprite>("CutScenes/emilySCARED_cutscene_8")},
             {"JakeScared", Resources.Load<Sprite>("CutScenes/jakeSCAREDcutscene_8")},
             {"JakeCurious", Resources.Load<Sprite>("CutScenes/jakeCURIOUScutscene_4")},
-            {"JakeHappy", Resources.Load<Sprite>("CutScenes/jakeHAPPYcutscene_2")}
+            {"JakeHappy", Resources.Load<Sprite>("CutScenes/jakeHAPPYScutscene_2")},
+            {"TankStandard", Resources.Load<Sprite>("CutScenes/tank")}
         };
 		backgrounds = new Dictionary<string, Sprite> () {
 			{"templeOutside", Resources.Load<Sprite>("CutScenes/temple_outside")},
