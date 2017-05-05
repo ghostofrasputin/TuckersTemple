@@ -1,0 +1,20 @@
+{
+	"scene1": {
+	  "image": "templeInside",
+	 	"line1": {
+			"image": "EmilyScared",
+			"text": "Emily: Where am I?",
+			"sound": ""
+		},
+		"line2": {
+			"image": "EmilyScared",
+			"text": "Emily: It feels like the walls are shifting, and I keep seeing things moving in the shadows.",
+			"sound": ""
+		},
+		"line3": {
+			"image": "EmilyCurious",
+			"text": "Emily: Well, Dad always said the unknown is just an oppertunity for knowledge.  I have to keep moving.",
+			"sound": ""
+		}
+	}
+}

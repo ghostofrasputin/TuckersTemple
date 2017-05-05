@@ -16,7 +16,7 @@ public class DialogueWriter : MonoBehaviour {
 	// public:
 	public float delay = 0.1f;
 	public string currentText = "";
-	public string fullText;
+	public string fullText = "";
 	public SoundController sound;
 	public AudioClip typewriterSound;
 	// private:

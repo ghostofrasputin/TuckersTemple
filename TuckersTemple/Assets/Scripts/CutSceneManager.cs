@@ -70,11 +70,26 @@ public class CutSceneManager : MonoBehaviour {
 	void Start () {
 		//fill the dictionaries
 		actorImages = new Dictionary<string, Sprite> () {
-			{"RoyStandard", Resources.Load<Sprite>("CutScenes/RoyStandard")}
-		};
+            {"blank", Resources.Load<Sprite>("CutScenes/blank")},
+            {"RoyStandard", Resources.Load<Sprite>("CutScenes/royNEUTRAL_cutscene_2")},
+            {"RoyDetermined", Resources.Load<Sprite>("CutScenes/royDETERMINEDL_cutscene_5")},
+            {"RoyScared", Resources.Load<Sprite>("CutScenes/roySCARED_cutscene_10")},
+            {"RoyHappy", Resources.Load<Sprite>("CutScenes/royHAPPY_cutscene_3")},
+            {"EmilyCurious", Resources.Load<Sprite>("CutScenes/emilyCURIOUS_cutscene_3")},
+            {"EmilyScared", Resources.Load<Sprite>("CutScenes/emilySCARED_cutscene_8")},
+            {"JakeScared", Resources.Load<Sprite>("CutScenes/jakeSCAREDcutscene_8")},
+            {"JakeCurious", Resources.Load<Sprite>("CutScenes/jakeCURIOUScutscene_4")},
+            {"JakeHappy", Resources.Load<Sprite>("CutScenes/jakeHAPPYScutscene_2")},
+            {"TankStandard", Resources.Load<Sprite>("CutScenes/tank")}
+        };
 		backgrounds = new Dictionary<string, Sprite> () {
-			{"test1", Resources.Load<Sprite>("CutScenes/cutscene_1")}
-		};
+			{"templeOutside", Resources.Load<Sprite>("CutScenes/temple_outside")},
+            {"templeInfront", Resources.Load<Sprite>("CutScenes/cutscene_1")},
+            {"templeStairs", Resources.Load<Sprite>("CutScenes/cutscene_7")},
+            {"templeCollapse", Resources.Load<Sprite>("CutScenes/cutscene_9")},
+            {"templeInside", Resources.Load<Sprite>("CutScenes/template_episode_2")},
+            {"foundJake", Resources.Load<Sprite>("CutScenes/cutscene_4")}
+        };
 		sounds = new Dictionary<string, AudioClip> () {
 			{"roy_hmm", Resources.Load<AudioClip>("CutScenes/Andre-Hmm")},
 			{"roy_notsure", Resources.Load<AudioClip>("CutScenes/Andre-ImNotSureAboutThis")},
@@ -82,15 +97,16 @@ public class CutSceneManager : MonoBehaviour {
 		};
 
 		cutSceneFiles = new Dictionary<int, string>(){
-			{1, "CutScene1"}, //these cutscenes play before the level
-			{3, "CutScene2"}
-		};
+			{1, "CutScene_Opening"}, //these cutscenes play before the level
+			{15, "CutScene_EmilyAlone"},
+            {17, "CutScene_AlmostToJake" }
+        };
 
 		//intialize GameObjects
 		background = transform.Find("Background").gameObject;
 		textBox = transform.Find ("TextBox").gameObject;
-		loadingImage = transform.Find ("LoadingImage").gameObject;
-		dialogueWriter = textBox.transform.Find("Text").GetComponent<DialogueWriter> ();
+		//loadingImage = GameObject.Find ("LoadingImage").gameObject; //set manually
+		dialogueWriter = transform.Find("Text").GetComponent<DialogueWriter> ();
 		tapPrompt = transform.Find ("TapPrompt").gameObject;
 		sceneIndex = 0;
 		lineIndex = -1; //line index gets set to -1 since there is currently no line displayed at all
@@ -194,7 +210,9 @@ public class CutSceneManager : MonoBehaviour {
 		//turn off the text box
 		textBox.GetComponent<CanvasGroup>().alpha = 0f;
 		tapPrompt.SetActive (true);
-	}
+        transform.Find("Text").GetComponent<Text>().text = "";
+
+    }
 
 	//display the next line
 	void nextLine (){
@@ -207,7 +225,7 @@ public class CutSceneManager : MonoBehaviour {
 		//set the appropriate text for the text box
 		//textBox.transform.Find ("Text").GetComponent<Text> ().text =
 			//cutScenes [sceneIndex].Lines [lineIndex].LineText;
-		textBox.transform.Find("Text").GetComponent<DialogueWriter>().writeDialogue(cutScenes [sceneIndex].Lines [lineIndex].LineText);
+		transform.Find("Text").GetComponent<DialogueWriter>().writeDialogue(cutScenes [sceneIndex].Lines [lineIndex].LineText);
 		if (cutScenes [sceneIndex].Lines [lineIndex].soundByte != null) {
 			sound.PlayOneShot (cutScenes [sceneIndex].Lines [lineIndex].soundByte);
 		}
