@@ -16,8 +16,8 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject Enemy;
     public GameObject Wraith;
     public GameObject Goal;
-	public GameObject Laser;
-	public GameObject Item;
+    public GameObject Laser;
+    public GameObject Item;
     public FSMSystem fsm;
     public Vector2 lastPos = new Vector2(0, 0); //holds the last position for mouse input to calculate deltaPosition
     public int numRows; //number of tiles to size
@@ -27,7 +27,7 @@ public class GameMasterFSM : MonoBehaviour
     public int Direction;
     public Canvas winScreen;
     public GameObject deathScreen;
-	public GameObject loadingScreen;
+    public GameObject loadingScreen;
     public List<GameObject> actors;
     public List<GameObject> characters;
     public List<GameObject> enemies;
@@ -60,6 +60,7 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject wrapCopy1;
     public GameObject wrapCopy2;
     public bool wrapLatch;
+    public float scalar;
     
     // audio:
     public AudioClip TileSlide1;
@@ -93,6 +94,7 @@ public class GameMasterFSM : MonoBehaviour
         cutscenes.Add(17);
 
         boundary = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
+	scalar = .006f;
     }
 
     public void Update()
@@ -548,7 +550,7 @@ public class GameMasterFSM : MonoBehaviour
 						// moving horizontal rows:
 						if (!isVert) {
 							for (int c = 0; c < numCols; c++) {
-								tileGrid [c] [row].GetComponent<TileFSM>().goalPos = new Vector2 (tileGrid [c] [row].transform.position.x + touchDelta.x * .006f, 
+								tileGrid [c] [row].GetComponent<TileFSM>().goalPos = new Vector2 (tileGrid [c] [row].transform.position.x + touchDelta.x * scalar, 
 																						tileGrid [c] [row].transform.position.y);
 								//Debug.Log (tileGrid [c] [row].GetComponent<TileFSM> ().goalPos);
 							}
@@ -557,7 +559,7 @@ public class GameMasterFSM : MonoBehaviour
 						else {
 							for (int r = 0; r < numRows; r++) {
 								tileGrid [col] [r].GetComponent<TileFSM>().goalPos = new Vector2 (tileGrid [col] [r].transform.position.x, 
-																						tileGrid [col] [r].transform.position.y + touchDelta.y * .006f);
+																						tileGrid [col] [r].transform.position.y + touchDelta.y * scalar);
 							}
 						}
 					}
@@ -573,7 +575,7 @@ public class GameMasterFSM : MonoBehaviour
                 
 				//Debug.Log (isVert);
 					if (isVert) {
-						swipeDist = (touchPosition.y - touchStart.y) * .02f;
+						swipeDist = (touchPosition.y - touchStart.y) * scalar;
 						if (Mathf.Abs (swipeDist) < tileSize / 2) {
 							validSwipe = false;
 							incompleteTouch = true;
@@ -594,7 +596,7 @@ public class GameMasterFSM : MonoBehaviour
 							Direction = N;
 						}
 					} else {
-						swipeDist = (touchPosition.x - touchStart.x) * .02f;
+						swipeDist = (touchPosition.x - touchStart.x) * scalar;
 						if (Mathf.Abs (swipeDist) < tileSize / 2) {
 							validSwipe = false;
 							incompleteTouch = true;
