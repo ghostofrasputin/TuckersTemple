@@ -34,7 +34,7 @@ public class ZombiePasser : MonoBehaviour {
 	private void Awake () {
 		//set the screen orientation.  We do this in ZombiePasser since it exists in
 		//every screen. This is untested and needs to be tried in an apk. -Andrew
-		Screen.orientation = ScreenOrientation.Portrait;
+		//Screen.orientation = ScreenOrientation.Portrait; //never mind we can do this in player settings
 		// extract level JSON file here:
 		levelData = Camera.main.GetComponent<LevelReader>();
 		levelsList = levelData.getLevels();

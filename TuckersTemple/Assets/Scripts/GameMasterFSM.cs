@@ -17,6 +17,7 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject Wraith;
     public GameObject Goal;
 	public GameObject Laser;
+	public GameObject Item;
     public FSMSystem fsm;
     public Vector2 lastPos = new Vector2(0, 0); //holds the last position for mouse input to calculate deltaPosition
     public int numRows; //number of tiles to size
@@ -42,6 +43,7 @@ public class GameMasterFSM : MonoBehaviour
 	public GameObject RootTile;
 	public float gridScale = 0.25f;
 	public GameObject TutorialButton;
+	public bool foundItem = false;
 	public List<GameObject> lasers;
     
     // touch handle
@@ -85,9 +87,12 @@ public class GameMasterFSM : MonoBehaviour
 		RootTile = GameObject.Find ("Tiles").gameObject;
 		RootTile.transform.localScale = new Vector3(gridScale, gridScale, 1f);
 
-		//intitialize cutscenes, after the first
+		//intitialize cutscenes
 		cutscenes = new List<int>();
-		//cutscenes.Add (3);
+        cutscenes.Add (15);
+        cutscenes.Add(17);
+
+        boundary = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
     }
 
     public void Update()
@@ -154,7 +159,9 @@ public class GameMasterFSM : MonoBehaviour
     public void reset()
     {
 		SoundController.instance.gameOver.Stop ();
-		deathScreen.SetActive(false);
+        deathScreen.GetComponent<CanvasGroup>().interactable = false;
+        deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
+
         attempts++;
         setupLevel(levelsList[currentLevel - 1]);
 		if (fsm.CurrentStateID == StateID.LevelDeath) {
@@ -171,17 +178,39 @@ public class GameMasterFSM : MonoBehaviour
     //Displays win screen
     public void levelWin()
     {
-		
+		ZombiePasser zombie = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ();
         try
         {
             // unlocks the next level. 
             //note: currentlevel-1 is the real current level for the array, currentlevel is the next level
-            GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setLockedLevelBool(currentLevel);
+			zombie.setLockedLevelBool(currentLevel);
         }
         catch (System.Exception error)
         {
             Debug.Log(error);
         }
+
+		//Checking stars for ZombiePasser - Justin
+		zombie.setStars(currentLevel - 1, 1);
+		GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+		//set the second star
+		if (moves < 4)
+		{
+			zombie.setStars(currentLevel - 1, zombie.getStars(currentLevel - 1) + 1);
+			GameObject.Find("Star2").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+		}
+		//set the third star
+		//if (foundItem)
+		if(true) //for now we're just giving the star
+		{
+			zombie.setStars(currentLevel - 1, zombie.getStars(currentLevel-1)+1);
+			GameObject.Find("Star3").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+		}
+		print("Num of Moves : " + moves);
+		print("foundItem: " + foundItem);
+		print(zombie.getStars(currentLevel - 1));
+
+
         turnOffTileColliders();
         winScreen.GetComponent<InGameMenuManager>().playAnim("winEnter");
         ticking = false;
@@ -209,10 +238,12 @@ public class GameMasterFSM : MonoBehaviour
     public void levelDeath()
     {
 		//SoundController.instance.musicSource.Stop ();
-        SoundController.instance.PlaySingle(playerdeathSound);
+        //SoundController.instance.PlaySingle(playerdeathSound);
         turnOffTileColliders();
-		deathScreen.SetActive(true);
-		SoundController.instance.PlaySingleGameOver (gameOverSound);
+		deathScreen.GetComponent<Animator>().Play("DeathFadeIn");
+        deathScreen.GetComponent<CanvasGroup>().interactable = true;
+        deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
+        //SoundController.instance.PlaySingleGameOver (gameOverSound);
     }
 
     public void nextLevel()
@@ -286,7 +317,7 @@ public class GameMasterFSM : MonoBehaviour
 		lasers.Clear ();
         tileGrid = new GameObject[numCols][];
         generateLevel(level);
-        Destroy(boundary);
+        //Destroy(boundary.gameObject);
         turnOnTileColliders();
     }
 
@@ -340,25 +371,25 @@ public class GameMasterFSM : MonoBehaviour
         {
             string key = kvp.Key;
             List<int> value = kvp.Value;
-            if (key.Equals("roy"))
+			if (key.Contains("roy"))
             {
                 GameObject roy = spawnActor(Character, value[0], value[1], value[2]);
                 actors.Add(roy);
                 characters.Add(roy);
             }
-            if (key.Equals("emily"))
+			if (key.Contains("emily"))
             {
                 GameObject emily = spawnActor(Emily, value[0], value[1], value[2]);
                 actors.Add(emily);
                 characters.Add(emily);
             }
-            if (key.Equals("jake"))
+			if (key.Contains("jake"))
             {
                 GameObject jake = spawnActor(Character, value[0], value[1], value[2]);
                 actors.Add(jake);
                 characters.Add(jake);
             }
-            if (key.Equals("tank"))
+			if (key.Contains("tank"))
             {
                 GameObject tank = spawnActor(Character, value[0], value[1], value[2]);
                 actors.Add(tank);
@@ -383,21 +414,21 @@ public class GameMasterFSM : MonoBehaviour
         {
             string key = kvp.Key;
             List<int> value = kvp.Value;
-            if (key.Equals("goal"))
+			if (key.Contains("goal"))
             {
                 int x = value[0];
                 int y = value[1];
                 Instantiate(Goal, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y,
                     tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
             }
-            if (key.Equals("trap"))
+			if (key.Contains("trap"))
             {
                 int x = value[0];
                 int y = value[1];
                 Instantiate(Trap, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y,
                     tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
             }
-			if (key.Equals ("laser")) {
+			if (key.Contains ("laser")) {
 				int x = value [0];
 				int y = value [1];
 				float offset = tileSize / 3;
@@ -406,11 +437,17 @@ public class GameMasterFSM : MonoBehaviour
 				lasers.Add (las);
 				las.GetComponent<LaserScript> ().setDir (value [2], offset);
 			}
+			if (key.Contains ("item")) {
+				int x = value [0];
+				int y = value [1];
+				GameObject item = Instantiate(Item, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y, 
+					tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
+			}
         }
         //Add in outer walls to the grid
-        boundary = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
-        boundary.transform.localScale = new Vector3((numCols + 1) * tileSize, (numRows + 1) * tileSize, 0);
-        boundary.transform.position = new Vector3((numCols + 1) * tileSize / 4, (numRows + 1) * tileSize / 4, 0);
+        boundary.transform.localScale = new Vector3((numCols * 4/3) * tileSize, (numRows * 4/3) * tileSize, 1);
+        boundary.transform.position = new Vector3((numCols * 4/3) * tileSize / 4, (numRows * 4/3) * tileSize / 4, 0);
+        Debug.Log(boundary.transform.localScale.ToString());
     }
     
    //called to skip animations
@@ -437,7 +474,7 @@ public class GameMasterFSM : MonoBehaviour
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Tile")))
                 {
                     touchTarget = hit.collider.gameObject;
-                    Debug.Log(touchTarget);
+                    //Debug.Log(touchTarget);
                 }
                 break;
 
@@ -534,7 +571,7 @@ public class GameMasterFSM : MonoBehaviour
                 Destroy(wrapCopy2, 0.5f);
                 wrapLatch = false;
                 
-				Debug.Log (isVert);
+				//Debug.Log (isVert);
 					if (isVert) {
 						swipeDist = (touchPosition.y - touchStart.y) * .02f;
 						if (Mathf.Abs (swipeDist) < tileSize / 2) {
@@ -545,7 +582,7 @@ public class GameMasterFSM : MonoBehaviour
 							incompleteTouch = false;
 						}
 						for (int r = 0; r < numRows; r++) {
-							Debug.Log(swipeDist);
+							//Debug.Log(swipeDist);
 							if (!validSwipe) {
 								tileGrid [Column] [r].GetComponent<TileFSM>().incompleteMove = true;
 							}
@@ -590,7 +627,7 @@ public class GameMasterFSM : MonoBehaviour
     public void moveGrid(int col, int row, int dir)
     {
         //float tileSize = tileGrid[0][0].GetComponent<Renderer>().bounds.size.x * gridScale;
-        SoundController.instance.RandomSfx(TileSlide1, TileSlide2);
+        //SoundController.instance.RandomSfx(TileSlide1, TileSlide2);
 
         //calculate normal offset vector and move the tiles
         Vector2 offset = new Vector2(0, 0);
@@ -613,61 +650,62 @@ public class GameMasterFSM : MonoBehaviour
      * //We did it!  If you have any questions, ask Andrew or Elliot, but they probably don't understand it any more than was written here.
      * //We sacrificied a few animals to make the numbers work, so don't change them unless you know what you're doing!
      */
-		case N:
-			offset.y = tileSize;
-			temp = tileGrid [col] [numRows - 1];
-			for (int r = numRows - 1; r > 0; r--) {
-				tileGrid [col] [r] = tileGrid [col] [r - 1];
-				tileGrid [col] [r].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [col] [r].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [col] [r].GetComponent<TileFSM> ().startPos.y);
-			}
-			tileGrid [col] [0] = temp;
-			tileGrid [col] [0].GetComponent<TileFSM> ().offGrid = true;
-			tileGrid [col] [0].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [col] [0].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [col] [0].GetComponent<TileFSM> ().startPos.y);
-			tileGrid [col] [0].GetComponent<TileFSM> ().wrapPos = new Vector2 (tileSize * col, -tileSize);
-			tileGrid [col] [0].GetComponent<TileFSM> ().wrapGoalPos = new Vector2 (tileSize * col, 0);
+			case N:
+				offset.y = tileSize;
+				temp = tileGrid [col] [numRows - 1];
+				for (int r = numRows - 1; r > 0; r--) {
+					tileGrid [col] [r] = tileGrid [col] [r - 1];
+					tileGrid [col] [r].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [col] [r].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [col] [r].GetComponent<TileFSM> ().startPos.y);
+				}
+				tileGrid [col] [0] = temp;
+				tileGrid [col] [0].GetComponent<TileFSM> ().offGrid = true;
+				tileGrid [col] [0].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [col] [0].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [col] [0].GetComponent<TileFSM> ().startPos.y);
+				tileGrid [col] [0].GetComponent<TileFSM> ().wrapPos = new Vector2 (tileSize * col, -tileSize);
+				tileGrid [col] [0].GetComponent<TileFSM> ().wrapGoalPos = new Vector2 (tileSize * col, 0);
 
-			break;
-		case S:
-			offset.y = -tileSize;
-			temp = tileGrid [col] [0];
-			for (int r = 0; r < numRows - 1; r++) {
-				tileGrid [col] [r] = tileGrid [col] [r + 1];
-				tileGrid [col] [r].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [col] [r].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [col] [r].GetComponent<TileFSM> ().startPos.y);
+				break;
+			case S:
+				offset.y = -tileSize;
+				temp = tileGrid [col] [0];
+				for (int r = 0; r < numRows - 1; r++) {
+					tileGrid [col] [r] = tileGrid [col] [r + 1];
+					tileGrid [col] [r].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [col] [r].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [col] [r].GetComponent<TileFSM> ().startPos.y);
+				}
+				tileGrid [col] [numRows - 1] = temp;
+				tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().offGrid = true;
+				tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().startPos.y);
+				tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().wrapPos = new Vector2 (tileSize * col, numRows * tileSize);
+				tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().wrapGoalPos = new Vector2 (tileSize * col, (numRows - 1) * tileSize);
+				break;
+			case E:
+				offset.x = tileSize;
+				temp = tileGrid [numCols - 1] [row];
+				for (int c = numCols - 1; c > 0; c--) {
+					tileGrid [c] [row] = tileGrid [c - 1] [row];
+					tileGrid [c] [row].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [c] [row].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [c] [row].GetComponent<TileFSM> ().startPos.y);
+				}
+				tileGrid [0] [row] = temp;
+				tileGrid [0] [row].GetComponent<TileFSM> ().offGrid = true;
+				tileGrid [0] [row].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [0] [row].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [0] [row].GetComponent<TileFSM> ().startPos.y);
+				tileGrid [0] [row].GetComponent<TileFSM> ().wrapPos = new Vector2 (-tileSize, tileSize * row);
+				tileGrid [0] [row].GetComponent<TileFSM> ().wrapGoalPos = new Vector2 (0, tileSize * row);
+				break;
+			case W:
+				offset.x = -tileSize;
+				temp = tileGrid [0] [row];
+				for (int c = 0; c < numCols - 1; c++) {
+					tileGrid [c] [row] = tileGrid [c + 1] [row];
+					tileGrid [c] [row].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [c] [row].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [c] [row].GetComponent<TileFSM> ().startPos.y);
+				}
+				tileGrid [numCols - 1] [row] = temp;
+				tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().offGrid = true;
+				tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [numCols - 1] [row].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().startPos.y);
+				tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().wrapPos = new Vector2 (numCols * tileSize, row * tileSize);
+				tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().wrapGoalPos = new Vector2 ((numCols - 1) * tileSize, row * tileSize);
+				break;
 			}
-			tileGrid [col] [numRows - 1] = temp;
-			tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().offGrid = true;
-			tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().startPos.y);
-			tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().wrapPos = new Vector2 (tileSize * col, numRows * tileSize);
-			tileGrid [col] [numRows - 1].GetComponent<TileFSM> ().wrapGoalPos = new Vector2 (tileSize * col, (numRows - 1) * tileSize);
-			break;
-		case E:
-			offset.x = tileSize;
-			temp = tileGrid [numCols - 1] [row];
-			for (int c = numCols - 1; c > 0; c--) {
-				tileGrid [c] [row] = tileGrid [c - 1] [row];
-				tileGrid [c] [row].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [c] [row].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [c] [row].GetComponent<TileFSM> ().startPos.y);
-			}
-			tileGrid [0] [row] = temp;
-			tileGrid [0] [row].GetComponent<TileFSM> ().offGrid = true;
-			tileGrid [0] [row].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [0] [row].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [0] [row].GetComponent<TileFSM> ().startPos.y);
-			tileGrid [0] [row].GetComponent<TileFSM> ().wrapPos = new Vector2 (-tileSize, tileSize * row);
-			tileGrid [0] [row].GetComponent<TileFSM> ().wrapGoalPos = new Vector2 (0, tileSize * row);
-			break;
-		case W:
-			offset.x = -tileSize;
-			temp = tileGrid [0] [row];
-			for (int c = 0; c < numCols - 1; c++) {
-				tileGrid [c] [row] = tileGrid [c + 1] [row];
-				tileGrid [c] [row].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [c] [row].GetComponent<TileFSM> ().startPos.x, offset.y + tileGrid [c] [row].GetComponent<TileFSM> ().startPos.y);
-			}
-			tileGrid [numCols - 1] [row] = temp;
-			tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().offGrid = true;
-			tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().goalPos = new Vector2 (offset.x + tileGrid [numCols - 1] [row].GetComponent<TileFSM>().startPos.x, offset.y + tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().startPos.y);
-			tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().wrapPos = new Vector2 (numCols * tileSize, row * tileSize);
-			tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().wrapGoalPos = new Vector2 ((numCols - 1) * tileSize, row * tileSize);
-			break;
 		}
-	}
+	moves++;
     }
 
     public bool doneSliding()
@@ -831,6 +869,11 @@ public class LevelJuiceState : FSMState
 				child.GetComponent<LaserScript> ().setEye (true);
 			}
 		}
+			
+		GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+		GameObject.Find("Star2").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+		GameObject.Find("Star3").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+		GameObject.Find("GameMaster").GetComponent<GameMasterFSM>().foundItem = false;
 	}
 
 } // LevelJuiceState
@@ -946,6 +989,11 @@ public class OrderTilesState : FSMState
 			}
 		}
 	}
+
+    public override void DoBeforeLeaving()
+    {
+        SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
+    }
 
 } // OrderTilesState
 

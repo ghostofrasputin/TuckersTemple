@@ -17,6 +17,7 @@ public class LevelLock : MonoBehaviour {
 	private int levelNum;
 	private bool isLocked;
     private int numOfStars;
+	private string target;
 	// Use this for initialization
 	void Start () {
 		levelNum = System.Convert.ToInt32(gameObject.name);
