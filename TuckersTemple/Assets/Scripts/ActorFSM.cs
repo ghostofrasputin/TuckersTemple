@@ -18,10 +18,10 @@ public class ActorFSM : MonoBehaviour
     public Sprite downSprite;
     public Sprite leftSprite;
     public String actorName;
-	public int visitedWalk = 0;
-	public String enemyDeath = "";
-	public String trapDeath = "";
-	private bool hitByLaser = false;
+    public int visitedWalk = 0;
+    public String enemyDeath = "";
+    public String trapDeath = "";
+    private bool hitByLaser = false;
 
     // audio:
     public AudioClip playerfootsteps1;
@@ -298,62 +298,72 @@ public class LookAState : FSMState
         {
             if(ray.collider.tag == "Trap")//both enemy and player
             {
-				ray.transform.gameObject.GetComponent<FireSystem> ().setOn ();
+		ray.transform.gameObject.GetComponent<FireSystem> ().setOn ();
                 npc.GetComponent<ActorFSM>().SetTransition(Transition.TrapFound); //to trapDeath
                 return;
             }
             if (npc.tag == "Player") {
                 if (ray.collider.tag == "Enemy")
                 {
-                    	int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;
-                    	switch (controlref.direction)
-                    	{
-                        	case 0:
-                            	{
-                                	if (enemyDir == 2) { isDead = true; }
-                               		break;
-                            	}
-                        	case 1:
-                            	{
-                                	if (enemyDir == 3) { isDead = true; }
-                                	break;
-                            	}
-                        	case 2:
-                            	{
-                                	if (enemyDir == 0) { isDead = true; }
-                                	break;
-                            	}
-                        	case 3:
-                            	{
-                                	if (enemyDir == 1) { isDead = true; }
-                                	break;
-                            	}
-                    	}
-				}	
+			int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;
+			switch (controlref.direction)
+			{
+				case 0:
+				{
+					if (enemyDir == 2) { isDead = true; }
+					break;
+				}
+				case 1:
+				{
+					if (enemyDir == 3) { isDead = true; }
+					break;
+				}
+				case 2:
+				{
+					if (enemyDir == 0) { isDead = true; }
+					break;
+				}
+				case 3:
+				{
+					if (enemyDir == 1) { isDead = true; }
+					break;
+				}
+			}
+		}	
                 else if (ray.collider.tag == "Goal")
                 {
                     npc.GetComponent<ActorFSM>().SetTransition(Transition.GoalFound); //to Win
                     return;
-				}
-				else if (ray.collider.tag == "Item")
-				{
-					npc.GetComponent<ActorFSM>().foundItem(ray.collider.gameObject);
-					return;
-				}
+		}
+		else if (ray.collider.tag == "Item")
+		{
+			npc.GetComponent<ActorFSM>().foundItem(ray.collider.gameObject);
+			return;
+		}
                 if (isDead)
                 {
                     npc.GetComponent<ActorFSM>().SetTransition(Transition.EnemyFound); //to Dead
                     return;//needed to skip pathfound transition from firing, current logic structure is a bit iffy
                 }
+		else
+            	{
+			//raycast saw something, but actor did not win or die
+                	npc.GetComponent<ActorFSM>().SetTransition(Transition.PathFound); //to Walk
+			return;
+            	}
             }
             else
             {
+	    	//Raycast saw something other than trap, actor is enemy
                 npc.GetComponent<ActorFSM>().SetTransition(Transition.PathFound); //to Walk
+		return;
             }
         }
         else
         {
+		//raycast saw nothing
             npc.GetComponent<ActorFSM>().SetTransition(Transition.PathFound); //to Walk
+	    return;
         }
     }
 
