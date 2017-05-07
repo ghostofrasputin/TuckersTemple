@@ -337,6 +337,7 @@ public class GameMasterFSM : MonoBehaviour
 		//zoom the camera and scale the background
 		GameObject mainCamera = GameObject.Find("Main Camera");
 		GameObject UIBorder = GameObject.Find ("UIBorderPause");
+		//Debug.Log ("UI Border: " + UIBorder.transform.position + " " + UIBorder.transform.localScale);
 		if (numCols == 4) {
 			mainCamera.transform.localScale = new Vector3 (1.31f, 1.333f, 1);
 			mainCamera.transform.position = new Vector3 (2.25f, 1.6f, -10);
@@ -349,6 +350,9 @@ public class GameMasterFSM : MonoBehaviour
 			mainCamera.transform.localScale = new Vector3 (1f, 1f, 1);
 			mainCamera.transform.position = new Vector3 (1.5f, 1f, -10);
 			mainCamera.GetComponent<Camera> ().orthographicSize = 5;
+			// scale UI border to work with new camera paramters
+			UIBorder.transform.localScale = new Vector3 (.4209864f,.4542772f,.3758603f);
+			UIBorder.transform.position = new Vector3 (1.485596f,.9803f,0.0f);
 		}
 
 

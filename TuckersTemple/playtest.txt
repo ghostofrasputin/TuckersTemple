@@ -303,3 +303,32 @@
 "Mines" beaten in 3 moves in 0 seconds in 2 attempts.
 "Mix together" beaten in 9 moves in 0 seconds in 2 attempts.
 "A challenge" beaten in 5 moves in 0 seconds in 2 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"A bit more difficult" beaten in 5 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"A bit more difficult" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 3 moves in 0 seconds in 1 attempts.
+"A bit more difficult" beaten in 2 moves in 0 seconds in 1 attempts.
+"Enemy Appears v2" beaten in 17 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"Journey" beaten in 4 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"Journey" beaten in 12 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 3 moves in 0 seconds in 1 attempts.
+"Journey" beaten in 11 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"A bit more difficult" beaten in 2 moves in 0 seconds in 1 attempts.
+"Enemy Appears v2" beaten in 6 moves in 0 seconds in 2 attempts.
+"Keep it Simple" beaten in 2 moves in 0 seconds in 1 attempts.
+"Its a trap" beaten in 15 moves in 0 seconds in 2 attempts.
+"Trap Room" beaten in 3 moves in 0 seconds in 1 attempts.
+"Mines" beaten in 2 moves in 0 seconds in 1 attempts.
+"Mix together" beaten in 23 moves in 0 seconds in 2 attempts.
+"A challenge" beaten in 2 moves in 0 seconds in 1 attempts.
+"Journey" beaten in 22 moves in 0 seconds in 4 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"A bit more difficult" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
