@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class ActorFSM : MonoBehaviour
 {
     public GameObject gm;
+    public GameObject slash;
     public FSMSystem fsm;
     public bool doneSlide;
     public int direction;
@@ -23,6 +24,9 @@ public class ActorFSM : MonoBehaviour
     public String trapDeath = "";
     private bool hitByLaser = false;
 
+	//deathtexts
+	private Dictionary<string, List<string>> deathTexts;
+
     // audio:
     public AudioClip playerfootsteps1;
     public AudioClip playerfootsteps2;
@@ -36,32 +40,19 @@ public class ActorFSM : MonoBehaviour
         goalPos = transform.position;
         sr = GetComponent<SpriteRenderer>();
         MakeFSM();
-		int msg = UnityEngine.Random.Range(0, 2);
-		switch (msg)
-		{
-		case 0:
-			enemyDeath = actorName + " was swallowed by shadows.";
-			break;
-		case 1:
-			enemyDeath = actorName + " let the darkness consume them.";
-			break;
-		}
-		msg = UnityEngine.Random.Range(0,4);
-		switch (msg)
-		{
-		case 0:
-			trapDeath = actorName + " activated a trap card.";
-			break;
-		case 1:
-			trapDeath = actorName + " spontaneously combusted.";
-			break;
-		case 2:
-			trapDeath = actorName + " did not stop, drop, and roll.";
-			break;
-		case 3:
-			trapDeath = actorName + " forgot to turn off the oven.";
-			break;
-		}
+		deathTexts = new Dictionary<string, List<string>> ();
+		List<string> texts = new List<string>();
+		texts.Add (" was swallowed by shadows.");
+		texts.Add (" was consumed by darkness.");
+		deathTexts.Add ("enemy", texts);
+		texts = new List<string>();
+		texts.Add (" combusted.");
+		texts.Add (" did not stop, drop, and roll.");
+		deathTexts.Add ("trap", texts);
+		texts = new List<string>();
+		texts.Add (" was shot through the heart.");
+		texts.Add (" was hit by a laser beam.");
+		deathTexts.Add ("laser", texts);
     }
 
     public void Update()
@@ -152,13 +143,10 @@ public class ActorFSM : MonoBehaviour
     }
 
 	public void setDeathText(string cause){
-		int msg = UnityEngine.Random.Range(0,0);
-		switch (msg)
-		{
-			case 0:
-				gm.GetComponent<GameMasterFSM>().deathText.text = actorName + " walked into a laser.";
-				break;
-		}
+		List<string> texts = deathTexts[cause];
+		int msg = UnityEngine.Random.Range(0,texts.Count);
+		Debug.Log (msg + "/" + texts.Count);
+		gm.GetComponent<GameMasterFSM>().deathText.text = actorName + texts[msg];
 	}
 
 	public void setLaserHit(bool hit){
@@ -476,9 +464,9 @@ public class TrapDeadAState : FSMState
 
     public override void DoBeforeEntering()
     {
-        if (controlref.actorName == "Roy" || controlref.actorName == "Emily")
+        if (controlref.tag == "Player")
         {
-            controlref.gm.GetComponent<GameMasterFSM>().deathText.text = controlref.trapDeath;
+			controlref.GetComponent<ActorFSM> ().setDeathText ("trap");
         }
     }
 
@@ -526,9 +514,10 @@ public class EnemyDeadAState : FSMState
 
     public override void DoBeforeEntering()
     {
-        if (controlref.actorName == "Roy" || controlref.actorName == "Emily")
+		if (controlref.tag == "Player")
         {
-            controlref.gm.GetComponent<GameMasterFSM>().deathText.text = controlref.enemyDeath;
+            UnityEngine.Object.Instantiate(controlref.slash, controlref.transform.position, Quaternion.identity);
+            controlref.GetComponent<ActorFSM> ().setDeathText ("enemy");
         }
     }
 
@@ -569,9 +558,9 @@ public class LaserDeadAState : FSMState
 	{
 		if (npc.tag == "Player")
 		{
-			//gm.GetComponent<GameMasterFSM>().characters.Remove(npc);
-			//gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
-			//controlref.destroyObj();
+            //gm.GetComponent<GameMasterFSM>().characters.Remove(npc);
+            //gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
+            //controlref.destroyObj();
 			controlref.sr.enabled = false;
 		}
 		else if (npc.tag == "Enemy")

@@ -115,6 +115,12 @@ public class CutSceneManager : MonoBehaviour {
 		//get the current level
 		int currLevel = GameObject.Find("ZombiePasser").GetComponent<ZombiePasser>().getLevel();
 
+		//check if the current level has a cutscene
+		if (!cutSceneFiles.ContainsKey (currLevel)) {
+			Debug.Log ("No cutscene for level " + currLevel);
+			endCutScene ();
+		}
+
 		//load in the JSON file, the same way as levelReader
 		TextAsset cutSceneFile = Resources.Load(cutSceneFiles[currLevel]) as TextAsset;
 		jsonString = cutSceneFile.ToString();
@@ -153,6 +159,7 @@ public class CutSceneManager : MonoBehaviour {
 		//set background to first image, and make the text box invisible
 		background.GetComponent<Image> ().sprite = cutScenes[0].BackgroundImage;
 		textBox.GetComponent<CanvasGroup>().alpha = 0f;
+		nextLine ();
     }
 	
 	// Update is called once per frame
@@ -211,7 +218,7 @@ public class CutSceneManager : MonoBehaviour {
 		textBox.GetComponent<CanvasGroup>().alpha = 0f;
 		tapPrompt.SetActive (true);
         transform.Find("Text").GetComponent<Text>().text = "";
-
+		nextLine ();
     }
 
 	//display the next line
