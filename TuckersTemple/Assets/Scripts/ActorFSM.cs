@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class ActorFSM : MonoBehaviour
 {
     public GameObject gm;
+    public GameObject slash;
     public FSMSystem fsm;
     public bool doneSlide;
     public int direction;
@@ -515,7 +516,8 @@ public class EnemyDeadAState : FSMState
     {
 		if (controlref.tag == "Player")
         {
-			controlref.GetComponent<ActorFSM> ().setDeathText ("enemy");
+            UnityEngine.Object.Instantiate(controlref.slash, controlref.transform.position, Quaternion.identity);
+            controlref.GetComponent<ActorFSM> ().setDeathText ("enemy");
         }
     }
 
@@ -556,9 +558,9 @@ public class LaserDeadAState : FSMState
 	{
 		if (npc.tag == "Player")
 		{
-			//gm.GetComponent<GameMasterFSM>().characters.Remove(npc);
-			//gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
-			//controlref.destroyObj();
+            //gm.GetComponent<GameMasterFSM>().characters.Remove(npc);
+            //gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
+            //controlref.destroyObj();
 			controlref.sr.enabled = false;
 		}
 		else if (npc.tag == "Enemy")
