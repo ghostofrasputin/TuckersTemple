@@ -912,13 +912,17 @@ public class InputState : FSMState
 		if (controlref.doneSliding()) {
 			foreach (GameObject child in controlref.lasers) {
 				if (child.tag == "Laser") {
-					child.GetComponent<LaserScript> ().setEye (true);
+					if (!child.GetComponent<LaserScript> ().eyeOpen) {
+						child.GetComponent<LaserScript> ().setEye (true);
+					}
 				}
 			}
 		} else {
 			foreach (GameObject child in controlref.lasers) {
 				if (child.tag == "Laser") {
-					child.GetComponent<LaserScript> ().setEye (false);
+					if (child.GetComponent<LaserScript> ().eyeOpen) {
+						child.GetComponent<LaserScript> ().setEye (false);
+					}
 				}
 			}
 		}

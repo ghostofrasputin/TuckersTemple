@@ -9,6 +9,8 @@ public class LaserScript : MonoBehaviour {
 	public bool eyeOpen;
 	public RaycastHit2D[] actorRay;
 	private Vector3 drawPoint;
+	public GameObject laserHit;
+	private GameObject currLaserHit;
 
 	// Use this for initialization
 	void Start () {
@@ -30,6 +32,11 @@ public class LaserScript : MonoBehaviour {
 		//Shoot a raycast out to the next wall
 		RaycastHit2D laserRay = Physics2D.Raycast (transform.position, dir, 100f, LayerMask.GetMask ("Wall"));
 		drawPoint = (Vector3)laserRay.point;
+		if (laserRay.collider.gameObject.tag.Equals ("Wall")) {
+			float offset = 3 * laserRay.collider.bounds.size.x / 4;
+			drawPoint.x += offset * dir.x;
+			drawPoint.y += offset * dir.y;
+		}
 		//check if shot any characters
 		actorRay = Physics2D.RaycastAll (transform.position, dir, laserRay.distance, LayerMask.GetMask("Character"));
 
@@ -56,8 +63,10 @@ public class LaserScript : MonoBehaviour {
 	public void setEye(bool state){
 		eyeOpen = state;
 		line.enabled = state;
+		GameObject.Destroy (currLaserHit);
 		if (eyeOpen) {
 			fireRayCast ();
+			currLaserHit = Instantiate (laserHit, drawPoint, Quaternion.identity, this.transform);
 		} else {
 			actorRay = new RaycastHit2D[0];
 		}
