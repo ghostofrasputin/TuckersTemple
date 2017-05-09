@@ -24,9 +24,11 @@ public class ActorFSM : MonoBehaviour
     public String enemyDeath = "";
     public String trapDeath = "";
 
-	// idle actor behavior
+	// actor behavior
 	public bool scaleFlag;
 	public float scaleFactor;
+	public bool rotateFlag;
+	public float rotateFactor;
 
 	//deathtexts
 	private Dictionary<string, List<string>> deathTexts;
@@ -43,6 +45,8 @@ public class ActorFSM : MonoBehaviour
         gm = GameObject.FindGameObjectWithTag("GameController");
         doneSlide = false;
 		scaleFlag = false;
+		rotateFlag = false;
+		rotateFactor = 0;
 		scaleFactor = gameObject.transform.localScale.x;
         goalPos = transform.position;
         sr = GetComponent<SpriteRenderer>();
@@ -150,7 +154,8 @@ public class ActorFSM : MonoBehaviour
     }
 
 	// Use to scale, tilt, or rotate for desired effect
-	public void wiggle(float scaleSpeed, float angle, float lowerLimit=.6f, float upperLimit=0.7f){
+	public void wiggle(float scaleSpeed, float rotateSpeed, float lowerLimit=.6f, float upperLimit=0.7f, float rLL=0.3f, float rUL=0.6f){
+		// controls scaling:
 		if (scaleFlag) {
 			scaleFactor += scaleSpeed;
 		} else {
@@ -167,7 +172,22 @@ public class ActorFSM : MonoBehaviour
 		}
 		gameObject.transform.localScale = new Vector3 (scaleFactor, scaleFactor, 0.0f); 
 
-		//gameObject.transform.RotateAround(gameObject.transform.position,new Vector3(0,0,1),angle);
+		// controls rotation:
+		if (rotateFlag) {
+			rotateFactor += 0.02f;
+		} else {
+			rotateFactor -= 0.02f;
+			rotateSpeed = -rotateSpeed;
+		}
+		if (rotateFactor <= rLL) {
+			rotateFactor = rLL;
+			rotateFlag = true;
+		}
+		if (rotateFactor >= rUL) {
+			rotateFactor = rUL;
+			rotateFlag = false;
+		}
+		gameObject.transform.RotateAround(gameObject.transform.position,new Vector3(0,0,1),rotateSpeed);
 	}
 
 	public void setDeathText(string cause){
@@ -292,10 +312,10 @@ public class IdleAState : FSMState
 	{
 		// Idle Behavior similar to IMBROGLIO !!!
 		if (controlref.tag == "Player") {
-			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 1.0f);
+			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.1f);
 		}
 		if (controlref.tag == "Enemy") {
-			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 1.0f, 1.5f, 1.6f);
+			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.1f, 1.5f, 1.6f);
 		}
 	}
 
@@ -400,7 +420,7 @@ public class LookAState : FSMState
 public class WalkAState : FSMState
 {
 	ActorFSM controlref;
-    private float speed = .07f;
+    private float speed = .03f;
 
     public WalkAState(ActorFSM control)
 	{
@@ -447,7 +467,16 @@ public class WalkAState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
 	{
-    //    SoundController.instance.PlaySingleDelay(controlref.playerfootsteps1);
+		// SoundController.instance.PlaySingleDelay(controlref.playerfootsteps1);
+
+		// walk behavior
+		if (controlref.tag == "Player") {
+			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.5f, 0.6f, 0.7f, 0.2f, 0.6f);
+		}
+		if (controlref.tag == "Enemy") {
+			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.5f, 1.5f, 1.6f, 0.2f, 0.6f);
+		}
+
         npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
     }
 
