@@ -457,7 +457,7 @@ public class GameMasterFSM : MonoBehaviour
         //Add in outer walls to the grid
         boundary.transform.localScale = new Vector3((numCols * 4/3) * tileSize, (numRows * 4/3) * tileSize, 1);
         boundary.transform.position = new Vector3((numCols * 4/3) * tileSize / 4, (numRows * 4/3) * tileSize / 4, 0);
-        Debug.Log(boundary.transform.localScale.ToString());
+        //Debug.Log(boundary.transform.localScale.ToString());
     }
     
    //called to skip animations
