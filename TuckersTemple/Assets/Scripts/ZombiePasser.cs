@@ -25,7 +25,7 @@ public class ZombiePasser : MonoBehaviour {
 	private bool sfxToggle = true;
 	private bool vibToggle = true;
 
-	private bool[] lockedLevels = {false, false, false, false, false, false };
+	private bool[] lockedLevels = {false, false, false, false, false, false};
 
     private Dictionary<int,int> starRating = new Dictionary<int,int>();
     
@@ -35,9 +35,14 @@ public class ZombiePasser : MonoBehaviour {
 		//set the screen orientation.  We do this in ZombiePasser since it exists in
 		//every screen. This is untested and needs to be tried in an apk. -Andrew
 		//Screen.orientation = ScreenOrientation.Portrait; //never mind we can do this in player settings
+
 		// extract level JSON file here:
 		levelData = Camera.main.GetComponent<LevelReader>();
 		levelsList = levelData.getLevels();
+
+		// read in saved data here:
+
+
         for(int i = 0; i< lockedLevels.Length;i++)
         {
             starRating.Add(i + 1, 0);

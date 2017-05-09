@@ -18,6 +18,7 @@ public class LevelLock : MonoBehaviour {
 	private bool isLocked;
     private int numOfStars;
 	private string target;
+
 	// Use this for initialization
 	void Start () {
 		levelNum = System.Convert.ToInt32(gameObject.name);
@@ -44,6 +45,8 @@ public class LevelLock : MonoBehaviour {
                 Sprite threeStars = Resources.Load(target, typeof(Sprite)) as Sprite;
                 this.gameObject.transform.Find("stars").GetComponent<Image>().sprite = threeStars;
 			}
-		} catch(System.Exception){}
+		} catch(System.Exception error){
+			Debug.Log (error);
+		}
 	}
 }
