@@ -354,6 +354,7 @@ public class LookAState : FSMState
 		}	
                 else if (ray.collider.tag == "Goal")
                 {
+                    ray.collider.gameObject.GetComponent<goalLight>().FlashLight();
                     npc.GetComponent<ActorFSM>().SetTransition(Transition.GoalFound); //to Win
                     return;
 		}
