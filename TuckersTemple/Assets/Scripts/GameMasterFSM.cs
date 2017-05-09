@@ -457,7 +457,7 @@ public class GameMasterFSM : MonoBehaviour
         //Add in outer walls to the grid
         boundary.transform.localScale = new Vector3((numCols * 4/3) * tileSize, (numRows * 4/3) * tileSize, 1);
         boundary.transform.position = new Vector3((numCols * 4/3) * tileSize / 4, (numRows * 4/3) * tileSize / 4, 0);
-        Debug.Log(boundary.transform.localScale.ToString());
+        //Debug.Log(boundary.transform.localScale.ToString());
     }
     
    //called to skip animations
@@ -912,13 +912,17 @@ public class InputState : FSMState
 		if (controlref.doneSliding()) {
 			foreach (GameObject child in controlref.lasers) {
 				if (child.tag == "Laser") {
-					child.GetComponent<LaserScript> ().setEye (true);
+					if (!child.GetComponent<LaserScript> ().eyeOpen) {
+						child.GetComponent<LaserScript> ().setEye (true);
+					}
 				}
 			}
 		} else {
 			foreach (GameObject child in controlref.lasers) {
 				if (child.tag == "Laser") {
-					child.GetComponent<LaserScript> ().setEye (false);
+					if (child.GetComponent<LaserScript> ().eyeOpen) {
+						child.GetComponent<LaserScript> ().setEye (false);
+					}
 				}
 			}
 		}

@@ -6,7 +6,8 @@ using UnityEngine.UI;
 
 public class ActorFSM : MonoBehaviour
 {
-    public GameObject gm;
+    // public:
+	public GameObject gm;
     public GameObject slash;
     public FSMSystem fsm;
     public bool doneSlide;
@@ -22,10 +23,16 @@ public class ActorFSM : MonoBehaviour
     public int visitedWalk = 0;
     public String enemyDeath = "";
     public String trapDeath = "";
-    private bool hitByLaser = false;
+
+	// actor behavior
+	public bool scaleFlag;
+	public float scaleFactor;
+	public bool rotateFlag;
+	public float rotateFactor;
 
 	//deathtexts
 	private Dictionary<string, List<string>> deathTexts;
+	private bool hitByLaser = false;
 
     // audio:
     public AudioClip playerfootsteps1;
@@ -37,6 +44,10 @@ public class ActorFSM : MonoBehaviour
     {
         gm = GameObject.FindGameObjectWithTag("GameController");
         doneSlide = false;
+		scaleFlag = false;
+		rotateFlag = false;
+		rotateFactor = 0;
+		scaleFactor = gameObject.transform.localScale.x;
         goalPos = transform.position;
         sr = GetComponent<SpriteRenderer>();
         MakeFSM();
@@ -141,6 +152,43 @@ public class ActorFSM : MonoBehaviour
     {
         Destroy(gameObject);
     }
+
+	// Use to scale, tilt, or rotate for desired effect
+	public void wiggle(float scaleSpeed, float rotateSpeed, float lowerLimit=.6f, float upperLimit=0.7f, float rLL=0.3f, float rUL=0.6f){
+		// controls scaling:
+		if (scaleFlag) {
+			scaleFactor += scaleSpeed;
+		} else {
+			scaleFactor -= scaleSpeed;
+		}
+			
+		if (scaleFactor <= lowerLimit) {
+			scaleFactor = lowerLimit;
+			scaleFlag = true;
+		}
+		if (scaleFactor >= upperLimit) {
+			scaleFactor = upperLimit;
+			scaleFlag = false;
+		}
+		gameObject.transform.localScale = new Vector3 (scaleFactor, scaleFactor, 0.0f); 
+
+		// controls rotation:
+		if (rotateFlag) {
+			rotateFactor += 0.02f;
+		} else {
+			rotateFactor -= 0.02f;
+			rotateSpeed = -rotateSpeed;
+		}
+		if (rotateFactor <= rLL) {
+			rotateFactor = rLL;
+			rotateFlag = true;
+		}
+		if (rotateFactor >= rUL) {
+			rotateFactor = rUL;
+			rotateFlag = false;
+		}
+		gameObject.transform.RotateAround(gameObject.transform.position,new Vector3(0,0,1),rotateSpeed);
+	}
 
 	public void setDeathText(string cause){
 		List<string> texts = deathTexts[cause];
@@ -262,7 +310,13 @@ public class IdleAState : FSMState
 
 	public override void Act(GameObject gm, GameObject npc)
 	{
-		//idle	
+		// Idle Behavior similar to IMBROGLIO !!!
+		if (controlref.tag == "Player") {
+			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.1f);
+		}
+		if (controlref.tag == "Enemy") {
+			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.1f, 1.5f, 1.6f);
+		}
 	}
 
 } //IdleState
@@ -320,6 +374,7 @@ public class LookAState : FSMState
 		}	
                 else if (ray.collider.tag == "Goal")
                 {
+                    ray.collider.gameObject.GetComponent<goalLight>().FlashLight();
                     npc.GetComponent<ActorFSM>().SetTransition(Transition.GoalFound); //to Win
                     return;
 		}
@@ -365,7 +420,7 @@ public class LookAState : FSMState
 public class WalkAState : FSMState
 {
 	ActorFSM controlref;
-    private float speed = .07f;
+    private float speed = .03f;
 
     public WalkAState(ActorFSM control)
 	{
@@ -412,7 +467,16 @@ public class WalkAState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
 	{
-    //    SoundController.instance.PlaySingleDelay(controlref.playerfootsteps1);
+		// SoundController.instance.PlaySingleDelay(controlref.playerfootsteps1);
+
+		// walk behavior
+		if (controlref.tag == "Player") {
+			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.5f, 0.6f, 0.7f, 0.2f, 0.6f);
+		}
+		if (controlref.tag == "Enemy") {
+			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.5f, 1.5f, 1.6f, 0.2f, 0.6f);
+		}
+
         npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
     }
 
