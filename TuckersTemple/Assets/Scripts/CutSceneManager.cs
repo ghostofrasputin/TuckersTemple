@@ -119,6 +119,7 @@ public class CutSceneManager : MonoBehaviour {
 		if (!cutSceneFiles.ContainsKey (currLevel)) {
 			Debug.Log ("No cutscene for level " + currLevel);
 			endCutScene ();
+            return;
 		}
 
 		//load in the JSON file, the same way as levelReader

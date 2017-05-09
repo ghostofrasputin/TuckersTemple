@@ -14,6 +14,7 @@ public class TileFSM : MonoBehaviour
     public bool offGrid;
     public float offset;
     public float tileSize;
+    public int[] walls;
     public void SetTransition(Transition t) { fsm.PerformTransition(t); }
 
     public GameObject Wall;
@@ -209,6 +210,7 @@ public class TileFSM : MonoBehaviour
                 GameObject.Destroy(paths);
                 break;
         }
+        walls = wallCheck;
         for (int i = 0; i < 4; i++)
         {
             int currentWallBoolean = wallCheck[i];
