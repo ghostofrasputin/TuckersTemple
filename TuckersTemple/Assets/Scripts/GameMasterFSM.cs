@@ -1086,6 +1086,8 @@ public class OrderActorsState : FSMState
 
     public override void DoBeforeEntering()
     {
+    	controlref.sameTileReset();
+
         foreach (GameObject actor in controlref.actors)
         {
             actor.GetComponent<ActorFSM>().doneSlide = true;
@@ -1095,8 +1097,6 @@ public class OrderActorsState : FSMState
 				child.GetComponent<LaserScript> ().setEye (false);
 			}
 		}
-
-        controlref.sameTileReset();
     }
 
     public override void Reason(GameObject gm, GameObject npc)
