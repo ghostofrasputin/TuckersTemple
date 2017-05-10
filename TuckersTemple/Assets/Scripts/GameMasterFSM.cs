@@ -1002,7 +1002,7 @@ public class OrderTilesState : FSMState
 
     public override void DoBeforeLeaving()
     {
-        SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
+        //SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
     }
 
 } // OrderTilesState
@@ -1020,6 +1020,9 @@ public class OrderActorsState : FSMState
 
     public override void DoBeforeEntering()
     {
+        SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
+        Handheld.Vibrate();
+        GameObject.Find("Main Camera").GetComponent<ScreenShake>().startShaking();
         foreach (GameObject actor in controlref.actors)
         {
             actor.GetComponent<ActorFSM>().doneSlide = true;
