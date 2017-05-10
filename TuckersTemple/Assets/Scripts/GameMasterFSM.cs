@@ -801,6 +801,60 @@ public class GameMasterFSM : MonoBehaviour
         }
         return false;
     }
+
+    public void sameTileOffset()
+    {
+        List<GameObject> charList = new List<GameObject>();
+        foreach (GameObject tile in tiles)
+        {
+            foreach (Transform child in tile.transform)
+            {
+                if (child.tag == "Player")
+                {
+                    charList.Add(child.gameObject);
+                }
+            }
+            
+            switch(charList.Count)
+            {
+                case 2:
+                    charList[0].transform.position -= new Vector3(tileSize / 4, 0, 0);
+                    charList[1].transform.position += new Vector3(tileSize / 4, 0, 0);
+                    //charList[0].transform.localScale -= new Vector3(.5f, .5f, 1);
+                    //charList[1].transform.localScale -= new Vector3(10, .5f, 1);
+                    break;
+                case 3:
+                    charList[1].transform.position -= new Vector3(tileSize / 4,  tileSize / 6, 0);
+                    charList[2].transform.position += new Vector3(tileSize / 4, -tileSize / 6, 0);
+                    charList[0].transform.position += new Vector3(           0,  tileSize / 6, 0);
+                    break;
+                case 4:
+                    charList[2].transform.position -= new Vector3(tileSize / 4,  tileSize / 6, 0);
+                    charList[3].transform.position += new Vector3(tileSize / 4, -tileSize / 6, 0);
+                    charList[0].transform.position -= new Vector3(tileSize / 4, -tileSize / 6, 0);
+                    charList[1].transform.position += new Vector3(tileSize / 4,  tileSize / 6, 0);
+                    break;
+                default:
+                    //0, 1, or more than 4? do nothing
+                    break;
+            }
+            charList.Clear();
+        }
+    }
+
+    public void sameTileReset()
+    {
+        foreach (GameObject tile in tiles)
+        {
+            foreach (Transform child in tile.transform)
+            {
+                if (child.tag == "Player")
+                {
+                    child.position = tile.transform.position;
+                }
+            }
+        }
+    }
 }
 
 public class InitState : FSMState
@@ -897,6 +951,14 @@ public class InputState : FSMState
         stateID = StateID.Ready;
         controlref = control;
         controlref.swiped = false;
+    }
+
+    public override void DoBeforeEntering()
+    {
+        if (!controlref.incompleteTouch)
+        {
+            controlref.sameTileOffset();
+        }
     }
 
     public override void Reason(GameObject gm, GameObject npc)
@@ -1024,6 +1086,8 @@ public class OrderActorsState : FSMState
 
     public override void DoBeforeEntering()
     {
+    	controlref.sameTileReset();
+
         foreach (GameObject actor in controlref.actors)
         {
             actor.GetComponent<ActorFSM>().doneSlide = true;
