@@ -45,6 +45,7 @@ public class GameMasterFSM : MonoBehaviour
 	public GameObject TutorialButton;
 	public bool foundItem = false;
 	public List<GameObject> lasers;
+    public GameObject UIBorder;
     
     // touch handle
     public bool latch = false;
@@ -94,7 +95,7 @@ public class GameMasterFSM : MonoBehaviour
         cutscenes.Add(17);
 
         boundary = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
-	scalar = .006f;
+	    scalar = .006f;
     }
 
     public void Update()
@@ -508,7 +509,8 @@ public class GameMasterFSM : MonoBehaviour
 							}
 						}
 						if (foundTile) {
-							break;
+                            spinGear(1f);
+                            break;
 						}
 					}
                     
@@ -634,11 +636,24 @@ public class GameMasterFSM : MonoBehaviour
         return touchSuccess;
     }
 
+    public void spinGear(float s)
+    {
+        if (s == 0)
+        {
+            UIBorder.GetComponent<Animator>().enabled = false;
+        }
+        else
+        {
+            UIBorder.GetComponent<Animator>().enabled = true;
+            UIBorder.GetComponent<Animator>().speed = s;
+            UIBorder.GetComponent<Animator>().Play("UIBorderGear");
+        }
+    }
+
     public void moveGrid(int col, int row, int dir)
     {
         //float tileSize = tileGrid[0][0].GetComponent<Renderer>().bounds.size.x * gridScale;
         //SoundController.instance.RandomSfx(TileSlide1, TileSlide2);
-
         //calculate normal offset vector and move the tiles
         Vector2 offset = new Vector2(0, 0);
         GameObject temp;
@@ -917,7 +932,7 @@ public class InputState : FSMState
 					}
 				}
 			}
-		} else {
+        } else {
 			foreach (GameObject child in controlref.lasers) {
 				if (child.tag == "Laser") {
 					if (child.GetComponent<LaserScript> ().eyeOpen) {
@@ -925,7 +940,7 @@ public class InputState : FSMState
 					}
 				}
 			}
-		}
+        }
     }
 
     public override void Act(GameObject gm, GameObject npc)
@@ -1002,11 +1017,13 @@ public class OrderTilesState : FSMState
 				child.GetComponent<LaserScript> ().setEye (false);
 			}
 		}
-	}
+        controlref.spinGear(0.5f);
+    }
 
     public override void DoBeforeLeaving()
     {
         SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
+        controlref.spinGear(0);
     }
 
 } // OrderTilesState
