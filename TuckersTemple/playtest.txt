@@ -332,3 +332,6 @@
 "All Open" beaten in 2 moves in 0 seconds in 1 attempts.
 "A bit more difficult" beaten in 2 moves in 0 seconds in 1 attempts.
 "All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 4 moves in 0 seconds in 1 attempts.
+"A bit more difficult" beaten in 2 moves in 0 seconds in 1 attempts.
+"Lasers" beaten in 4 moves in 0 seconds in 1 attempts.
