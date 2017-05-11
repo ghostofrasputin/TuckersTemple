@@ -19,6 +19,8 @@ public class Level {
 	public string Name { get; set; }
 	public int Rows { get; set; }
 	public int Cols { get; set; }
+    public int Moves { get; set; }
+    public string Star { get; set; }
 	public List<List<string>> Tiles { get; set; }
 	public Dictionary<string,List<int>> Actors { get; set; }
 	public Dictionary<string,List<int>> StaticObjects { get; set; } // traps, goals, etc.
@@ -69,11 +71,25 @@ public class LevelReader : MonoBehaviour {
 			stats = new Dictionary<string,List<int>> ();
 			setDict(staticO, stats);
 
-			// Create a new level:
-			Level level = new Level {
-				Name = (string)levelInfo[0],
-				Rows = (int)levelInfo[1],
-				Cols = (int)levelInfo[2],
+            //get star info
+            int numMoves = 4; //default number of moves to 4 if none is specified.
+            if (levelInfo.Keys.Contains("moves"))
+            {
+                numMoves = (int)levelInfo["moves"];
+            }
+            string starCriteria = ""; //if no special requirement, the star will be given for free.
+            if (levelInfo.Keys.Contains("star"))
+            {
+                starCriteria = (string)levelInfo["star"];
+            }
+
+            // Create a new level:
+            Level level = new Level {
+                Name = (string)levelInfo[0],
+                Rows = (int)levelInfo[1],
+                Cols = (int)levelInfo[2],
+                Moves = numMoves,
+                Star = starCriteria,
 				Tiles = tiles,
 				Actors = acts,
 				StaticObjects = stats
