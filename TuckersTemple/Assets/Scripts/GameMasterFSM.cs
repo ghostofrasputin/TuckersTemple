@@ -18,6 +18,7 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject Goal;
     public GameObject Laser;
     public GameObject Item;
+    public GameObject sparkle;
     public FSMSystem fsm;
     public Vector2 lastPos = new Vector2(0, 0); //holds the last position for mouse input to calculate deltaPosition
     public int numRows; //number of tiles to size
@@ -94,12 +95,16 @@ public class GameMasterFSM : MonoBehaviour
         cutscenes.Add(17);
 
         boundary = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
-	scalar = .006f;
+	    scalar = .006f;
     }
 
     public void Update()
     {
         //print(tag + " == " + fsm.CurrentStateID);
+        if (Input.GetMouseButtonDown(0))
+        {
+            Instantiate(sparkle, Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0)), Quaternion.identity);
+        }
         fsm.CurrentState.Reason(gm, gameObject);
         fsm.CurrentState.Act(gm, gameObject);
     }
