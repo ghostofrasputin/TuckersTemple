@@ -46,7 +46,9 @@ public class GameMasterFSM : MonoBehaviour
 	public bool foundItem = false;
 	public List<GameObject> lasers;
     public GameObject UIBorder;
-    
+    public bool isPaused;
+    public bool foundTile = false;
+
     // touch handle
     public bool latch = false;
     public bool isVert = false;
@@ -85,6 +87,7 @@ public class GameMasterFSM : MonoBehaviour
     {
         MakeFSM();
 		wrapLatch = false;
+        isPaused = false;
 		tileSize = Tile.GetComponent<SpriteRenderer>().bounds.size.x * gridScale;
 		RootTile = GameObject.Find ("Tiles").gameObject;
 		RootTile.transform.localScale = new Vector3(gridScale, gridScale, 1f);
@@ -469,165 +472,216 @@ public class GameMasterFSM : MonoBehaviour
 				t.transform.position = t.GetComponent<TileFSM>().goalPos;
 			}
 		}
-	} 
-    
-   public bool HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase, Vector3 touchDelta = default(Vector3))
+	}
+
+    public void flipPause()
+    {
+        isPaused = !isPaused;
+        UIBorder.GetComponent<Animator>().speed = 1.5f;
+    }
+
+    public bool HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase, Vector3 touchDelta = default(Vector3))
     {
         bool touchSuccess = false;
 		int row = 0;
 		int col = 0;
+        Debug.Log(foundTile);
         switch (touchPhase)
         {
             case TouchPhase.Began:
                 Ray ray = Camera.main.ScreenPointToRay(touchPosition);
                 touchTarget = null;
-                touchStart = new Vector2(touchPosition.x, touchPosition.y);
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Tile")))
                 {
                     touchTarget = hit.collider.gameObject;
                     //Debug.Log(touchTarget);
+                    for (int c = 0; c < numCols; c++)
+                    {
+                        for (int r = 0; r < numRows; r++)
+                        {
+                            if (tileGrid[c][r].Equals(touchTarget))
+                            {
+                                row = r;
+                                Row = row;
+                                col = c;
+                                Column = col;
+                                foundTile = true;
+                                touchStart = new Vector2(touchPosition.x, touchPosition.y);
+                                break;
+                            }
+                        }
+                        if (foundTile) { break; }
+                    }
                 }
+                Debug.Log(Row + ", " + Column);
+                break;
+
+            case TouchPhase.Stationary:
+
+                if (foundTile) { spinGear(0); }
                 break;
 
 			case TouchPhase.Moved:
-				Vector2 offsetLocal = (Vector2)touchPosition - touchStart;
-				if (Math.Abs(offsetLocal.x) > 10 || Math.Abs(offsetLocal.y) > 10) {
-					if (latch == false) {
-						offset = (Vector2)touchPosition - touchStart;
-						isVert = Mathf.Abs (offset.y) > Mathf.Abs (offset.x);
-						latch = true;
-					}
-					// look for a selected tile and it's row/col
-					bool foundTile = false; 
-					for (int c = 0; c < numCols; c++) {
-						for (int r = 0; r < numRows; r++) {
-							if (tileGrid [c] [r].Equals (touchTarget)) {
-								Row = row = r;
-								Column = col = c;
-								foundTile = true;
-								break;
-							}
-						}
-						if (foundTile) {
-                            spinGear(1f);
-                            break;
-						}
-					}
-                    
-					// move the row or column 
-				    // with user touch
-					if (foundTile) {
-						float tileS = touchTarget.GetComponent<SpriteRenderer> ().bounds.size.x * gridScale;
-						/* Debug.Log("spriterenderer" + tileS); */
-						Vector3 origScale;
-						if(isVert){
-							if(!wrapLatch) {
-								wrapTile = tileGrid[Column][numRows-1];
-								origScale = wrapTile.transform.localScale;
-								wrapTile.transform.localScale = Vector3.one;
-								wrapCopy1 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, -tileSize, 0), Quaternion.identity, wrapTile.transform);
-								Destroy(wrapCopy1.GetComponent<TileFSM>());
-								wrapTile.transform.localScale = origScale;
 
-								wrapTile = tileGrid[Column][0];
-								origScale = wrapTile.transform.localScale;
-								wrapTile.transform.localScale = Vector3.one;
-								wrapCopy2 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, tileSize * numRows, 0), Quaternion.identity, wrapTile.transform);
-								Destroy(wrapCopy2.GetComponent<TileFSM>());
-								wrapTile.transform.localScale = origScale;
+                if (foundTile)
+                {
+                    spinGear(.5f);
+                    Vector2 offsetLocal = (Vector2)touchPosition - touchStart;
+                    if (Math.Abs(offsetLocal.x) > 10 || Math.Abs(offsetLocal.y) > 10)
+                    {
+                        if (latch == false)
+                        {
+                            offset = (Vector2)touchPosition - touchStart;
+                            isVert = Mathf.Abs(offset.y) > Mathf.Abs(offset.x);
+                            latch = true;
+                        }
 
-								wrapLatch = true;
-							}
-						} else {
-							if(!wrapLatch) {
-								wrapTile = tileGrid[numCols-1][Row];                                
-								origScale = wrapTile.transform.localScale;
-								wrapTile.transform.localScale = Vector3.one;
-								wrapCopy1 = Instantiate(wrapTile, new Vector3(-tileSize, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
-								Destroy(wrapCopy1.GetComponent<TileFSM>());
-								wrapTile.transform.localScale = origScale;
+                        // move the row or column 
+                        // with user touch
+                        float tileS = touchTarget.GetComponent<SpriteRenderer>().bounds.size.x * gridScale;
+                        /* Debug.Log("spriterenderer" + tileS); */
+                        Vector3 origScale;
+                        if (isVert)
+                        {
+                            if (!wrapLatch)
+                            {
+                                wrapTile = tileGrid[Column][numRows - 1];
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy1 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, -tileSize, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy1.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
 
-								wrapTile = tileGrid[0][Row];                                
-								origScale = wrapTile.transform.localScale;
-								wrapTile.transform.localScale = Vector3.one;
-							wrapCopy2 = Instantiate(wrapTile, new Vector3(tileSize * numCols, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
-								Destroy(wrapCopy2.GetComponent<TileFSM>());
-								wrapTile.transform.localScale = origScale;
+                                wrapTile = tileGrid[Column][0];
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy2 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, tileSize * numRows, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy2.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
 
-								wrapLatch = true;
-							}
-						}
-						// moving horizontal rows:
-						if (!isVert) {
-							for (int c = 0; c < numCols; c++) {
-								tileGrid [c] [row].GetComponent<TileFSM>().goalPos = new Vector2 (tileGrid [c] [row].transform.position.x + touchDelta.x * scalar, 
-																						tileGrid [c] [row].transform.position.y);
-								//Debug.Log (tileGrid [c] [row].GetComponent<TileFSM> ().goalPos);
-							}
-						} 
-						// moving vertical cols:
-						else {
-							for (int r = 0; r < numRows; r++) {
-								tileGrid [col] [r].GetComponent<TileFSM>().goalPos = new Vector2 (tileGrid [col] [r].transform.position.x, 
-																						tileGrid [col] [r].transform.position.y + touchDelta.y * scalar);
-							}
-						}
-					}
-				}
+                                wrapLatch = true;
+                            }
+                        }
+                        else
+                        {
+                            if (!wrapLatch)
+                            {
+                                wrapTile = tileGrid[numCols - 1][Row];
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy1 = Instantiate(wrapTile, new Vector3(-tileSize, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy1.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+
+                                wrapTile = tileGrid[0][Row];
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy2 = Instantiate(wrapTile, new Vector3(tileSize * numCols, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy2.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+
+                                wrapLatch = true;
+                            }
+                        }
+                        // moving horizontal rows:
+                        if (!isVert)
+                        {
+                            for (int c = 0; c < numCols; c++)
+                            {
+                                tileGrid[c][Row].GetComponent<TileFSM>().goalPos = new Vector2(tileGrid[c][Row].transform.position.x + touchDelta.x * scalar,
+                                                                                        tileGrid[c][Row].transform.position.y);
+                                //Debug.Log (tileGrid [c] [row].GetComponent<TileFSM> ().goalPos);
+                            }
+                        }
+                        // moving vertical cols:
+                        else
+                        {
+                            for (int r = 0; r < numRows; r++)
+                            {
+                                tileGrid[Column][r].GetComponent<TileFSM>().goalPos = new Vector2(tileGrid[Column][r].transform.position.x,
+                                                                                        tileGrid[Column][r].transform.position.y + touchDelta.y * scalar);
+                            }
+                        }
+                    }
+                }
 				break;
 			case TouchPhase.Ended:
-				float swipeDist;
-				//float tileSize = tileGrid [0] [0].GetComponent<Renderer> ().bounds.size.x * gridScale;
-				bool validSwipe;
-                Destroy(wrapCopy1, 0.5f);
-                Destroy(wrapCopy2, 0.5f);
-                wrapLatch = false;
-                
-				//Debug.Log (isVert);
-					if (isVert) {
-						swipeDist = (touchPosition.y - touchStart.y) * scalar;
-						if (Mathf.Abs (swipeDist) < tileSize / 2) {
-							validSwipe = false;
-							incompleteTouch = true;
-						} else {
-							validSwipe = true;
-							incompleteTouch = false;
-						}
-						for (int r = 0; r < numRows; r++) {
-							//Debug.Log(swipeDist);
-							if (!validSwipe) {
-								tileGrid [Column] [r].GetComponent<TileFSM>().incompleteMove = true;
-							}
-							tileGrid [Column] [r].GetComponent<TileFSM>().touchReleased = true;
-						}
-						if (swipeDist < 0) {
-							Direction = S;
-						} else {
-							Direction = N;
-						}
-					} else {
-						swipeDist = (touchPosition.x - touchStart.x) * scalar;
-						if (Mathf.Abs (swipeDist) < tileSize / 2) {
-							validSwipe = false;
-							incompleteTouch = true;
-						} else {
-							validSwipe = true;
-							incompleteTouch = false;
-						}
-						for (int c = 0; c < numCols; c++) {
-							if (!validSwipe) {
-								tileGrid [c] [Row].GetComponent<TileFSM>().incompleteMove = true;
-							}
-							tileGrid [c] [Row].GetComponent<TileFSM>().touchReleased = true;
-						}
-						if (swipeDist < 0) {
-							Direction = W;
-						} else {
-							Direction = E;
-						}
-					}
-					latch = false;
-					touchSuccess = true;
+
+                if (foundTile)
+                {
+                    float swipeDist;
+                    //float tileSize = tileGrid [0] [0].GetComponent<Renderer> ().bounds.size.x * gridScale;
+                    bool validSwipe;
+                    Destroy(wrapCopy1, 0.5f);
+                    Destroy(wrapCopy2, 0.5f);
+                    wrapLatch = false;
+
+                    //Debug.Log (isVert);
+                    if (isVert)
+                    {
+                        swipeDist = (touchPosition.y - touchStart.y) * scalar;
+                        if (Mathf.Abs(swipeDist) < tileSize / 2)
+                        {
+                            validSwipe = false;
+                            incompleteTouch = true;
+                        }
+                        else
+                        {
+                            validSwipe = true;
+                            incompleteTouch = false;
+                        }
+                        for (int r = 0; r < numRows; r++)
+                        {
+                            //Debug.Log(swipeDist);
+                            if (!validSwipe)
+                            {
+                                tileGrid[Column][r].GetComponent<TileFSM>().incompleteMove = true;
+                            }
+                            tileGrid[Column][r].GetComponent<TileFSM>().touchReleased = true;
+                        }
+                        if (swipeDist < 0)
+                        {
+                            Direction = S;
+                        }
+                        else
+                        {
+                            Direction = N;
+                        }
+                    }
+                    else
+                    {
+                        swipeDist = (touchPosition.x - touchStart.x) * scalar;
+                        if (Mathf.Abs(swipeDist) < tileSize / 2)
+                        {
+                            validSwipe = false;
+                            incompleteTouch = true;
+                        }
+                        else
+                        {
+                            validSwipe = true;
+                            incompleteTouch = false;
+                        }
+                        for (int c = 0; c < numCols; c++)
+                        {
+                            if (!validSwipe)
+                            {
+                                tileGrid[c][Row].GetComponent<TileFSM>().incompleteMove = true;
+                            }
+                            tileGrid[c][Row].GetComponent<TileFSM>().touchReleased = true;
+                        }
+                        if (swipeDist < 0)
+                        {
+                            Direction = W;
+                        }
+                        else
+                        {
+                            Direction = E;
+                        }
+                    }
+                    latch = false;
+                    touchSuccess = true;
+                    foundTile = false;
+                }
 	                break;
 
 	            default:
@@ -946,7 +1000,7 @@ public class InputState : FSMState
     public override void Act(GameObject gm, GameObject npc)
     {
         controlref.swiped = false;
-        
+
         if (Input.touchCount == 0)
         {
             //Calls when mouse is first pressed(begin)
@@ -959,8 +1013,15 @@ public class InputState : FSMState
             //called when mouse his held down(moved)
             if (Input.GetMouseButton(0))
             {
-                controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Moved, Input.mousePosition - (Vector3)controlref.lastPos);
-                controlref.lastPos = Input.mousePosition;
+                if (controlref.lastPos == (Vector2)Input.mousePosition)
+                {
+                    controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Stationary, Input.mousePosition - (Vector3)controlref.lastPos);
+                }
+                else
+                {
+                    controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Moved, Input.mousePosition - (Vector3)controlref.lastPos);
+                    controlref.lastPos = Input.mousePosition;
+                }
             }
             //called when mouse is lifted up(ended)
             if (Input.GetMouseButtonUp(0))
@@ -974,7 +1035,6 @@ public class InputState : FSMState
             Touch touch = Input.touches[0];
             controlref.swiped = controlref.HandleTouch(touch.fingerId, touch.position, touch.phase, touch.deltaPosition);
         }
-        
     }
 
 } //InputState
