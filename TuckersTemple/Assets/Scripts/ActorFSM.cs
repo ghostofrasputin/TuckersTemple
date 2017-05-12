@@ -144,12 +144,17 @@ public class ActorFSM : MonoBehaviour
 	 */ 
 	public void foundItem(GameObject Item)
 	{
-		GameObject.Find("GameMaster").GetComponent<GameMasterFSM>().foundItem = true;
+		GameObject.Find("GameMaster").GetComponent<GameMasterFSM>().starRequirements["foundItem"] = true;
 		Destroy(Item);
 	}
 
+    //This should always be called if the actor gets destroyed
     public void destroyObj()
     {
+        if(this.tag == "Enemy")
+        {
+            gm.GetComponent<GameMasterFSM>().enemyDied();
+        }
         Destroy(gameObject);
     }
 
