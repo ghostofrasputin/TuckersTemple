@@ -68,6 +68,7 @@ public class GameMasterFSM : MonoBehaviour
     public AudioClip nextLevelSound;
     public AudioClip playerdeathSound;
 	public AudioClip gameOverSound;
+    public AudioClip tileSlideOnly;
 
     // private:
     private RaycastHit hit;
@@ -163,7 +164,7 @@ public class GameMasterFSM : MonoBehaviour
 		SoundController.instance.gameOver.Stop ();
         deathScreen.GetComponent<CanvasGroup>().interactable = false;
         deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
-
+        moves = 0;
         attempts++;
         setupLevel(levelsList[currentLevel - 1]);
 		if (fsm.CurrentStateID == StateID.LevelDeath) {
@@ -516,8 +517,8 @@ public class GameMasterFSM : MonoBehaviour
 				    // with user touch
 					if (foundTile) {
 						float tileS = touchTarget.GetComponent<SpriteRenderer> ().bounds.size.x * gridScale;
-						/* Debug.Log("spriterenderer" + tileS); */
-						Vector3 origScale;
+                        /* Debug.Log("spriterenderer" + tileS); */
+                        Vector3 origScale;
 						if(isVert){
 							if(!wrapLatch) {
 								wrapTile = tileGrid[Column][numRows-1];
@@ -526,6 +527,7 @@ public class GameMasterFSM : MonoBehaviour
 								wrapCopy1 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, -tileSize, 0), Quaternion.identity, wrapTile.transform);
 								Destroy(wrapCopy1.GetComponent<TileFSM>());
 								wrapTile.transform.localScale = origScale;
+                                SoundController.instance.RandomSfxTiles(tileSlideOnly, tileSlideOnly);
 
 								wrapTile = tileGrid[Column][0];
 								origScale = wrapTile.transform.localScale;
@@ -544,8 +546,9 @@ public class GameMasterFSM : MonoBehaviour
 								wrapCopy1 = Instantiate(wrapTile, new Vector3(-tileSize, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
 								Destroy(wrapCopy1.GetComponent<TileFSM>());
 								wrapTile.transform.localScale = origScale;
+                                SoundController.instance.RandomSfxTiles(tileSlideOnly, tileSlideOnly);
 
-								wrapTile = tileGrid[0][Row];                                
+                                wrapTile = tileGrid[0][Row];                                
 								origScale = wrapTile.transform.localScale;
 								wrapTile.transform.localScale = Vector3.one;
 							wrapCopy2 = Instantiate(wrapTile, new Vector3(tileSize * numCols, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
@@ -580,7 +583,6 @@ public class GameMasterFSM : MonoBehaviour
                 Destroy(wrapCopy1, 0.5f);
                 Destroy(wrapCopy2, 0.5f);
                 wrapLatch = false;
-                
 				//Debug.Log (isVert);
 					if (isVert) {
 						swipeDist = (touchPosition.y - touchStart.y) * scalar;
@@ -642,7 +644,7 @@ public class GameMasterFSM : MonoBehaviour
         //calculate normal offset vector and move the tiles
         Vector2 offset = new Vector2(0, 0);
         GameObject temp;
-	if (!incompleteTouch) {
+        if (!incompleteTouch) {
 		switch (dir) {
 		/*
      * What follows is a bunch of suprisingly straightforward 2D array logic.  It will be explained once here instead of in each loop individually
@@ -1046,6 +1048,9 @@ public class OrderTilesState : FSMState
             if (controlref.incompleteTouch) {
                 npc.GetComponent<GameMasterFSM>().SetTransition(Transition.Incomplete); //to Input
             } else {
+                SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
+                Handheld.Vibrate();
+                GameObject.Find("Main Camera").GetComponent<ScreenShake>().startShaking();
                 npc.GetComponent<GameMasterFSM>().SetTransition(Transition.TilesDone); //to orderactors
             }
         }
@@ -1125,6 +1130,7 @@ public class OrderActorsState : FSMState
 		
 	public override void DoBeforeLeaving ()
 	{
+
 		foreach (GameObject child in controlref.lasers) {
 			if (child.tag == "Laser") {
 				child.GetComponent<LaserScript> ().setEye (true);
