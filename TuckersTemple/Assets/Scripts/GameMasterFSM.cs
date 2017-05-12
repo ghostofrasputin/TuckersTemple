@@ -101,7 +101,7 @@ public class GameMasterFSM : MonoBehaviour
     public void Update()
     {
         //print(tag + " == " + fsm.CurrentStateID);
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began))
         {
             Instantiate(sparkle, Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0)), Quaternion.identity);
         }
