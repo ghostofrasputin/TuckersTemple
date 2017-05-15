@@ -135,7 +135,7 @@ public class ActorFSM : MonoBehaviour
         fsm.AddState(win);
         fsm.AddState(trap);
         fsm.AddState(enemy);
-		fsm.AddState (laser);
+		fsm.AddState(laser);
     }
 
 	/* foundItem is called when actors collide into an item.
@@ -159,7 +159,7 @@ public class ActorFSM : MonoBehaviour
     }
 
 	// Use to scale, tilt, or rotate for desired effect
-	public void wiggle(float scaleSpeed, float rotateSpeed, float lowerLimit=.6f, float upperLimit=0.7f, float rLL=0.3f, float rUL=0.6f){
+	public void wiggle(float scaleSpeed, float rotateSpeed, float lowerLimit=.6f, float upperLimit=0.63f, float rLL=0.3f, float rUL=0.6f){
 		// controls scaling:
 		if (scaleFlag) {
 			scaleFactor += scaleSpeed;
@@ -289,7 +289,12 @@ public class IdleAState : FSMState
 		controlref = control;
 	}
 
-	public override void Reason(GameObject gm, GameObject npc)
+    public override void DoBeforeEntering()
+    {
+        controlref.transform.rotation = Quaternion.identity;
+    }
+
+    public override void Reason(GameObject gm, GameObject npc)
 	{
 		if (npc.GetComponent<ActorFSM>().isHitByLaser()) {
 			npc.GetComponent<ActorFSM> ().SetTransition (Transition.LaserCollide);
@@ -321,10 +326,10 @@ public class IdleAState : FSMState
 	{
 		// Idle Behavior similar to IMBROGLIO !!!
 		if (controlref.tag == "Player") {
-			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.1f);
+			npc.GetComponent<ActorFSM> ().wiggle (0.0005f, 0.05f);
 		}
 		if (controlref.tag == "Enemy") {
-			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.1f, 1.5f, 1.6f);
+			npc.GetComponent<ActorFSM> ().wiggle (0.0005f, 0.1f, 1.5f, 1.6f);
 		}
 	}
 
@@ -568,6 +573,15 @@ public class TrapDeadAState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
+        if (controlref.tag == "Player")
+        {
+            npc.GetComponent<ActorFSM>().wiggle(0.001f, 0.5f, 0.6f, 0.7f, 0.2f, 0.6f);
+        }
+        if (controlref.tag == "Enemy")
+        {
+            npc.GetComponent<ActorFSM>().wiggle(0.001f, 0.5f, 1.5f, 1.6f, 0.2f, 0.6f);
+        }
+
         npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
     }
 
