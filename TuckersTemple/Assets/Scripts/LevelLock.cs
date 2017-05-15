@@ -18,11 +18,13 @@ public class LevelLock : MonoBehaviour {
 	private bool isLocked;
     private int numOfStars;
 	private string target;
+
 	// Use this for initialization
 	void Start () {
 		levelNum = System.Convert.ToInt32(gameObject.name);
 		try {
 			isLocked = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLockedLevelBool(levelNum-1);
+			//Debug.Log("level: "+levelNum+" locked: "+isLocked);
 			// use locked sprite and turn off button:
 			if(isLocked == true) {
                 this.gameObject.GetComponent<Button>().interactable = false;
@@ -30,7 +32,7 @@ public class LevelLock : MonoBehaviour {
                 this.gameObject.GetComponent<Image>().sprite = lockedSprite;
                 Text buttonText = this.gameObject.GetComponent<Button>().GetComponentsInChildren<Text>()[0];
                 buttonText.text = "";
-                this.gameObject.transform.Find("stars").GetComponent<Image>().enabled = false;
+                //this.gameObject.transform.Find("stars").GetComponent<Image>().enabled = false;
             } 
 			// use unlocked sprite:
 			else {
@@ -39,11 +41,19 @@ public class LevelLock : MonoBehaviour {
 				//this.gameObject.GetComponent<Image>().sprite = lockedSprite;
 				Text buttonText = this.gameObject.GetComponent<Button>().GetComponentsInChildren<Text>()[0];
 				buttonText.text = ""+levelNum+"";
-                numOfStars = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getStars(levelNum-1);
-                string target = "UI/" +numOfStars+ " star";
+				/*List<bool> stars = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getStars(levelNum-1);
+				numOfStars = 0;
+				for(int i=0; i<stars.Count;i++){
+					if(stars[i] == false){
+						numOfStars++;
+					}
+				}
+				string target = "UI/" +numOfStars+ " star";*/
                 Sprite threeStars = Resources.Load(target, typeof(Sprite)) as Sprite;
-                this.gameObject.transform.Find("stars").GetComponent<Image>().sprite = threeStars;
+                //this.gameObject.transform.Find("stars").GetComponent<Image>().sprite = threeStars;
 			}
-		} catch(System.Exception){}
+		} catch(System.Exception error){
+			Debug.Log ("Levellock error: "+error);
+		}
 	}
 }

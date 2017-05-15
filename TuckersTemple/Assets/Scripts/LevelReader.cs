@@ -1,5 +1,5 @@
 ﻿/**************************************
- * Reader.cs                          *
+ * LevelReader.cs                     *
  *                                    *
  * reads in json levels file into     *
  * a list of level objects            *

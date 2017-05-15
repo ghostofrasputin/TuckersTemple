@@ -183,6 +183,7 @@ public class GameMasterFSM : MonoBehaviour
     public void levelWin()
     {
 		ZombiePasser zombie = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ();
+		SaveSystem saveSys = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<SaveSystem> ();
         try
         {
             // unlocks the next level. 
@@ -194,14 +195,14 @@ public class GameMasterFSM : MonoBehaviour
             Debug.Log(error);
         }
 
-		//Checking stars for ZombiePasser - Justin
-		zombie.setStars(currentLevel - 1, 1);
+		//Checking stars for ZombiePasser
+		zombie.setStar(currentLevel , 0, true);
 		GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
         int numMoves = levelsList[currentLevel-1].Moves;
 		//set the second star
 		if (moves <= numMoves)
 		{
-			zombie.setStars(currentLevel - 1, zombie.getStars(currentLevel - 1) + 1);
+			zombie.setStar(currentLevel, 1, true);
 			GameObject.Find("Star2").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
 		}
         //set the third star
@@ -213,9 +214,14 @@ public class GameMasterFSM : MonoBehaviour
         }
 		if(thirdStar) //Set the third star based on if it was accomplished.
 		{
-			zombie.setStars(currentLevel - 1, zombie.getStars(currentLevel-1)+1);
+			zombie.setStar(currentLevel, 2, true);
 			GameObject.Find("Star3").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
 		}
+
+		print("Num of Moves : " + moves);
+		print("foundItem: " + foundItem);
+		//print(zombie.getStars(currentLevel - 1));
+
 
 
         turnOffTileColliders();
@@ -231,6 +237,10 @@ public class GameMasterFSM : MonoBehaviour
         moves = 0;
         time = 0;
         attempts = 0;
+
+		// save game data:
+		zombie.saveGame();
+
     }
 
     private void setCanvas(Canvas c, bool b)
