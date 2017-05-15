@@ -40,8 +40,14 @@ public class LevelLock : MonoBehaviour {
 				//this.gameObject.GetComponent<Image>().sprite = lockedSprite;
 				Text buttonText = this.gameObject.GetComponent<Button>().GetComponentsInChildren<Text>()[0];
 				buttonText.text = ""+levelNum+"";
-                numOfStars = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getStars(levelNum-1);
-                string target = "UI/" +numOfStars+ " star";
+				List<bool> stars = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getStars(levelNum-1);
+				numOfStars = 0;
+				for(int i=0; i<stars.Count;i++){
+					if(stars[i] == false){
+						numOfStars++;
+					}
+				}
+				string target = "UI/" +numOfStars+ " star";
                 Sprite threeStars = Resources.Load(target, typeof(Sprite)) as Sprite;
                 this.gameObject.transform.Find("stars").GetComponent<Image>().sprite = threeStars;
 			}

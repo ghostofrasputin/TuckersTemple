@@ -10,36 +10,53 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LitJson;
+using System.IO;
 
 public class SaveSystem : MonoBehaviour {
 
 	// private:
-	private string fileName = "saveData";
-
 	private string jsonString;
 	private JsonData saveData;
-	private List<bool> lockedLevels = new List<bool> ();
-	private Dictionary<int,int> starRating = new Dictionary<int,int>();
 
-	// loads saved data on start up
-	void Start () {
-		TextAsset saveFile = Resources.Load("saveData") as TextAsset;
-		// there's no save data to load,
-		// write default data (everything locked)
-		if (saveFile == null) {
-			Debug.Log ("Writing default JSON with everything locked.");
-			writeDefaultJSON (saveFile);
-		} else {
-			jsonString = saveFile.ToString ();
-			saveData = JsonMapper.ToObject (jsonString);
-		}
+	// write data structure to json file
+	public void writeJsonFile(string filename, object dataStruct){
+		saveData = JsonMapper.ToJson (dataStruct);
+		string pathName = Path.Combine (Application.persistentDataPath, filename);
+		File.WriteAllText (pathName, saveData.ToString ());
+		//Debug.Log (filename);
 	}
 
-	// app opened for first time, everything is locked on startup,
-	// this function creates the default json file from a blank json
-	// file
-	private void writeDefaultJSON(TextAsset file){
-		
+	// load save data from json file to dictionary: starRatings
+	public Dictionary<int,List<bool>> loadJsonFileDict(string filename, Dictionary<int,List<bool>> starRatings){
+		string pathName = Path.Combine(Application.persistentDataPath,filename);
+		jsonString = File.ReadAllText (pathName);
+		//Debug.Log(jsonString); 
+		saveData = JsonMapper.ToObject(jsonString);
+		starRatings = new Dictionary<int,List<bool>> ();
+		for (int i = 1; i < saveData.Count+1; i++) {
+			List<bool> stars = new List<bool> ();
+			for (int j = 0; j < saveData [i.ToString ()].Count; j++) {
+				bool flag = (bool)saveData [i.ToString ()] [j];
+				stars.Add(flag);
+			}
+			starRatings.Add(i,stars);
+		}
+		return starRatings;
+	}
+
+	// load save data from json file to dictionary: settings or lockedLevels
+	public List<bool> loadJsonFileList(string filename, List<bool> dataList){
+		string pathName = Path.Combine(Application.persistentDataPath,filename);
+		jsonString = File.ReadAllText (pathName);
+		//Debug.Log(jsonString); 
+		saveData = JsonMapper.ToObject(jsonString);
+		// build settings or lockedLevels:
+		dataList = new List<bool>();
+		for (int i = 0; i < saveData.Count; i++) {
+			bool flag = (bool)saveData [i];
+			dataList.Add (flag);
+		}
+		return dataList;
 	}
 
 }

@@ -192,25 +192,25 @@ public class GameMasterFSM : MonoBehaviour
             Debug.Log(error);
         }
 
-		//Checking stars for ZombiePasser - Justin
-		zombie.setStars(currentLevel - 1, 1);
+		//Checking stars for ZombiePasser
+		zombie.setStar(currentLevel - 1, 0, true);
 		GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
 		//set the second star
 		if (moves < 4)
 		{
-			zombie.setStars(currentLevel - 1, zombie.getStars(currentLevel - 1) + 1);
+			zombie.setStar(currentLevel - 1, 1, true);
 			GameObject.Find("Star2").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
 		}
 		//set the third star
 		//if (foundItem)
 		if(true) //for now we're just giving the star
 		{
-			zombie.setStars(currentLevel - 1, zombie.getStars(currentLevel-1)+1);
+			zombie.setStar(currentLevel - 1, 2, true);
 			GameObject.Find("Star3").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
 		}
 		print("Num of Moves : " + moves);
 		print("foundItem: " + foundItem);
-		print(zombie.getStars(currentLevel - 1));
+		//print(zombie.getStars(currentLevel - 1));
 
 
         turnOffTileColliders();

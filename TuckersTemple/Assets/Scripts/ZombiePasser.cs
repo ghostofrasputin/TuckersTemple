@@ -20,14 +20,21 @@ public class ZombiePasser : MonoBehaviour {
 	private LevelReader levelData;
 	private List<Level> levelsList;
 
-	// NOTE: eventually this data will be loaded from save data:
+	// ALL Save Data for the game:
+	bool loaded = false;
+	SaveSystem saveSystem;
+
+	// settings data:
+	List<bool> settings = new List<bool> ();
 	private bool musicToggle = true;
 	private bool sfxToggle = true;
 	private bool vibToggle = true;
 
-	private bool[] lockedLevels = {false, false, false, false, false, false};
-
-    private Dictionary<int,int> starRating = new Dictionary<int,int>();
+	// locked level data:
+	private List<bool> lockedLevels = new List<bool>();
+    
+	// star ratings for eaach level data:
+	private Dictionary<int,List<bool>> starRatings = new Dictionary<int,List<bool>>();
     
 	// Make this game object and all its transform children
 	// survive when loading a new scene.
@@ -39,19 +46,25 @@ public class ZombiePasser : MonoBehaviour {
 		// extract level JSON file here:
 		levelData = Camera.main.GetComponent<LevelReader>();
 		levelsList = levelData.getLevels();
+		saveSystem = Camera.main.GetComponent<SaveSystem>();
 
-		// read in saved data here:
-
-
-        for(int i = 0; i< lockedLevels.Length;i++)
-        {
-            starRating.Add(i + 1, 0);
-        }
 		DontDestroyOnLoad(this);
 		if (FindObjectsOfType(GetType()).Length > 1)
 		{
 			Destroy(gameObject);
 		}
+	}
+
+	public void Update(){
+		if (loaded == false) {
+			//printDefaultStructuresToJson (saveSystem, levelsList.Count);
+			// Load save data into proper data strutures:
+			saveSystem.loadJsonFileList("settings.json",settings);
+			saveSystem.loadJsonFileList("lockedLevels.json",lockedLevels);
+			saveSystem.loadJsonFileDict("starRatings.json", starRatings);
+			loaded = true;
+		}
+
 	}
 
 	// sets level to be played through button
@@ -114,15 +127,15 @@ public class ZombiePasser : MonoBehaviour {
 	}
 
 	public void setLockedLevelBool(int index){
-		if (index > lockedLevels.Length-1 || index < 0) {
+		if (index > lockedLevels.Count-1 || index < 0) {
 			Debug.Log ("error: index out of range");
 			return;
 		}
 		lockedLevels [index] = false;
 	}
-    public void setStars(int level, int star)
+	public void setStar(int level, int star, bool starSetting)
     {
-        starRating[level] = star;
+		starRatings[level][star] = starSetting;
     }
 	// return the private level int
 	public int getLevel(){
@@ -133,13 +146,13 @@ public class ZombiePasser : MonoBehaviour {
 	public List<Level> getLevels(){
 		return levelsList;
 	}
-    // return a star value from dictionary
-    public int getStars(int level)
+    // return a list of star values
+	public List<bool> getStars(int level)
     {
-        return starRating[level];
+		return starRatings[level];
     }
 	public bool getLockedLevelBool(int index){
-		if (index > lockedLevels.Length-1 || index < 0) {
+		if (index > lockedLevels.Count-1 || index < 0) {
 			Debug.Log ("error: index out of range");
 		}
 		return lockedLevels [index];
@@ -155,6 +168,35 @@ public class ZombiePasser : MonoBehaviour {
 
 	public bool getVibToggle(){
 		return vibToggle;
+	}
+
+	// this is a one time needed helper
+	// function to print out the initial state
+	// of the save data. after these files are created
+	// this function won't be needed, but will be left in
+	// to create files if needed.
+	public void printDefaultStructuresToJson(SaveSystem saveSys, int numberOfLevels){
+		List<bool> settings = new List<bool> ();
+		settings.Add (true);
+		settings.Add (true);
+		settings.Add (true);
+		List<bool> lockedLevels = new List<bool> ();
+
+		// NOTE: key needs to be a string from JsonMapper to work...
+		Dictionary<string,List<bool>> starRatings = new Dictionary<string,List<bool>>();
+
+		//Debug.Log (numberOfLevels);
+		for (int i = 0; i < numberOfLevels; i++) {
+			lockedLevels.Add (false);
+			List<bool> levelStars = new List<bool> ();
+			for (int j = 0; j < 3; j++) {
+				levelStars.Add (false);
+			}
+			starRatings.Add ((i + 1).ToString(), levelStars);
+		}
+		saveSys.writeJsonFile("lockedLevels.json", lockedLevels);
+		saveSys.writeJsonFile ("starRatings.json", starRatings);
+		saveSys.writeJsonFile ("settings.json", settings);
 	}
 
 }
