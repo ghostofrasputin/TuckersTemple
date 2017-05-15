@@ -58,5 +58,15 @@ public class SaveSystem : MonoBehaviour {
 		}
 		return dataList;
 	}
+    
+    public bool fileExists(string filename)
+    {
+        string pathName = Path.Combine(Application.persistentDataPath, filename);
 
+        if (System.IO.File.Exists(pathName))
+        {
+            return true;
+        }
+        return false;
+    }
 }

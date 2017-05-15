@@ -21,6 +21,7 @@ public class LevelLock : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        return;
 		levelNum = System.Convert.ToInt32(gameObject.name);
 		try {
 			isLocked = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLockedLevelBool(levelNum-1);
