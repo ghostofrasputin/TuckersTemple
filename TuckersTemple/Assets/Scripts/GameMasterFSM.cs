@@ -219,7 +219,7 @@ public class GameMasterFSM : MonoBehaviour
 		}
 
 		print("Num of Moves : " + moves);
-		print("foundItem: " + foundItem);
+		//print("foundItem: " + foundItem);
 		//print(zombie.getStars(currentLevel - 1));
 
 
