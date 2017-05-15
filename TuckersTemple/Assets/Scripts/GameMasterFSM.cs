@@ -286,9 +286,12 @@ public class GameMasterFSM : MonoBehaviour
         ticking = true;
         SoundController.instance.PlaySingle(nextLevelSound);
 
-		//reset already sets a transition, so this is throwing an error.  Not sure why it was here? -Andrew
+        //reset already sets a transition, so this is throwing an error.  Not sure why it was here? -Andrew
         //GetComponent<GameMasterFSM>().SetTransition(Transition.NextLevel); //to ready
-		TutorialButton.SetActive(false);
+        if (currentLevel > 4)
+        {
+            TutorialButton.SetActive(false);
+        }
     }
 
     public void turnOffTileColliders()
@@ -316,6 +319,8 @@ public class GameMasterFSM : MonoBehaviour
     public void resetStarRequirements()
     {
         starRequirements.Clear();
+        //also reset number of moves
+        moves = 0;
         setStarRequirements();
     }
 
