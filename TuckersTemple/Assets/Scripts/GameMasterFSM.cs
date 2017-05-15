@@ -43,7 +43,8 @@ public class GameMasterFSM : MonoBehaviour
 	public GameObject RootTile;
 	public float gridScale = 0.25f;
 	public GameObject TutorialButton;
-	public bool foundItem = false;
+    public Dictionary<string, bool> starRequirements;
+    public string[] starCriteria = { "foundItem", "killAll", "killNone" };
 	public List<GameObject> lasers;
     
     // touch handle
@@ -95,6 +96,7 @@ public class GameMasterFSM : MonoBehaviour
 
         boundary = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
 	scalar = .006f;
+        setStarRequirements();
     }
 
     public void Update()
@@ -196,22 +198,30 @@ public class GameMasterFSM : MonoBehaviour
 		//Checking stars for ZombiePasser
 		zombie.setStar(currentLevel , 0, true);
 		GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        int numMoves = levelsList[currentLevel-1].Moves;
 		//set the second star
-		if (moves < 4)
+		if (moves <= numMoves)
 		{
 			zombie.setStar(currentLevel, 1, true);
 			GameObject.Find("Star2").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
 		}
-		//set the third star
-		//if (foundItem)
-		if(true) //for now we're just giving the star
+        //set the third star
+        bool thirdStar = false;
+        //check what the string requirement for this level is and check if it is satisfied
+        if(starRequirements.ContainsKey(levelsList[currentLevel - 1].Star))
+        {
+            if (starRequirements[levelsList[currentLevel - 1].Star] == true) thirdStar = true;
+        }
+		if(thirdStar) //Set the third star based on if it was accomplished.
 		{
 			zombie.setStar(currentLevel, 2, true);
 			GameObject.Find("Star3").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
 		}
+
 		print("Num of Moves : " + moves);
 		print("foundItem: " + foundItem);
 		//print(zombie.getStars(currentLevel - 1));
+
 
 
         turnOffTileColliders();
@@ -303,6 +313,43 @@ public class GameMasterFSM : MonoBehaviour
         }
     }
 
+    public void resetStarRequirements()
+    {
+        starRequirements.Clear();
+        setStarRequirements();
+    }
+
+    public void setStarRequirements()
+    {
+        starRequirements = new Dictionary<string, bool>();
+        foreach(string s in starCriteria)
+        {
+            starRequirements.Add(s, false);
+        }
+        //set any that start true
+        if (starRequirements.ContainsKey("killNone"))
+        {
+            starRequirements["killNone"] = true;
+        }
+    }
+
+    //called by ActorFSM in the event of an enemy death
+    //It processes starRequirements
+    public void enemyDied()
+    {
+        if (starRequirements.ContainsKey("killNone"))
+        {
+            starRequirements["killNone"] = false;
+        }
+        if (enemies.Count == 0)
+        {
+            if (starRequirements.ContainsKey("killAll"))
+            {
+                starRequirements["killAll"] = true;
+            }
+        }
+    }
+
     public void setupLevel(Level level)
     {
         // clear everything, then regenerate the level
@@ -323,6 +370,7 @@ public class GameMasterFSM : MonoBehaviour
         tiles.Clear();
 		lasers.Clear ();
         tileGrid = new GameObject[numCols][];
+        resetStarRequirements();
         generateLevel(level);
         //Destroy(boundary.gameObject);
         turnOnTileColliders();
@@ -806,6 +854,60 @@ public class GameMasterFSM : MonoBehaviour
         }
         return false;
     }
+
+    public void sameTileOffset()
+    {
+        List<GameObject> charList = new List<GameObject>();
+        foreach (GameObject tile in tiles)
+        {
+            foreach (Transform child in tile.transform)
+            {
+                if (child.tag == "Player")
+                {
+                    charList.Add(child.gameObject);
+                }
+            }
+            
+            switch(charList.Count)
+            {
+                case 2:
+                    charList[0].transform.position -= new Vector3(tileSize / 4, 0, 0);
+                    charList[1].transform.position += new Vector3(tileSize / 4, 0, 0);
+                    //charList[0].transform.localScale -= new Vector3(.5f, .5f, 1);
+                    //charList[1].transform.localScale -= new Vector3(10, .5f, 1);
+                    break;
+                case 3:
+                    charList[1].transform.position -= new Vector3(tileSize / 4,  tileSize / 6, 0);
+                    charList[2].transform.position += new Vector3(tileSize / 4, -tileSize / 6, 0);
+                    charList[0].transform.position += new Vector3(           0,  tileSize / 6, 0);
+                    break;
+                case 4:
+                    charList[2].transform.position -= new Vector3(tileSize / 4,  tileSize / 6, 0);
+                    charList[3].transform.position += new Vector3(tileSize / 4, -tileSize / 6, 0);
+                    charList[0].transform.position -= new Vector3(tileSize / 4, -tileSize / 6, 0);
+                    charList[1].transform.position += new Vector3(tileSize / 4,  tileSize / 6, 0);
+                    break;
+                default:
+                    //0, 1, or more than 4? do nothing
+                    break;
+            }
+            charList.Clear();
+        }
+    }
+
+    public void sameTileReset()
+    {
+        foreach (GameObject tile in tiles)
+        {
+            foreach (Transform child in tile.transform)
+            {
+                if (child.tag == "Player")
+                {
+                    child.position = tile.transform.position;
+                }
+            }
+        }
+    }
 }
 
 public class InitState : FSMState
@@ -888,7 +990,6 @@ public class LevelJuiceState : FSMState
 		GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
 		GameObject.Find("Star2").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
 		GameObject.Find("Star3").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
-		GameObject.Find("GameMaster").GetComponent<GameMasterFSM>().foundItem = false;
 	}
 
 } // LevelJuiceState
@@ -902,6 +1003,14 @@ public class InputState : FSMState
         stateID = StateID.Ready;
         controlref = control;
         controlref.swiped = false;
+    }
+
+    public override void DoBeforeEntering()
+    {
+        if (!controlref.incompleteTouch)
+        {
+            controlref.sameTileOffset();
+        }
     }
 
     public override void Reason(GameObject gm, GameObject npc)
@@ -1029,6 +1138,8 @@ public class OrderActorsState : FSMState
 
     public override void DoBeforeEntering()
     {
+    	controlref.sameTileReset();
+
         foreach (GameObject actor in controlref.actors)
         {
             actor.GetComponent<ActorFSM>().doneSlide = true;

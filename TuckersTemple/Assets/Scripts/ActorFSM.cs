@@ -135,7 +135,7 @@ public class ActorFSM : MonoBehaviour
         fsm.AddState(win);
         fsm.AddState(trap);
         fsm.AddState(enemy);
-		fsm.AddState (laser);
+		fsm.AddState(laser);
     }
 
 	/* foundItem is called when actors collide into an item.
@@ -144,17 +144,22 @@ public class ActorFSM : MonoBehaviour
 	 */ 
 	public void foundItem(GameObject Item)
 	{
-		GameObject.Find("GameMaster").GetComponent<GameMasterFSM>().foundItem = true;
+		GameObject.Find("GameMaster").GetComponent<GameMasterFSM>().starRequirements["foundItem"] = true;
 		Destroy(Item);
 	}
 
+    //This should always be called if the actor gets destroyed
     public void destroyObj()
     {
+        if(this.tag == "Enemy")
+        {
+            gm.GetComponent<GameMasterFSM>().enemyDied();
+        }
         Destroy(gameObject);
     }
 
 	// Use to scale, tilt, or rotate for desired effect
-	public void wiggle(float scaleSpeed, float rotateSpeed, float lowerLimit=.6f, float upperLimit=0.7f, float rLL=0.3f, float rUL=0.6f){
+	public void wiggle(float scaleSpeed, float rotateSpeed, float lowerLimit=.6f, float upperLimit=0.63f, float rLL=0.3f, float rUL=0.6f){
 		// controls scaling:
 		if (scaleFlag) {
 			scaleFactor += scaleSpeed;
@@ -227,6 +232,10 @@ public class ActorFSM : MonoBehaviour
             }
             //RAYCAST LASER BEAMS ♫♫♫♫♫
             //Debug.Log(this+", "+currDir);
+
+            //Vector2 tileCenter = new Vector2(transform.parent.transform.position.x + gm.GetComponent<GameMasterFSM>().tileSize / 2, transform.parent.transform.position.y + gm.GetComponent<GameMasterFSM>().tileSize / 2);
+            //Debug.Log(tileCenter);
+            //Debug.Log(transform.position);
             RaycastHit2D ray = Physics2D.Raycast(transform.position, v2Dirs[currDir], GetComponentInParent<TileFSM>().GetComponent<Renderer>().bounds.size.x, LayerMask.GetMask("Wall"));
 
             if (ray.collider == null || !(ray.collider.tag == "Wall" || ray.collider.tag == "OuterWall"))
@@ -280,7 +289,12 @@ public class IdleAState : FSMState
 		controlref = control;
 	}
 
-	public override void Reason(GameObject gm, GameObject npc)
+    public override void DoBeforeEntering()
+    {
+        controlref.transform.rotation = Quaternion.identity;
+    }
+
+    public override void Reason(GameObject gm, GameObject npc)
 	{
 		if (npc.GetComponent<ActorFSM>().isHitByLaser()) {
 			npc.GetComponent<ActorFSM> ().SetTransition (Transition.LaserCollide);
@@ -312,10 +326,10 @@ public class IdleAState : FSMState
 	{
 		// Idle Behavior similar to IMBROGLIO !!!
 		if (controlref.tag == "Player") {
-			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.1f);
+			npc.GetComponent<ActorFSM> ().wiggle (0.0005f, 0.05f);
 		}
 		if (controlref.tag == "Enemy") {
-			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.1f, 1.5f, 1.6f);
+			npc.GetComponent<ActorFSM> ().wiggle (0.0005f, 0.1f, 1.5f, 1.6f);
 		}
 	}
 
@@ -333,80 +347,83 @@ public class LookAState : FSMState
     //right now this is based on logic with tags which is bad, but I'm not sure how to move to a polymorphic style for our actor entities
     public override void Reason(GameObject gm, GameObject npc)
     {
-        bool isDead = false;
-        RaycastHit2D ray = Physics2D.Raycast(npc.transform.position, controlref.v2Dirs[controlref.direction], controlref.GetComponentInParent<TileFSM>().GetComponent<Renderer>().bounds.size.x, LayerMask.GetMask("Collidables"));
+        bool isEnemyDead = false;
+        bool isTrapDead  = false;
+        bool isWin       = false;
 
-        if (ray.collider != null)
+        RaycastHit2D[] rays = Physics2D.RaycastAll(npc.transform.position, controlref.v2Dirs[controlref.direction], controlref.GetComponentInParent<TileFSM>().GetComponent<Renderer>().bounds.size.x, LayerMask.GetMask("Collidables"));
+
+        if (rays.Length != 0)
         {
-            if(ray.collider.tag == "Trap")//both enemy and player
+            foreach (RaycastHit2D ray in rays)
             {
-		ray.transform.gameObject.GetComponent<FireSystem> ().setOn ();
-                npc.GetComponent<ActorFSM>().SetTransition(Transition.TrapFound); //to trapDeath
-                return;
-            }
-            if (npc.tag == "Player") {
-                if (ray.collider.tag == "Enemy")
+                if (ray.collider.tag == "Trap")//both enemy and player
                 {
-			int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;
-			switch (controlref.direction)
-			{
-				case 0:
-				{
-					if (enemyDir == 2) { isDead = true; }
-					break;
-				}
-				case 1:
-				{
-					if (enemyDir == 3) { isDead = true; }
-					break;
-				}
-				case 2:
-				{
-					if (enemyDir == 0) { isDead = true; }
-					break;
-				}
-				case 3:
-				{
-					if (enemyDir == 1) { isDead = true; }
-					break;
-				}
-			}
-		}	
-                else if (ray.collider.tag == "Goal")
-                {
-                    ray.collider.gameObject.GetComponent<goalLight>().FlashLight();
-                    npc.GetComponent<ActorFSM>().SetTransition(Transition.GoalFound); //to Win
-                    return;
-		}
-		else if (ray.collider.tag == "Item")
-		{
-			npc.GetComponent<ActorFSM>().foundItem(ray.collider.gameObject);
-			return;
-		}
-                if (isDead)
-                {
-                    npc.GetComponent<ActorFSM>().SetTransition(Transition.EnemyFound); //to Dead
-                    return;//needed to skip pathfound transition from firing, current logic structure is a bit iffy
+                    isTrapDead = true;
+                    ray.transform.gameObject.GetComponent<FireSystem>().setOn();
+                    break;
                 }
-		else
-            	{
-			//raycast saw something, but actor did not win or die
-                	npc.GetComponent<ActorFSM>().SetTransition(Transition.PathFound); //to Walk
-			return;
-            	}
+                if (npc.tag == "Player")
+                {
+                    if (ray.collider.tag == "Enemy")
+                    {
+                        int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;
+                        switch (controlref.direction)
+                        {
+                            case 0:
+                                {
+                                    if (enemyDir == 2) { isEnemyDead = true; }
+                                    break;
+                                }
+                            case 1:
+                                {
+                                    if (enemyDir == 3) { isEnemyDead = true; }
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    if (enemyDir == 0) { isEnemyDead = true; }
+                                    break;
+                                }
+                            case 3:
+                                {
+                                    if (enemyDir == 1) { isEnemyDead = true; }
+                                    break;
+                                }
+                        }
+                    }
+                    else if (ray.collider.tag == "Goal")
+                    {
+                        isWin = true;
+                        ray.collider.gameObject.GetComponent<goalLight>().FlashLight();
+                    }
+                    else if (ray.collider.tag == "Item")
+                    {
+                        npc.GetComponent<ActorFSM>().foundItem(ray.collider.gameObject);
+                    }
+                }
             }
-            else
-            {
-	    	//Raycast saw something other than trap, actor is enemy
-                npc.GetComponent<ActorFSM>().SetTransition(Transition.PathFound); //to Walk
-		return;
-            }
+        }
+
+        if (isTrapDead)
+        {
+            npc.GetComponent<ActorFSM>().SetTransition(Transition.TrapFound); //to trapDeath
+            return;
+        }
+        else if (isEnemyDead)
+        {
+            npc.GetComponent<ActorFSM>().SetTransition(Transition.EnemyFound);
+            return;
+        }
+        else if (isWin)
+        {
+            npc.GetComponent<ActorFSM>().SetTransition(Transition.GoalFound); //to Win
+            return;
         }
         else
         {
-		//raycast saw nothing
-            npc.GetComponent<ActorFSM>().SetTransition(Transition.PathFound); //to Walk
-	    return;
+            npc.GetComponent<ActorFSM>().SetTransition(Transition.PathFound);
+            return;
         }
     }
 
@@ -556,6 +573,15 @@ public class TrapDeadAState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
+        if (controlref.tag == "Player")
+        {
+            npc.GetComponent<ActorFSM>().wiggle(0.001f, 0.5f, 0.6f, 0.7f, 0.2f, 0.6f);
+        }
+        if (controlref.tag == "Enemy")
+        {
+            npc.GetComponent<ActorFSM>().wiggle(0.001f, 0.5f, 1.5f, 1.6f, 0.2f, 0.6f);
+        }
+
         npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
     }
 
