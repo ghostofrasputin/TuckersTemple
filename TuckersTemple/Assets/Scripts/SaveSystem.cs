@@ -23,35 +23,35 @@ public class SaveSystem : MonoBehaviour {
 		saveData = JsonMapper.ToJson (dataStruct);
 		string pathName = Path.Combine (Application.persistentDataPath, filename);
 		File.WriteAllText (pathName, saveData.ToString ());
-		//Debug.Log (filename);
+		//Debug.Log (saveData.ToString ()); //prints out json format
 	}
 
 	// load save data from json file to dictionary: starRatings
-	public Dictionary<int,List<bool>> loadJsonFileDict(string filename, Dictionary<int,List<bool>> starRatings){
+	public Dictionary<string,List<bool>> loadJsonFileDict(string filename){
 		string pathName = Path.Combine(Application.persistentDataPath,filename);
 		jsonString = File.ReadAllText (pathName);
 		//Debug.Log(jsonString); 
 		saveData = JsonMapper.ToObject(jsonString);
-		starRatings = new Dictionary<int,List<bool>> ();
+		Dictionary<string,List<bool>> starRatings = new Dictionary<string,List<bool>> ();
 		for (int i = 1; i < saveData.Count+1; i++) {
 			List<bool> stars = new List<bool> ();
 			for (int j = 0; j < saveData [i.ToString ()].Count; j++) {
 				bool flag = (bool)saveData [i.ToString ()] [j];
 				stars.Add(flag);
 			}
-			starRatings.Add(i,stars);
+			starRatings.Add(i.ToString(),stars);
 		}
 		return starRatings;
 	}
 
-	// load save data from json file to dictionary: settings or lockedLevels
-	public List<bool> loadJsonFileList(string filename, List<bool> dataList){
+	// load save data from json file to list: settings or lockedLevels
+	public List<bool> loadJsonFileList(string filename){
 		string pathName = Path.Combine(Application.persistentDataPath,filename);
 		jsonString = File.ReadAllText (pathName);
 		//Debug.Log(jsonString); 
 		saveData = JsonMapper.ToObject(jsonString);
 		// build settings or lockedLevels:
-		dataList = new List<bool>();
+		List<bool> dataList = new List<bool>();
 		for (int i = 0; i < saveData.Count; i++) {
 			bool flag = (bool)saveData [i];
 			dataList.Add (flag);

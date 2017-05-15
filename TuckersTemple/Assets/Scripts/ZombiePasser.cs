@@ -23,18 +23,15 @@ public class ZombiePasser : MonoBehaviour {
 	// ALL Save Data for the game:
 	bool loaded = false;
 	SaveSystem saveSystem;
-
 	// settings data:
 	List<bool> settings = new List<bool> ();
 	private bool musicToggle = true;
 	private bool sfxToggle = true;
 	private bool vibToggle = true;
-
 	// locked level data:
 	private List<bool> lockedLevels = new List<bool>();
-    
 	// star ratings for eaach level data:
-	private Dictionary<int,List<bool>> starRatings = new Dictionary<int,List<bool>>();
+	private Dictionary<string,List<bool>> starRatings = new Dictionary<string,List<bool>>();
     
 	// Make this game object and all its transform children
 	// survive when loading a new scene.
@@ -46,8 +43,19 @@ public class ZombiePasser : MonoBehaviour {
 		// extract level JSON file here:
 		levelData = Camera.main.GetComponent<LevelReader>();
 		levelsList = levelData.getLevels();
-		saveSystem = Camera.main.GetComponent<SaveSystem>();
 
+		// SAVE SYSTEM:
+		saveSystem = Camera.main.GetComponent<SaveSystem>();
+		//printDefaultStructuresToJson (saveSystem, 17);
+		// Load save data into proper data strutures:
+		settings = saveSystem.loadJsonFileList("settings.json");
+		musicToggle = settings[0];
+		sfxToggle = settings[1];
+		vibToggle = settings[2];
+		lockedLevels = saveSystem.loadJsonFileList("lockedLevels.json");
+		starRatings = saveSystem.loadJsonFileDict("starRatings.json");
+
+		// keep zombie awake:
 		DontDestroyOnLoad(this);
 		if (FindObjectsOfType(GetType()).Length > 1)
 		{
@@ -55,16 +63,11 @@ public class ZombiePasser : MonoBehaviour {
 		}
 	}
 
-	public void Update(){
-		if (loaded == false) {
-			//printDefaultStructuresToJson (saveSystem, levelsList.Count);
-			// Load save data into proper data strutures:
-			saveSystem.loadJsonFileList("settings.json",settings);
-			saveSystem.loadJsonFileList("lockedLevels.json",lockedLevels);
-			saveSystem.loadJsonFileDict("starRatings.json", starRatings);
-			loaded = true;
-		}
-
+	// saves the game by writing to json files
+	public void saveGame(){
+		saveSystem.writeJsonFile("lockedLevels.json", lockedLevels);
+		saveSystem.writeJsonFile("starRatings.json", starRatings);
+		saveSystem.writeJsonFile("settings.json", settings);
 	}
 
 	// sets level to be played through button
@@ -133,10 +136,19 @@ public class ZombiePasser : MonoBehaviour {
 		}
 		lockedLevels [index] = false;
 	}
+
+	// set one of the 3 stars in the list for that level
 	public void setStar(int level, int star, bool starSetting)
     {
-		starRatings[level][star] = starSetting;
+		if (star >= 3 || star < 0) {
+			Debug.Log ("error: star array range is 0-2.");
+			return;
+		}
+		//Debug.Log ("Level: " + level + " star number: " + star + " setting: " + starSetting);
+		string lev = level.ToString ();
+		starRatings[lev][star] = starSetting;
     }
+
 	// return the private level int
 	public int getLevel(){
 		return levelNum;
@@ -146,14 +158,17 @@ public class ZombiePasser : MonoBehaviour {
 	public List<Level> getLevels(){
 		return levelsList;
 	}
+
     // return a list of star values
 	public List<bool> getStars(int level)
     {
-		return starRatings[level];
+		string lev = level.ToString ();
+		return starRatings[lev];
     }
+
 	public bool getLockedLevelBool(int index){
 		if (index > lockedLevels.Count-1 || index < 0) {
-			Debug.Log ("error: index out of range");
+			Debug.Log ("error: index out of range. The index put is: "+index +" in array of size: "+lockedLevels.Count);
 		}
 		return lockedLevels [index];
 	}
@@ -176,27 +191,32 @@ public class ZombiePasser : MonoBehaviour {
 	// this function won't be needed, but will be left in
 	// to create files if needed.
 	public void printDefaultStructuresToJson(SaveSystem saveSys, int numberOfLevels){
-		List<bool> settings = new List<bool> ();
-		settings.Add (true);
-		settings.Add (true);
-		settings.Add (true);
-		List<bool> lockedLevels = new List<bool> ();
+		List<bool> s = new List<bool> ();
+		s.Add (true);
+		s.Add (true);
+		s.Add (true);
+		List<bool> ll = new List<bool> ();
 
 		// NOTE: key needs to be a string from JsonMapper to work...
-		Dictionary<string,List<bool>> starRatings = new Dictionary<string,List<bool>>();
+		Dictionary<string,List<bool>> sr = new Dictionary<string,List<bool>>();
 
 		//Debug.Log (numberOfLevels);
 		for (int i = 0; i < numberOfLevels; i++) {
-			lockedLevels.Add (false);
+			if (i == 0) {
+				ll.Add (false);
+			} else {
+				ll.Add (true);
+			}
+
 			List<bool> levelStars = new List<bool> ();
 			for (int j = 0; j < 3; j++) {
-				levelStars.Add (false);
+				levelStars.Add (true);
 			}
-			starRatings.Add ((i + 1).ToString(), levelStars);
+			sr.Add ((i + 1).ToString(), levelStars);
 		}
-		saveSys.writeJsonFile("lockedLevels.json", lockedLevels);
-		saveSys.writeJsonFile ("starRatings.json", starRatings);
-		saveSys.writeJsonFile ("settings.json", settings);
+		saveSys.writeJsonFile("lockedLevels.json", ll);
+		saveSys.writeJsonFile ("starRatings.json", sr);
+		saveSys.writeJsonFile ("settings.json", s);
 	}
 
 }
