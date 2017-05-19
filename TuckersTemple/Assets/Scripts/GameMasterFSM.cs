@@ -201,16 +201,24 @@ public class GameMasterFSM : MonoBehaviour
             Debug.Log(error);
         }
 
-		//Checking stars for ZombiePasser
-		//zombie.setStar(currentLevel , 0, true);
-		GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        //Checking stars for ZombiePasser
+        //zombie.setStar(currentLevel , 0, true);
+        GameObject temp1 = GameObject.Find("Star1");
+        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        temp1.GetComponent<ParticleSystem>().Play();
+        GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily");
+
         int numMoves = levelsList[currentLevel-1].Moves;
 		//set the second star
 		if (moves <= numMoves)
 		{
-			//zombie.setStar(currentLevel, 1, true);
-			GameObject.Find("Star2").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
-		}
+            //zombie.setStar(currentLevel, 1, true);
+            GameObject temp2 = GameObject.Find("Star2");
+            temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+            temp2.GetComponent<ParticleSystem>().Play();
+            GameObject.FindWithTag("jakeWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake");
+
+        }
         //set the third star
         bool thirdStar = false;
         //check what the string requirement for this level is and check if it is satisfied
@@ -220,11 +228,14 @@ public class GameMasterFSM : MonoBehaviour
         }
 		if(thirdStar) //Set the third star based on if it was accomplished.
 		{
-			//zombie.setStar(currentLevel, 2, true);
-			GameObject.Find("Star3").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
-		}
+            //zombie.setStar(currentLevel, 2, true);
+            GameObject temp3 = GameObject.Find("Star3");
+            temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+            temp3.GetComponent<ParticleSystem>().Play();
+            GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy");
+        }
 
-		print("Num of Moves : " + moves);
+        print("Num of Moves : " + moves);
 		//print("foundItem: " + foundItem);
 		//print(zombie.getStars(currentLevel - 1));
 
@@ -778,7 +789,7 @@ public class GameMasterFSM : MonoBehaviour
          {
              UIBorder.GetComponent<Animator>().enabled = true;
              UIBorder.GetComponent<Animator>().speed = s;
-             UIBorder.GetComponent<Animator>().Play("UIBorderGear");
+             //UIBorder.GetComponent<Animator>().Play("UIBorderGear");
          }
      }
 
@@ -1081,11 +1092,22 @@ public class LevelJuiceState : FSMState
 				child.GetComponent<LaserScript> ().setEye (true);
 			}
 		}
-			
-		GameObject.Find("Star1").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
-		GameObject.Find("Star2").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
-		GameObject.Find("Star3").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
-	}
+
+        GameObject temp1 = GameObject.Find("Star1");
+        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+        GameObject temp2 = GameObject.Find("Star2");
+        temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+        GameObject temp3 = GameObject.Find("Star3");
+        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+
+        temp1.GetComponent<ParticleSystem>().Stop();
+        temp2.GetComponent<ParticleSystem>().Stop();
+        temp3.GetComponent<ParticleSystem>().Stop();
+
+        GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily_blank");
+        GameObject.FindWithTag("royWin"  ).GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy_blank");
+        GameObject.FindWithTag("jakeWin" ).GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake_blank");
+    }
 
 } // LevelJuiceState
 
