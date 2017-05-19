@@ -189,7 +189,7 @@ public class GameMasterFSM : MonoBehaviour
     public void levelWin()
     {
 		//ZombiePasser zombie = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ();
-		SaveSystem saveSys = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<SaveSystem> ();
+		//SaveSystem saveSys = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<SaveSystem> ();
         try
         {
             // unlocks the next level. 
@@ -554,8 +554,6 @@ public class GameMasterFSM : MonoBehaviour
     public bool HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase, Vector3 touchDelta = default(Vector3))
     {
         bool touchSuccess = false;
-		int row = 0;
-		int col = 0;
         switch (touchPhase)
         {
             case TouchPhase.Began:
@@ -570,10 +568,8 @@ public class GameMasterFSM : MonoBehaviour
                         {
                              if (tileGrid[c][r].Equals(touchTarget))
                              {
-                                 row = r;
-                                 Row = row;
-                                 col = c;
-                                 Column = col;
+                                 Row = r;
+                                 Column = c;
                                  foundTile = true;
                                  touchStart = new Vector2(touchPosition.x, touchPosition.y);
                                  break;
@@ -603,93 +599,68 @@ public class GameMasterFSM : MonoBehaviour
                             isVert = Mathf.Abs(offset.y) > Mathf.Abs(offset.x);
                             latch = true;
                         }
-                        // look for a selected tile and it's row/col
-                        bool foundTile = false;
-                        for (int c = 0; c < numCols; c++)
+
+                        /* Debug.Log("spriterenderer" + tileS); */
+                        Vector3 origScale;
+                        if (isVert)
+                        {
+                            if (!wrapLatch)
+                            {
+                                wrapTile = tileGrid[Column][numRows - 1];
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy1 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, -tileSize, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy1.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+
+                                wrapTile = tileGrid[Column][0];
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy2 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, tileSize * numRows, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy2.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+
+                                wrapLatch = true;
+                            }
+                        }
+                        else
+                        {
+                            if (!wrapLatch)
+                            {
+                                wrapTile = tileGrid[numCols - 1][Row];
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy1 = Instantiate(wrapTile, new Vector3(-tileSize, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy1.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+
+                                wrapTile = tileGrid[0][Row];
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy2 = Instantiate(wrapTile, new Vector3(tileSize * numCols, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy2.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+
+                                wrapLatch = true;
+                            }
+                        }
+                        // moving horizontal rows:
+                        if (!isVert)
+                        {
+                            for (int c = 0; c < numCols; c++)
+                            {
+                                tileGrid[c][Row].GetComponent<TileFSM>().goalPos = new Vector2(tileGrid[c][Row].transform.position.x + touchDelta.x * scalar,
+                                                                                        tileGrid[c][Row].transform.position.y);
+                                //Debug.Log (tileGrid [c] [row].GetComponent<TileFSM> ().goalPos);
+                            }
+                        }
+                        // moving vertical cols:
+                        else
                         {
                             for (int r = 0; r < numRows; r++)
                             {
-                                if (tileGrid[c][r].Equals(touchTarget))
-                                {
-                                    Row = row = r;
-                                    Column = col = c;
-                                    foundTile = true;
-                                    break;
-                                }
-                            }
-                            if (foundTile)
-                            {
-                                break;
-                            }
-                        }
-
-                        // move the row or column 
-                        // with user touch
-                        if (foundTile)
-                        {
-                            float tileS = touchTarget.GetComponent<SpriteRenderer>().bounds.size.x * gridScale;
-                            /* Debug.Log("spriterenderer" + tileS); */
-                            Vector3 origScale;
-                            if (isVert)
-                            {
-                                if (!wrapLatch)
-                                {
-                                    wrapTile = tileGrid[Column][numRows - 1];
-                                    origScale = wrapTile.transform.localScale;
-                                    wrapTile.transform.localScale = Vector3.one;
-                                    wrapCopy1 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, -tileSize, 0), Quaternion.identity, wrapTile.transform);
-                                    Destroy(wrapCopy1.GetComponent<TileFSM>());
-                                    wrapTile.transform.localScale = origScale;
-
-                                    wrapTile = tileGrid[Column][0];
-                                    origScale = wrapTile.transform.localScale;
-                                    wrapTile.transform.localScale = Vector3.one;
-                                    wrapCopy2 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, tileSize * numRows, 0), Quaternion.identity, wrapTile.transform);
-                                    Destroy(wrapCopy2.GetComponent<TileFSM>());
-                                    wrapTile.transform.localScale = origScale;
-
-                                    wrapLatch = true;
-                                }
-                            }
-                            else
-                            {
-                                if (!wrapLatch)
-                                {
-                                    wrapTile = tileGrid[numCols - 1][Row];
-                                    origScale = wrapTile.transform.localScale;
-                                    wrapTile.transform.localScale = Vector3.one;
-                                    wrapCopy1 = Instantiate(wrapTile, new Vector3(-tileSize, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
-                                    Destroy(wrapCopy1.GetComponent<TileFSM>());
-                                    wrapTile.transform.localScale = origScale;
-
-                                    wrapTile = tileGrid[0][Row];
-                                    origScale = wrapTile.transform.localScale;
-                                    wrapTile.transform.localScale = Vector3.one;
-                                    wrapCopy2 = Instantiate(wrapTile, new Vector3(tileSize * numCols, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
-                                    Destroy(wrapCopy2.GetComponent<TileFSM>());
-                                    wrapTile.transform.localScale = origScale;
-
-                                    wrapLatch = true;
-                                }
-                            }
-                            // moving horizontal rows:
-                            if (!isVert)
-                            {
-                                for (int c = 0; c < numCols; c++)
-                                {
-                                    tileGrid[c][row].GetComponent<TileFSM>().goalPos = new Vector2(tileGrid[c][row].transform.position.x + touchDelta.x * scalar,
-                                                                                            tileGrid[c][row].transform.position.y);
-                                    //Debug.Log (tileGrid [c] [row].GetComponent<TileFSM> ().goalPos);
-                                }
-                            }
-                            // moving vertical cols:
-                            else
-                            {
-                                for (int r = 0; r < numRows; r++)
-                                {
-                                    tileGrid[col][r].GetComponent<TileFSM>().goalPos = new Vector2(tileGrid[col][r].transform.position.x,
-                                                                                            tileGrid[col][r].transform.position.y + touchDelta.y * scalar);
-                                }
+                                tileGrid[Column][r].GetComponent<TileFSM>().goalPos = new Vector2(tileGrid[Column][r].transform.position.x,
+                                                                                        tileGrid[Column][r].transform.position.y + touchDelta.y * scalar);
                             }
                         }
                     }

@@ -6,16 +6,16 @@ public class goalLight : MonoBehaviour
 {
 
     float promptTimer = 0f;
-    GameObject light;
+    GameObject gLight;
     bool flashlight = false;
 
     // Use this for initialization
     void Start()
     {
-        light = transform.Find("light").gameObject;
-        Color temp = light.GetComponent<SpriteRenderer>().color;
+        gLight = transform.Find("light").gameObject;
+        Color temp = gLight.GetComponent<SpriteRenderer>().color;
         temp.a = 0;
-        light.GetComponent<SpriteRenderer>().color = temp;
+        gLight.GetComponent<SpriteRenderer>().color = temp;
     }
 
     // Update is called once per frame
@@ -25,9 +25,9 @@ public class goalLight : MonoBehaviour
         if (flashlight)
         {
             promptTimer += Time.deltaTime * 2;
-            Color temp = light.GetComponent<SpriteRenderer>().color;
+            Color temp = gLight.GetComponent<SpriteRenderer>().color;
             temp.a = Mathf.Sin(promptTimer);
-            light.GetComponent<SpriteRenderer>().color = temp;
+            gLight.GetComponent<SpriteRenderer>().color = temp;
 
             if (Mathf.Sin(promptTimer) < 0)
             {

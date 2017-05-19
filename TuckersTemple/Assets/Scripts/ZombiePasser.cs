@@ -17,12 +17,12 @@ public class ZombiePasser : MonoBehaviour {
 
 	// private:
 	private int levelNum = 1;
-    private int numLevels = 17;
+    //private int numLevels = 17;
 	private LevelReader levelData;
 	private List<Level> levelsList;
 
 	// ALL Save Data for the game:
-	bool loaded = false;
+	//bool loaded = false;
 	SaveSystem saveSystem;
 	// settings data:
 	List<bool> settings = new List<bool> ();

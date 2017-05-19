@@ -21,9 +21,9 @@ public class LevelLock : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        return;
-		levelNum = System.Convert.ToInt32(gameObject.name);
+		//levelNum = System.Convert.ToInt32(gameObject.name);
 		try {
+            /*
 			isLocked = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLockedLevelBool(levelNum-1);
 			//Debug.Log("level: "+levelNum+" locked: "+isLocked);
 			// use locked sprite and turn off button:
@@ -49,10 +49,12 @@ public class LevelLock : MonoBehaviour {
 						numOfStars++;
 					}
 				}
-				string target = "UI/" +numOfStars+ " star";*/
+				string target = "UI/" +numOfStars+ " star";
                 Sprite threeStars = Resources.Load(target, typeof(Sprite)) as Sprite;
                 //this.gameObject.transform.Find("stars").GetComponent<Image>().sprite = threeStars;
+                
 			}
+            */
 		} catch(System.Exception error){
 			Debug.Log ("Levellock error: "+error);
 		}

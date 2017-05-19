@@ -27,13 +27,11 @@ public class MainMenuManager : MonoBehaviour {
 
 	//private:
 	private Animator anim;
-	private RectTransform pan;
 	private int counter = 0;
 
 	// Use this for initialization
 	void Start () {
 		anim = ani.GetComponent<Animator>();
-		pan = panel.GetComponent<RectTransform> ();
 		anim.enabled = false;
 
 		Toggle music = GameObject.Find("MusicToggle").GetComponent<Toggle>();

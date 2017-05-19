@@ -39,7 +39,6 @@ public class GameMaster : MonoBehaviour
     private GameObject touchTarget;
     private bool isVert = false; //Extablishes initial movement axis of swipe
     private bool isSelected = false;
-    private Vector2 lastPos = new Vector2(0,0); //holds the last position for mouse input to calculate deltaPosition
     private GameObject[][] tileGrid; // the holder for all the tiles
     private List<GameObject> playerChars = new List<GameObject>();
     private GameObject boundary;
@@ -89,7 +88,7 @@ public class GameMaster : MonoBehaviour
                 {
                     HandleTouch(10, Input.mousePosition, TouchPhase.Began);
                     //store the last position for next tick
-                    lastPos = Input.mousePosition;
+                    //lastPos = Input.mousePosition;
                 }
                 //called when mouse his held down(moved)
                 if (Input.GetMouseButton(0))
