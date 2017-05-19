@@ -525,7 +525,7 @@ public class GameMasterFSM : MonoBehaviour
 			if (key.Contains ("item")) {
 				int x = value [0];
 				int y = value [1];
-				GameObject item = Instantiate(Item, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y, 
+			    Instantiate(Item, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y, 
 					tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
 			}
         }
