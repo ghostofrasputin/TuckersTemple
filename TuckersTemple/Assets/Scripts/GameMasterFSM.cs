@@ -183,6 +183,29 @@ public class GameMasterFSM : MonoBehaviour
         }
     }
 
+    public void setWinScreenEmily()
+    {
+        GameObject temp1 = GameObject.Find("Star1");
+        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        temp1.GetComponent<ParticleSystem>().Play();
+        GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily");
+    }
+
+    public void setWinScreenJake()
+    {
+        GameObject temp2 = GameObject.Find("Star2");
+        temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        temp2.GetComponent<ParticleSystem>().Play();
+        GameObject.FindWithTag("jakeWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake");
+    }
+
+    public void setWinScreenRoy()
+    {
+        GameObject temp3 = GameObject.Find("Star3");
+        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        temp3.GetComponent<ParticleSystem>().Play();
+        GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy");
+    }
 
     //Called when the level is won
     //Displays win screen
@@ -201,24 +224,17 @@ public class GameMasterFSM : MonoBehaviour
             Debug.Log(error);
         }
 
+        Invoke("setWinScreenEmily", 1.5f);
+
         //Checking stars for ZombiePasser
         //zombie.setStar(currentLevel , 0, true);
-        GameObject temp1 = GameObject.Find("Star1");
-        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
-        temp1.GetComponent<ParticleSystem>().Play();
-        GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily");
 
         int numMoves = levelsList[currentLevel-1].Moves;
-		//set the second star
-		if (moves <= numMoves)
-		{
-            //zombie.setStar(currentLevel, 1, true);
-            GameObject temp2 = GameObject.Find("Star2");
-            temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
-            temp2.GetComponent<ParticleSystem>().Play();
-            GameObject.FindWithTag("jakeWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake");
-
+        if(moves <= numMoves)
+        {
+            Invoke("setWinScreenJake", 2);
         }
+
         //set the third star
         bool thirdStar = false;
         //check what the string requirement for this level is and check if it is satisfied
@@ -226,21 +242,10 @@ public class GameMasterFSM : MonoBehaviour
         {
             if (starRequirements[levelsList[currentLevel - 1].Star] == true) thirdStar = true;
         }
-		if(thirdStar) //Set the third star based on if it was accomplished.
-		{
-            //zombie.setStar(currentLevel, 2, true);
-            GameObject temp3 = GameObject.Find("Star3");
-            temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
-            temp3.GetComponent<ParticleSystem>().Play();
-            GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy");
+        if (thirdStar)
+        {
+            Invoke("setWinScreenRoy", 2.5f);
         }
-
-        print("Num of Moves : " + moves);
-		//print("foundItem: " + foundItem);
-		//print(zombie.getStars(currentLevel - 1));
-
-
-
         turnOffTileColliders();
         winScreen.GetComponent<InGameMenuManager>().playAnim("winEnter");
         ticking = false;
