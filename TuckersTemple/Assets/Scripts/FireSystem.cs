@@ -8,7 +8,6 @@ public class FireSystem : MonoBehaviour
     //private float timeDelay = 1;
     //private float onTime = 0;
     private float idleTime = 0;
-    private int randFlame = 0;
 
     private float startScale = 0.1f;
 

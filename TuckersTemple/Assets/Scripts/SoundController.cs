@@ -75,7 +75,7 @@ public class SoundController : MonoBehaviour {
     // Randomizes between two audio clips so it doesnt sound so repetitive all the time!
     public void RandomSfx (params AudioClip [] clips){
 		int randomIndex = Random.Range (0, clips.Length); // chooses randoml clip
-		float randomPitch = Random.Range (lowPitch, highPitch); // chooses range of pitch
+		//float randomPitch = Random.Range (lowPitch, highPitch); // chooses range of pitch
 
 		//sfxSource.pitch = randomPitch; // set pitch
 		sfxSource.clip = clips [randomIndex]; // set random index from array

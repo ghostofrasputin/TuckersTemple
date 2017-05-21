@@ -183,13 +183,36 @@ public class GameMasterFSM : MonoBehaviour
         }
     }
 
+    public void setWinScreenEmily()
+    {
+        GameObject temp1 = GameObject.Find("Star1");
+        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        temp1.GetComponent<ParticleSystem>().Play();
+        GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily");
+    }
+
+    public void setWinScreenJake()
+    {
+        GameObject temp2 = GameObject.Find("Star2");
+        temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        temp2.GetComponent<ParticleSystem>().Play();
+        GameObject.FindWithTag("jakeWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake");
+    }
+
+    public void setWinScreenRoy()
+    {
+        GameObject temp3 = GameObject.Find("Star3");
+        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        temp3.GetComponent<ParticleSystem>().Play();
+        GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy");
+    }
 
     //Called when the level is won
     //Displays win screen
     public void levelWin()
     {
 		//ZombiePasser zombie = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ();
-		SaveSystem saveSys = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<SaveSystem> ();
+		//SaveSystem saveSys = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<SaveSystem> ();
         try
         {
             // unlocks the next level. 
@@ -201,24 +224,17 @@ public class GameMasterFSM : MonoBehaviour
             Debug.Log(error);
         }
 
+        Invoke("setWinScreenEmily", 1.5f);
+
         //Checking stars for ZombiePasser
         //zombie.setStar(currentLevel , 0, true);
-        GameObject temp1 = GameObject.Find("Star1");
-        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
-        temp1.GetComponent<ParticleSystem>().Play();
-        GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily");
 
         int numMoves = levelsList[currentLevel-1].Moves;
-		//set the second star
-		if (moves <= numMoves)
-		{
-            //zombie.setStar(currentLevel, 1, true);
-            GameObject temp2 = GameObject.Find("Star2");
-            temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
-            temp2.GetComponent<ParticleSystem>().Play();
-            GameObject.FindWithTag("jakeWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake");
-
+        if(moves <= numMoves)
+        {
+            Invoke("setWinScreenJake", 2);
         }
+
         //set the third star
         bool thirdStar = false;
         //check what the string requirement for this level is and check if it is satisfied
@@ -226,21 +242,10 @@ public class GameMasterFSM : MonoBehaviour
         {
             if (starRequirements[levelsList[currentLevel - 1].Star] == true) thirdStar = true;
         }
-		if(thirdStar) //Set the third star based on if it was accomplished.
-		{
-            //zombie.setStar(currentLevel, 2, true);
-            GameObject temp3 = GameObject.Find("Star3");
-            temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
-            temp3.GetComponent<ParticleSystem>().Play();
-            GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy");
+        if (thirdStar)
+        {
+            Invoke("setWinScreenRoy", 2.5f);
         }
-
-        print("Num of Moves : " + moves);
-		//print("foundItem: " + foundItem);
-		//print(zombie.getStars(currentLevel - 1));
-
-
-
         turnOffTileColliders();
         winScreen.GetComponent<InGameMenuManager>().playAnim("winEnter");
         ticking = false;
@@ -525,7 +530,7 @@ public class GameMasterFSM : MonoBehaviour
 			if (key.Contains ("item")) {
 				int x = value [0];
 				int y = value [1];
-				GameObject item = Instantiate(Item, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y, 
+			    Instantiate(Item, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y, 
 					tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
 			}
         }
@@ -554,8 +559,6 @@ public class GameMasterFSM : MonoBehaviour
     public bool HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase, Vector3 touchDelta = default(Vector3))
     {
         bool touchSuccess = false;
-		int row = 0;
-		int col = 0;
         switch (touchPhase)
         {
             case TouchPhase.Began:
@@ -570,10 +573,8 @@ public class GameMasterFSM : MonoBehaviour
                         {
                              if (tileGrid[c][r].Equals(touchTarget))
                              {
-                                 row = r;
-                                 Row = row;
-                                 col = c;
-                                 Column = col;
+                                 Row = r;
+                                 Column = c;
                                  foundTile = true;
                                  touchStart = new Vector2(touchPosition.x, touchPosition.y);
                                  break;
@@ -603,93 +604,68 @@ public class GameMasterFSM : MonoBehaviour
                             isVert = Mathf.Abs(offset.y) > Mathf.Abs(offset.x);
                             latch = true;
                         }
-                        // look for a selected tile and it's row/col
-                        bool foundTile = false;
-                        for (int c = 0; c < numCols; c++)
+
+                        /* Debug.Log("spriterenderer" + tileS); */
+                        Vector3 origScale;
+                        if (isVert)
+                        {
+                            if (!wrapLatch)
+                            {
+                                wrapTile = tileGrid[Column][numRows - 1];
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy1 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, -tileSize, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy1.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+
+                                wrapTile = tileGrid[Column][0];
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy2 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, tileSize * numRows, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy2.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+
+                                wrapLatch = true;
+                            }
+                        }
+                        else
+                        {
+                            if (!wrapLatch)
+                            {
+                                wrapTile = tileGrid[numCols - 1][Row];
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy1 = Instantiate(wrapTile, new Vector3(-tileSize, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy1.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+
+                                wrapTile = tileGrid[0][Row];
+                                origScale = wrapTile.transform.localScale;
+                                wrapTile.transform.localScale = Vector3.one;
+                                wrapCopy2 = Instantiate(wrapTile, new Vector3(tileSize * numCols, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
+                                Destroy(wrapCopy2.GetComponent<TileFSM>());
+                                wrapTile.transform.localScale = origScale;
+
+                                wrapLatch = true;
+                            }
+                        }
+                        // moving horizontal rows:
+                        if (!isVert)
+                        {
+                            for (int c = 0; c < numCols; c++)
+                            {
+                                tileGrid[c][Row].GetComponent<TileFSM>().goalPos = new Vector2(tileGrid[c][Row].transform.position.x + touchDelta.x * scalar,
+                                                                                        tileGrid[c][Row].transform.position.y);
+                                //Debug.Log (tileGrid [c] [row].GetComponent<TileFSM> ().goalPos);
+                            }
+                        }
+                        // moving vertical cols:
+                        else
                         {
                             for (int r = 0; r < numRows; r++)
                             {
-                                if (tileGrid[c][r].Equals(touchTarget))
-                                {
-                                    Row = row = r;
-                                    Column = col = c;
-                                    foundTile = true;
-                                    break;
-                                }
-                            }
-                            if (foundTile)
-                            {
-                                break;
-                            }
-                        }
-
-                        // move the row or column 
-                        // with user touch
-                        if (foundTile)
-                        {
-                            float tileS = touchTarget.GetComponent<SpriteRenderer>().bounds.size.x * gridScale;
-                            /* Debug.Log("spriterenderer" + tileS); */
-                            Vector3 origScale;
-                            if (isVert)
-                            {
-                                if (!wrapLatch)
-                                {
-                                    wrapTile = tileGrid[Column][numRows - 1];
-                                    origScale = wrapTile.transform.localScale;
-                                    wrapTile.transform.localScale = Vector3.one;
-                                    wrapCopy1 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, -tileSize, 0), Quaternion.identity, wrapTile.transform);
-                                    Destroy(wrapCopy1.GetComponent<TileFSM>());
-                                    wrapTile.transform.localScale = origScale;
-
-                                    wrapTile = tileGrid[Column][0];
-                                    origScale = wrapTile.transform.localScale;
-                                    wrapTile.transform.localScale = Vector3.one;
-                                    wrapCopy2 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, tileSize * numRows, 0), Quaternion.identity, wrapTile.transform);
-                                    Destroy(wrapCopy2.GetComponent<TileFSM>());
-                                    wrapTile.transform.localScale = origScale;
-
-                                    wrapLatch = true;
-                                }
-                            }
-                            else
-                            {
-                                if (!wrapLatch)
-                                {
-                                    wrapTile = tileGrid[numCols - 1][Row];
-                                    origScale = wrapTile.transform.localScale;
-                                    wrapTile.transform.localScale = Vector3.one;
-                                    wrapCopy1 = Instantiate(wrapTile, new Vector3(-tileSize, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
-                                    Destroy(wrapCopy1.GetComponent<TileFSM>());
-                                    wrapTile.transform.localScale = origScale;
-
-                                    wrapTile = tileGrid[0][Row];
-                                    origScale = wrapTile.transform.localScale;
-                                    wrapTile.transform.localScale = Vector3.one;
-                                    wrapCopy2 = Instantiate(wrapTile, new Vector3(tileSize * numCols, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
-                                    Destroy(wrapCopy2.GetComponent<TileFSM>());
-                                    wrapTile.transform.localScale = origScale;
-
-                                    wrapLatch = true;
-                                }
-                            }
-                            // moving horizontal rows:
-                            if (!isVert)
-                            {
-                                for (int c = 0; c < numCols; c++)
-                                {
-                                    tileGrid[c][row].GetComponent<TileFSM>().goalPos = new Vector2(tileGrid[c][row].transform.position.x + touchDelta.x * scalar,
-                                                                                            tileGrid[c][row].transform.position.y);
-                                    //Debug.Log (tileGrid [c] [row].GetComponent<TileFSM> ().goalPos);
-                                }
-                            }
-                            // moving vertical cols:
-                            else
-                            {
-                                for (int r = 0; r < numRows; r++)
-                                {
-                                    tileGrid[col][r].GetComponent<TileFSM>().goalPos = new Vector2(tileGrid[col][r].transform.position.x,
-                                                                                            tileGrid[col][r].transform.position.y + touchDelta.y * scalar);
-                                }
+                                tileGrid[Column][r].GetComponent<TileFSM>().goalPos = new Vector2(tileGrid[Column][r].transform.position.x,
+                                                                                        tileGrid[Column][r].transform.position.y + touchDelta.y * scalar);
                             }
                         }
                     }

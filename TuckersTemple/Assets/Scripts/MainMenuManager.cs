@@ -27,7 +27,6 @@ public class MainMenuManager : MonoBehaviour {
 
 	//private:
 	private Animator anim;
-	private RectTransform pan;
 	private int counter = 0;
 
 	// settings menu controls:
@@ -44,7 +43,6 @@ public class MainMenuManager : MonoBehaviour {
 		upperLimit = lowerLimit-(settingsPanel.rect.height-30);
 		settingsScroll = 0;
 		anim = ani.GetComponent<Animator>();
-		pan = panel.GetComponent<RectTransform> ();
 		anim.enabled = false;
 
 		Toggle music = GameObject.Find("MusicToggle").GetComponent<Toggle>();
