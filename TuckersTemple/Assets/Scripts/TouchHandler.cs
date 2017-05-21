@@ -20,18 +20,28 @@ public class TouchHandler : MonoBehaviour {
 
 	// private:
 	private RectTransform panel;
+
+	private float startPos;
+	private float endPos;
+	private float heightOfMainImage;
+	private float levelScrollLimit;
 	private bool jump = false;
+
 
 	void Start () {
 		panel = GameObject.FindWithTag("controlPan").GetComponent<RectTransform>();
+		heightOfMainImage = GameObject.FindWithTag ("MainImage").GetComponent<RectTransform> ().rect.height;
+		startPos = panel.transform.position.y;
+		endPos = panel.transform.position.y + heightOfMainImage*2;
+		levelScrollLimit = startPos + heightOfMainImage - 25; // 25 is the offset
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		// jump to level selection:
 		if (jump) {
-			panel.transform.position = Vector3.MoveTowards(panel.transform.position, new Vector3 (panel.transform.position.x, 1925.0f, panel.transform.position.z), 30.0f);
-			if(panel.transform.position.y>=1925){
+			panel.transform.position = Vector3.MoveTowards(panel.transform.position, new Vector3 (panel.transform.position.x, levelScrollLimit, panel.transform.position.z), 30.0f);
+			if(panel.transform.position.y>=levelScrollLimit){
 				jump = false;
 			}
 		}
@@ -73,10 +83,10 @@ public class TouchHandler : MonoBehaviour {
 		case TouchPhase.Began:
 			break;
 		case TouchPhase.Moved:
-			//if(limits not passed)
-				panel.transform.position = new Vector3 (panel.transform.position.x, panel.transform.position.y + touchDelta.y, panel.transform.position.z);
-			// }
-			//Debug.Log(panel.transform.position);
+			float currentPos = panel.transform.position.y + touchDelta.y;
+			if ( currentPos >= startPos && currentPos <= endPos) {
+				panel.transform.position = new Vector3 (panel.transform.position.x, currentPos, panel.transform.position.z);
+			}
 			break;
 		case TouchPhase.Ended:
 			break;

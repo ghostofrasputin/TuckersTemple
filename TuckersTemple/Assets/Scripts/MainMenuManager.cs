@@ -30,8 +30,19 @@ public class MainMenuManager : MonoBehaviour {
 	private RectTransform pan;
 	private int counter = 0;
 
+	// settings menu controls:
+	private int settingsScroll;
+	private RectTransform settingsPanel;
+	private float speed = 7.0f;
+	private float lowerLimit;
+	private float upperLimit;
+
 	// Use this for initialization
 	void Start () {
+		settingsPanel = GameObject.FindWithTag("settingsPan").GetComponent<RectTransform>();
+		lowerLimit = settingsPanel.transform.position.y;
+		upperLimit = lowerLimit-(settingsPanel.rect.height-30);
+		settingsScroll = 0;
 		anim = ani.GetComponent<Animator>();
 		pan = panel.GetComponent<RectTransform> ();
 		anim.enabled = false;
@@ -42,11 +53,32 @@ public class MainMenuManager : MonoBehaviour {
 		sfx.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getSFXToggle();
 
 	}
-
-	// We might have something
-	// animate on our main menu?
-	void Update () {
 		
+	void Update () {
+		// have to update settings panel manually because aniamtion won't
+		// work depending where the main menu panel is located, basically
+		// it just bugs out and looks bad so this fixes it
+
+		float currentPos = settingsPanel.transform.position.y;
+		Debug.Log (currentPos);
+		Debug.Log ("upper"+upperLimit);
+		// scroll down
+		if (settingsScroll == 1) {
+			currentPos -= speed;
+			settingsPanel.transform.position = new Vector3 (settingsPanel.transform.position.x, currentPos, settingsPanel.transform.position.z);
+			if (currentPos <= upperLimit) {
+				settingsScroll = 0;
+			}
+		}
+
+		// scroll up
+		if (settingsScroll == 2) {
+			currentPos += speed;
+			settingsPanel.transform.position = new Vector3 (settingsPanel.transform.position.x, currentPos, settingsPanel.transform.position.z);
+			if (currentPos >= lowerLimit) {
+				settingsScroll = 0;
+			}
+		}
 	}
 
 	public void musicToggle(){
@@ -125,6 +157,15 @@ public class MainMenuManager : MonoBehaviour {
 		anim.enabled = true;
 		anim.Play (anima);
 	}
+
+	public void scrollDown(){
+		settingsScroll = 1;
+	}
+
+	public void scrollUp(){
+		settingsScroll = 2;
+	}
+
 }
 
 
