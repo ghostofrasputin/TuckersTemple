@@ -10,10 +10,65 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LitJson;
+using System;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
+/*
+[Serializable]
+class GameData {
+	public string settings;
+	public string lockedLevels;
+	public string starRatings;
+}*/
 
 public class SaveSystem : MonoBehaviour {
 
+
+	/***************************************
+	 * Binary Serialization Version        *
+	 ***************************************/
+	public ZombiePasser zombie;
+
+	public void Save() {
+		zombie = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ();
+		BinaryFormatter bf = new BinaryFormatter ();
+		FileStream file = File.Create (Application.persistentDataPath + "/GameData.dat");
+
+		GameData data = new GameData ();
+		data.settings = zombie.listToString(zombie.settings);
+		data.lockedLevels = zombie.listToString (zombie.lockedLevels);
+		data.starRatings = zombie.doubleListToString (zombie.starRatings);
+
+		bf.Serialize (file, data);
+		file.Close ();
+	}
+
+	public void Load() {
+		zombie = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ();
+		if (File.Exists (Application.persistentDataPath + "/GameData.dat")) {
+			BinaryFormatter bf = new BinaryFormatter ();
+			FileStream file = File.Open (Application.persistentDataPath + "/GameData.dat", FileMode.Open);
+
+			GameData data = (GameData)bf.Deserialize (file);
+
+			file.Close ();
+			zombie.settings = zombie.listFromString (data.settings);
+			zombie.lockedLevels = zombie.listFromString (data.lockedLevels);
+			zombie.starRatings = zombie.doubleListFromString (data.starRatings);
+		} else {
+			zombie.setDefaultData ();
+			Save ();
+			Load ();
+		}
+	}
+
+
+	/***************************************
+	 * JSON version: only works in Unity.  *
+	 * keep this code for future reference *
+	 ***************************************/
+	/*
 	// private:
 	private string jsonString;
 	private JsonData saveData;
@@ -68,5 +123,5 @@ public class SaveSystem : MonoBehaviour {
             return true;
         }
         return false;
-    }
+    }*/
 }
