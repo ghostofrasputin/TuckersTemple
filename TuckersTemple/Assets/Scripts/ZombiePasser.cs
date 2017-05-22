@@ -17,7 +17,7 @@ public class ZombiePasser : MonoBehaviour {
 
 	// private:
 	private int levelNum = 1;
-    //private int numLevels = 17;
+    private int numLevels = 50;
 	private LevelReader levelData;
 	private List<Level> levelsList;
 
@@ -47,21 +47,21 @@ public class ZombiePasser : MonoBehaviour {
 
 		// SAVE SYSTEM:
 		saveSystem = Camera.main.GetComponent<SaveSystem>();
-        /*if (saveSystem.fileExists("settings.json"))
-        {
+        //if (!saveSystem.fileExists("settings.json"))
+        //{
             // update numLevels accordingly:
             Debug.Log("creating new save files");
             printDefaultStructuresToJson(saveSystem, numLevels);
-        }
+        //}
         
 		// Load save data into proper data strutures:
-		//settings = saveSystem.loadJsonFileList("settings.json");
+		settings = saveSystem.loadJsonFileList("settings.json");
 		musicToggle = settings[0];
 		sfxToggle = settings[1];
 		vibToggle = settings[2];
 		lockedLevels = saveSystem.loadJsonFileList("lockedLevels.json");
 		starRatings = saveSystem.loadJsonFileDict("starRatings.json");
-        */
+
 		// keep zombie awake:
 		DontDestroyOnLoad(this);
 		if (FindObjectsOfType(GetType()).Length > 1)

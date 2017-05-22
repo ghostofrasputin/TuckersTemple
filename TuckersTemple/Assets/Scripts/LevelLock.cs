@@ -18,27 +18,28 @@ public class LevelLock : MonoBehaviour {
 	private bool isLocked;
     private int numOfStars;
 	private string target;
+	private Button lockButton;
 
 	// Use this for initialization
 	void Start () {
-		levelNum = System.Convert.ToInt32(gameObject.name);
+		levelNum = System.Convert.ToInt32(gameObject.name); 
+		lockButton = GetComponentsInChildren<Button>()[1];
 		try {
 			isLocked = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLockedLevelBool(levelNum-1);
-			//Debug.Log("level: "+levelNum+" locked: "+isLocked);
-			// use locked sprite and turn off button:
 			if(isLocked == true) {
                 this.gameObject.GetComponent<Button>().interactable = false;
-				Sprite lockedSprite = Resources.Load("UI/Lock",typeof(Sprite)) as Sprite;
+				lockButton.gameObject.SetActive(true);
+				Sprite lockedSprite = Resources.Load("mainMenu/TT-Logo-UNlocked",typeof(Sprite)) as Sprite;
                 this.gameObject.GetComponent<Image>().sprite = lockedSprite;
                 Text buttonText = this.gameObject.GetComponent<Button>().GetComponentsInChildren<Text>()[0];
                 buttonText.text = "";
                 //this.gameObject.transform.Find("stars").GetComponent<Image>().enabled = false;
             } 
-			// use unlocked sprite:
 			else {
 				this.gameObject.GetComponent<Button>().interactable = true;
-				//Sprite lockedSprite = Resources.Load("UISprite",typeof(Sprite)) as Sprite;
-				//this.gameObject.GetComponent<Image>().sprite = lockedSprite;
+				lockButton.gameObject.SetActive(false);
+				Sprite lockedSprite = Resources.Load("mainMenu/TT-Logo-UNlocked",typeof(Sprite)) as Sprite;
+				this.gameObject.GetComponent<Image>().sprite = lockedSprite;
 				Text buttonText = this.gameObject.GetComponent<Button>().GetComponentsInChildren<Text>()[0];
 				buttonText.text = ""+levelNum+"";
 				/*List<bool> stars = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getStars(levelNum-1);

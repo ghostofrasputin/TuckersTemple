@@ -211,13 +211,13 @@ public class GameMasterFSM : MonoBehaviour
     //Displays win screen
     public void levelWin()
     {
-		//ZombiePasser zombie = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ();
-		//SaveSystem saveSys = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<SaveSystem> ();
+		ZombiePasser zombie = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ();
+		SaveSystem saveSys = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<SaveSystem> ();
         try
         {
             // unlocks the next level. 
             //note: currentlevel-1 is the real current level for the array, currentlevel is the next level
-			//zombie.setLockedLevelBool(currentLevel);
+			zombie.setLockedLevelBool(currentLevel);
         }
         catch (System.Exception error)
         {
@@ -261,7 +261,7 @@ public class GameMasterFSM : MonoBehaviour
         attempts = 0;
 
 		// save game data:
-		//zombie.saveGame();
+		zombie.saveGame();
 
     }
 

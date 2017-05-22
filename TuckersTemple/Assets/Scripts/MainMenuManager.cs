@@ -58,8 +58,8 @@ public class MainMenuManager : MonoBehaviour {
 		// it just bugs out and looks bad so this fixes it
 
 		float currentPos = settingsPanel.transform.position.y;
-		Debug.Log (currentPos);
-		Debug.Log ("upper"+upperLimit);
+		//Debug.Log (currentPos);
+		//Debug.Log ("upper"+upperLimit);
 		// scroll down
 		if (settingsScroll == 1) {
 			currentPos -= speed;
