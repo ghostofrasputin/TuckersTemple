@@ -17,10 +17,8 @@ public class JiggleLock : MonoBehaviour {
 	// public:
 
 	// private:
-	private bool rotateFlag;
 	private bool jiggleFlag = false;
 	private float rotateSpeed;
-	private float rotateFactor;
 	private float[] jolts;
 	private float tracker;
 	private int index = 0;
@@ -29,8 +27,6 @@ public class JiggleLock : MonoBehaviour {
 		// jolts must be positive
 		jolts = new float[] {20.0f,40.0f,30.0f,10.0f,10.0f,10.0f,5.0f,5.0f,5.0f,5.0f,2.5f,2.5f,2.5f,2.5f};
 		rotateSpeed = 7.0f;
-		rotateFlag = true;
-		rotateFactor = 0.0f;
 		tracker = 0.0f;
 	}
 
