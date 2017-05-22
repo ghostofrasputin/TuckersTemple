@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HintArrow : MonoBehaviour {
+public class HintArrow : MonoBehaviour
+{
 
     private Vector2 goalPos;
     private Vector2 startPos;
@@ -10,21 +11,25 @@ public class HintArrow : MonoBehaviour {
     private float step;
     private float time;
     private SpriteRenderer sr;
+    private GameObject gm;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         sr = GetComponent<SpriteRenderer>();
+        gm = GameObject.FindGameObjectWithTag("GameController");
         sr.enabled = false;
         startPos = transform.position;
-        goalPos = startPos + new Vector2(1.5f,0);
-        speed = .5f;
+        goalPos = startPos + new Vector2(0, 3.0f);
+        speed = .2f;
         step = speed * Time.deltaTime;
         time = 0f;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        if(Input.touchCount > 0 || Input.GetMouseButtonDown(0))
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (gm.GetComponent<GameMasterFSM>().currentLevel >= 3 || Input.touchCount > 0 || Input.GetMouseButtonDown(0))
         {
             time = 0f;
             sr.enabled = false;
