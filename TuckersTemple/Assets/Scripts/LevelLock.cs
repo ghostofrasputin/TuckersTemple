@@ -22,12 +22,10 @@ public class LevelLock : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		levelNum = System.Convert.ToInt32(gameObject.name);
-		lockButton = GameObject.FindGameObjectWithTag ("Lock").GetComponent<Button>();
+		levelNum = System.Convert.ToInt32(gameObject.name); 
+		lockButton = GetComponentsInChildren<Button>()[1];
 		try {
 			isLocked = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLockedLevelBool(levelNum-1);
-			//Debug.Log("level: "+levelNum+" locked: "+isLocked);
-			// use locked sprite and turn off button:
 			if(isLocked == true) {
                 this.gameObject.GetComponent<Button>().interactable = false;
 				lockButton.gameObject.SetActive(true);
@@ -37,7 +35,6 @@ public class LevelLock : MonoBehaviour {
                 buttonText.text = "";
                 //this.gameObject.transform.Find("stars").GetComponent<Image>().enabled = false;
             } 
-			// use unlocked sprite:
 			else {
 				this.gameObject.GetComponent<Button>().interactable = true;
 				lockButton.gameObject.SetActive(false);
