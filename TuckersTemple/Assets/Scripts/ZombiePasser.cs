@@ -10,30 +10,44 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
+[Serializable]
+class GameData {
+	public string settings;
+	public string lockedLevels;
+	public string starRatings;
+}
 
 public class ZombiePasser : MonoBehaviour {
 
 	// public:
 
+	// default string data
+	public string settingsString;
+	public string lockedLevelsString;
+	public string starRatingsString;
+	// data to save
+	public SaveSystem saveSys;
+	public bool musicToggle = true;
+	public bool sfxToggle = true;
+	public bool vibToggle = true;
+	public List<bool> settings = new List<bool> ();
+	public List<bool> lockedLevels = new List<bool>();
+	public List<List<bool>> starRatings = new List<List<bool>>();
+
 	// private:
 	private int levelNum = 1;
-    private int numLevels = 50;
+    //private int numLevels = 50;
 	private LevelReader levelData;
 	private List<Level> levelsList;
 
-	// ALL Save Data for the game:
-	//bool loaded = false;
-	SaveSystem saveSystem;
-	// settings data:
-	List<bool> settings = new List<bool> ();
-	private bool musicToggle = true;
-	private bool sfxToggle = true;
-	private bool vibToggle = true;
-	// locked level data:
-	private List<bool> lockedLevels = new List<bool>();
-	// star ratings for eaach level data:
-	private Dictionary<string,List<bool>> starRatings = new Dictionary<string,List<bool>>();
-    
+	//------------------------------------------------------------------------------------------------
+	// Singleton
+	//------------------------------------------------------------------------------------------------
+
 	// Make this game object and all its transform children
 	// survive when loading a new scene.
 	private void Awake () {
@@ -45,22 +59,10 @@ public class ZombiePasser : MonoBehaviour {
 		levelData = Camera.main.GetComponent<LevelReader>();
 		levelsList = levelData.getLevels();
 
-		// SAVE SYSTEM:
-		saveSystem = Camera.main.GetComponent<SaveSystem>();
-        //if (!saveSystem.fileExists("settings.json"))
-        //{
-            // update numLevels accordingly:
-            Debug.Log("creating new save files");
-            printDefaultStructuresToJson(saveSystem, numLevels);
-        //}
-        
-		// Load save data into proper data strutures:
-		settings = saveSystem.loadJsonFileList("settings.json");
-		musicToggle = settings[0];
-		sfxToggle = settings[1];
-		vibToggle = settings[2];
-		lockedLevels = saveSystem.loadJsonFileList("lockedLevels.json");
-		starRatings = saveSystem.loadJsonFileDict("starRatings.json");
+		// Binary Serialization Save System:
+		//setDefaultData ();
+		//Save ();
+		Load();
 
 		// keep zombie awake:
 		DontDestroyOnLoad(this);
@@ -70,12 +72,9 @@ public class ZombiePasser : MonoBehaviour {
 		}
 	}
 
-	// saves the game by writing to json files
-	public void saveGame(){
-		saveSystem.writeJsonFile("lockedLevels.json", lockedLevels);
-		saveSystem.writeJsonFile("starRatings.json", starRatings);
-		saveSystem.writeJsonFile("settings.json", settings);
-	}
+	//------------------------------------------------------------------------------------------------
+	// Set Functions
+	//------------------------------------------------------------------------------------------------
 
 	// sets level to be played through button
 	// associated with that level
@@ -145,7 +144,7 @@ public class ZombiePasser : MonoBehaviour {
 	}
 
 	// set one of the 3 stars in the list for that level
-	public void setStar(int level, int star, bool starSetting)
+	/*public void setStar(int level, int star, bool starSetting)
     {
 		if (star >= 3 || star < 0) {
 			Debug.Log ("error: star array range is 0-2.");
@@ -154,7 +153,12 @@ public class ZombiePasser : MonoBehaviour {
 		//Debug.Log ("Level: " + level + " star number: " + star + " setting: " + starSetting);
 		string lev = level.ToString ();
 		starRatings[lev][star] = starSetting;
-    }
+    }*/
+
+	//------------------------------------------------------------------------------------------------
+	// Get Functions
+	//------------------------------------------------------------------------------------------------
+
 
 	// return the private level int
 	public int getLevel(){
@@ -167,11 +171,13 @@ public class ZombiePasser : MonoBehaviour {
 	}
 
     // return a list of star values
-	public List<bool> getStars(int level)
+	/*public List<bool> getStars(int level)
     {
 		string lev = level.ToString ();
 		return starRatings[lev];
-    }
+    }*/
+
+
 
 	public bool getLockedLevelBool(int index){
 		if (index > lockedLevels.Count-1 || index < 0) {
@@ -192,38 +198,125 @@ public class ZombiePasser : MonoBehaviour {
 		return vibToggle;
 	}
 
-	// this is a one time needed helper
-	// function to print out the initial state
-	// of the save data. after these files are created
-	// this function won't be needed, but will be left in
-	// to create files if needed.
-	public void printDefaultStructuresToJson(SaveSystem saveSys, int numberOfLevels){
-		List<bool> s = new List<bool> ();
-		s.Add (true);
-		s.Add (true);
-		s.Add (true);
-		List<bool> ll = new List<bool> ();
+	//------------------------------------------------------------------------------------------------
+	// Save Data Functions
+	//------------------------------------------------------------------------------------------------
 
-		// NOTE: key needs to be a string from JsonMapper to work...
-		Dictionary<string,List<bool>> sr = new Dictionary<string,List<bool>>();
+	public void Save() {
+		BinaryFormatter bf = new BinaryFormatter ();
+		FileStream file = File.Create (Application.persistentDataPath + "/GameData.dat");
 
-		//Debug.Log (numberOfLevels);
-		for (int i = 0; i < numberOfLevels; i++) {
-			if (i == 0) {
-				ll.Add (false);
-			} else {
-				ll.Add (true);
-			}
+		GameData data = new GameData ();
+		data.settings = listToString(settings);
+		data.lockedLevels = listToString (lockedLevels);
+		data.starRatings = doubleListToString (starRatings);
 
-			List<bool> levelStars = new List<bool> ();
-			for (int j = 0; j < 3; j++) {
-				levelStars.Add (true);
-			}
-			sr.Add ((i + 1).ToString(), levelStars);
+		bf.Serialize (file, data);
+		file.Close ();
+	}
+
+	public void Load() {
+		if (File.Exists (Application.persistentDataPath + "/GameData.dat")) {
+			BinaryFormatter bf = new BinaryFormatter ();
+			FileStream file = File.Open (Application.persistentDataPath + "/GameData.dat", FileMode.Open);
+
+			GameData data = (GameData)bf.Deserialize (file);
+
+			file.Close ();
+			settings = listFromString (data.settings);
+			lockedLevels = listFromString (data.lockedLevels);
+			starRatings = doubleListFromString (data.starRatings);
+		} else {
+			setDefaultData ();
+			Save ();
+			Load ();
 		}
-		saveSys.writeJsonFile("lockedLevels.json", ll);
-		saveSys.writeJsonFile ("starRatings.json", sr);
-		saveSys.writeJsonFile ("settings.json", s);
+	}
+
+	public void setDefaultData(){
+		settingsString = "ttt";
+		lockedLevelsString = "fttttttttttttttttttttttttttttttttttttttttttttttttt";
+		starRatingsString = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
+		settings = listFromString(settingsString);
+		lockedLevels = listFromString(lockedLevelsString);
+		starRatings = doubleListFromString (starRatingsString);
+	}
+
+	public string listToString(List<bool> dataList){
+		string data = "";
+
+		for (int i = 0; i < dataList.Count; i++) {
+			if (dataList [i] == true) {
+				data += 't';
+			}
+			if (dataList [i] == false) {
+				data += 'f';
+			}
+		}
+		return data;
+	}
+
+	public List<bool> listFromString(string dataString){
+		List<bool> data = new List<bool> ();
+
+		for (int i = 0; i < dataString.Length; i++) {
+			if (dataString [i].Equals('t')) {
+				data.Add(true);
+			}
+			if (dataString [i].Equals ('f')) {
+				data.Add(false);
+			}
+		}
+
+		return data;
+	}
+
+	public string doubleListToString(List<List<bool>> dataList){
+		string data = "";
+
+		for (int i = 0; i < dataList.Count; i++) {
+			for(int j=0; j< dataList[i].Count; j++){
+				List<bool> starList = dataList [i];
+				if (starList[j] == true) {
+					data += 't';
+				}
+				if (starList[j] == false) {
+					data += 'f';
+				}
+			}
+		}
+
+		return data;
+	}
+
+	public List<List<bool>> doubleListFromString(string dataString){
+		List<List<bool>> data = new List<List<bool>> ();
+
+		for (int i = 0; i < dataString.Length; i+=3) {
+
+			List<bool> starList = new List<bool> ();
+			if (dataString [i].Equals('t')) {
+				starList.Add(true);
+			}
+			if (dataString [i].Equals ('f')) {
+				starList.Add(false);
+			}
+			if (dataString [i+1].Equals('t')) {
+				starList.Add(true);
+			}
+			if (dataString [i+1].Equals ('f')) {
+				starList.Add(false);
+			}
+			if (dataString [i+2].Equals('t')) {
+				starList.Add(true);
+			}
+			if (dataString [i+2].Equals ('f')) {
+				starList.Add(false);
+			}
+			data.Add (starList);
+		}
+
+		return data;
 	}
 
 }

@@ -212,7 +212,7 @@ public class GameMasterFSM : MonoBehaviour
     public void levelWin()
     {
 		ZombiePasser zombie = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ();
-		SaveSystem saveSys = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<SaveSystem> ();
+
         try
         {
             // unlocks the next level. 
@@ -261,8 +261,7 @@ public class GameMasterFSM : MonoBehaviour
         attempts = 0;
 
 		// save game data:
-		zombie.saveGame();
-
+		zombie.Save();
     }
 
     private void setCanvas(Canvas c, bool b)
