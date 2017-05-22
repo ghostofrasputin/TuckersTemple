@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FireSystem : MonoBehaviour
 {
-
+	public AudioClip flamesActive;
     //private float timeDelay = 1;
     //private float onTime = 0;
     private float idleTime = 0;

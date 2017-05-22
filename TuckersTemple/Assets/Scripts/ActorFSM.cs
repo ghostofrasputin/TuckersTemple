@@ -37,6 +37,9 @@ public class ActorFSM : MonoBehaviour
     // audio:
     public AudioClip playerfootsteps1;
     public AudioClip playerfootsteps2;
+	public AudioClip playerDeath;
+	public AudioClip enemyKilled;
+	public AudioClip fireBlazin;
 
     public void SetTransition(Transition t) { fsm.PerformTransition(t); }
 
@@ -548,6 +551,8 @@ public class TrapDeadAState : FSMState
         if (controlref.tag == "Player")
         {
 			controlref.GetComponent<ActorFSM> ().setDeathText ("trap");
+			SoundController.instance.TrapOn (controlref.fireBlazin, controlref.fireBlazin);
+			SoundController.instance.RandomSfx (controlref.playerDeath, controlref.playerDeath);
         }
     }
 
@@ -608,6 +613,7 @@ public class EnemyDeadAState : FSMState
         {
             UnityEngine.Object.Instantiate(controlref.slash, controlref.transform.position, Quaternion.identity);
             controlref.GetComponent<ActorFSM> ().setDeathText ("enemy");
+			SoundController.instance.RandomSfx (controlref.playerDeath, controlref.playerDeath);
         }
     }
 

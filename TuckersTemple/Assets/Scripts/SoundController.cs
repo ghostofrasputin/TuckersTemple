@@ -8,6 +8,7 @@ public class SoundController : MonoBehaviour {
 	public AudioSource sfxSource;
 	public AudioSource musicSource;
 	public AudioSource sfxSourceTiles;
+	public AudioSource flameOn;
 	public AudioSource gameOver;
 
 	public static SoundController instance = null;
@@ -90,6 +91,16 @@ public class SoundController : MonoBehaviour {
 		sfxSourceTiles.pitch = randomPitch; // set pitch
 		sfxSourceTiles.clip = clips [randomIndex]; // set random index from array
 		sfxSourceTiles.Play ();
+
+	}
+
+	public void TrapOn (params AudioClip [] clips){
+		int randomIndex = Random.Range (0, clips.Length); // chooses randoml clip
+		float randomPitch = Random.Range (lowPitch, highPitch); // chooses range of pitch
+
+		flameOn.pitch = randomPitch; // set pitch
+		flameOn.clip = clips [randomIndex]; // set random index from array
+		flameOn.Play ();
 
 	}
 

@@ -88,7 +88,10 @@ public class CutSceneManager : MonoBehaviour {
             {"templeStairs", Resources.Load<Sprite>("CutScenes/cutscene_7")},
             {"templeCollapse", Resources.Load<Sprite>("CutScenes/cutscene_9")},
             {"templeInside", Resources.Load<Sprite>("CutScenes/template_episode_2")},
-            {"foundJake", Resources.Load<Sprite>("CutScenes/cutscene_4")}
+            {"foundJake", Resources.Load<Sprite>("CutScenes/cutscene_4")}, 
+			{"emilyBegin", Resources.Load<Sprite>("Cutscenes/cutscene_Emily-alone")},
+			{"tankBegin", Resources.Load<Sprite>("Cutscenes/cutscene_Tank-alone")},
+			{"emilyandtank", Resources.Load<Sprite>("Cutscenes/cutscene_EmilyandTank")}
         };
 		sounds = new Dictionary<string, AudioClip> () {
 			{"roy_hmm", Resources.Load<AudioClip>("CutScenes/Andre-Hmm")},
