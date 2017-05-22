@@ -73,6 +73,7 @@ public class GameMasterFSM : MonoBehaviour
     public AudioClip nextLevelSound;
     public AudioClip playerdeathSound;
 	public AudioClip gameOverSound;
+	public AudioClip levelWinSound;
 
     // private:
     private RaycastHit hit;
@@ -211,6 +212,7 @@ public class GameMasterFSM : MonoBehaviour
     //Displays win screen
     public void levelWin()
     {
+		SoundController.instance.RandomSfxTiles(levelWinSound, levelWinSound);
 		ZombiePasser zombie = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ();
 
         try

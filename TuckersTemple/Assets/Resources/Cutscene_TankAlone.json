@@ -1,0 +1,20 @@
+﻿{
+	"scene1": {
+	  "image": "tankBegin",
+	 	"line1": {
+			"image": "blank",
+			"text": "",
+			"sound": ""
+		},
+		"line2": {
+			"image": "EmilyScared",
+			"text": "Emily: It feels like the walls are shifting, and I keep seeing things moving in the shadows.",
+			"sound": ""
+		},
+		"line3": {
+			"image": "EmilyCurious",
+			"text": "Emily: Well, Dad always said the unknown is just an oppertunity for knowledge.  I have to keep moving.",
+			"sound": ""
+		}
+	}
+}
