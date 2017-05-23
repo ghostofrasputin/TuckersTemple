@@ -172,7 +172,7 @@ public class GameMasterFSM : MonoBehaviour
 		SoundController.instance.gameOver.Stop ();
         deathScreen.GetComponent<CanvasGroup>().interactable = false;
         deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
-
+        flipPause();
         attempts++;
         setupLevel(levelsList[currentLevel - 1]);
 		if (fsm.CurrentStateID == StateID.LevelDeath) {
@@ -182,6 +182,7 @@ public class GameMasterFSM : MonoBehaviour
 		} else if(fsm.CurrentStateID == StateID.LevelWon) {
             GetComponent<GameMasterFSM>().SetTransition(Transition.NextLevel);
         }
+        
     }
 
     public void setWinScreenEmily()
@@ -424,7 +425,7 @@ public class GameMasterFSM : MonoBehaviour
 			mainCamera.transform.position = new Vector3 (2.25f, 1.6f, -10);
 			mainCamera.GetComponent<Camera> ().orthographicSize = 7;
 			// scale UI border to work with new camera paramters
-			UIBorder.transform.localScale = new Vector3 (.596367f,.643526f,.532441f);
+			UIBorder.transform.localScale = new Vector3 (1.26393f,1.371209f,1f);
 			UIBorder.transform.position = new Vector3 (2.26f,1.63f,0.0f);
 		}
 		if (numCols == 3) {
@@ -432,8 +433,8 @@ public class GameMasterFSM : MonoBehaviour
 			mainCamera.transform.position = new Vector3 (1.5f, 1f, -10);
 			mainCamera.GetComponent<Camera> ().orthographicSize = 5;
 			// scale UI border to work with new camera paramters
-			UIBorder.transform.localScale = new Vector3 (.4209864f,.4542772f,.3758603f);
-			UIBorder.transform.position = new Vector3 (1.485596f,.9803f,0.0f);
+			UIBorder.transform.localScale = new Vector3 (1.26393f, 1.371209f, 1f);
+			UIBorder.transform.position = new Vector3 (1.5f,.995f,0.0f);
 		}
 
 
@@ -554,6 +555,13 @@ public class GameMasterFSM : MonoBehaviour
     public void flipPause()
     {
         isPaused = !isPaused;
+        if (isPaused)
+        {
+            turnOffTileColliders();
+        } else
+        {
+            turnOnTileColliders();
+        }
         UIBorder.GetComponent<Animator>().speed = 1.5f;
     }
 
