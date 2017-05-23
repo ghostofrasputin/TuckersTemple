@@ -425,8 +425,8 @@ public class GameMasterFSM : MonoBehaviour
 			mainCamera.transform.position = new Vector3 (2.25f, 1.6f, -10);
 			mainCamera.GetComponent<Camera> ().orthographicSize = 7;
 			// scale UI border to work with new camera paramters
-			UIBorder.transform.localScale = new Vector3 (1.26393f,1.371209f,1f);
-			UIBorder.transform.position = new Vector3 (2.26f,1.63f,0.0f);
+			UIBorder.transform.localScale = new Vector3 (1.76075f,1.915672f,1f);
+			UIBorder.transform.position = new Vector3 (2.25f,1.6f,0.0f);
 		}
 		if (numCols == 3) {
 			mainCamera.transform.localScale = new Vector3 (1f, 1f, 1);
@@ -603,7 +603,7 @@ public class GameMasterFSM : MonoBehaviour
             case TouchPhase.Moved:
                 if (foundTile)
                 {
-                    spinGear(.5f);
+                    spinGear(.3f);
                     Vector2 offsetLocal = (Vector2)touchPosition - touchStart;
                     if (Math.Abs(offsetLocal.x) > 10 || Math.Abs(offsetLocal.y) > 10)
                     {
@@ -774,7 +774,7 @@ public class GameMasterFSM : MonoBehaviour
          {
              UIBorder.GetComponent<Animator>().enabled = true;
              UIBorder.GetComponent<Animator>().speed = s;
-             //UIBorder.GetComponent<Animator>().Play("UIBorderGear");
+             UIBorder.GetComponent<Animator>().Play("UIBorderGear");
          }
      }
 
@@ -1225,7 +1225,7 @@ public class OrderTilesState : FSMState
 				child.GetComponent<LaserScript> ().setEye (false);
 			}
 		}
-        controlref.spinGear(0.5f);
+        controlref.spinGear(0.3f);
     }
 
     public override void DoBeforeLeaving()
