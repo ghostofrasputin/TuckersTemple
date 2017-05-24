@@ -12,6 +12,8 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject Tile; //The tile prefab to spawn in
     public GameObject Character;
     public GameObject Emily;
+    public GameObject Jake;
+    public GameObject Tank;
     public GameObject Trap;
     public GameObject Enemy;
     public GameObject Wraith;
@@ -477,13 +479,13 @@ public class GameMasterFSM : MonoBehaviour
             }
 			if (key.Contains("jake"))
             {
-                GameObject jake = spawnActor(Character, value[0], value[1], value[2]);
+                GameObject jake = spawnActor(Jake, value[0], value[1], value[2]);
                 actors.Add(jake);
                 characters.Add(jake);
             }
 			if (key.Contains("tank"))
             {
-                GameObject tank = spawnActor(Character, value[0], value[1], value[2]);
+                GameObject tank = spawnActor(Tank, value[0], value[1], value[2]);
                 actors.Add(tank);
                 characters.Add(tank);
             }
@@ -931,13 +933,34 @@ public class GameMasterFSM : MonoBehaviour
         return tileGrid[col][row];
     }
 
-    public bool sameTileCollide()
+    public bool sameTileCollide(GameObject actor)
     {
-        foreach (GameObject character in characters)
+        if (actor.tag == "Player")
         {
-            foreach (GameObject enemy in enemies)
+            for (int i = 0; i < enemies.Count; i++)
             {
-                if (character.transform.position == enemy.transform.position)
+                GameObject enemy = enemies[i];
+                if (actor.transform.position == enemy.transform.position)
+                {
+                    if (actor.GetComponent<ActorFSM>().actorName == "Tank")
+                    {
+                        actors.Remove(enemy.gameObject);
+                        enemies.Remove(enemy.gameObject);
+                        GameObject.Destroy(enemy.gameObject);
+                        i--;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        else if (actor.tag == "Enemy")
+        {
+            foreach (GameObject character in characters)
+            {
+                if (character.transform.position == actor.transform.position)
                 {
                     return true;
                 }
