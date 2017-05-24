@@ -605,7 +605,7 @@ public class GameMasterFSM : MonoBehaviour
                 {
                     spinGear(.3f);
                     Vector2 offsetLocal = (Vector2)touchPosition - touchStart;
-                    if (Math.Abs(offsetLocal.x) > 10 || Math.Abs(offsetLocal.y) > 10)
+                    if (latch || Math.Abs(offsetLocal.x) > 10 || Math.Abs(offsetLocal.y) > 10)
                     {
                         if (latch == false)
                         {

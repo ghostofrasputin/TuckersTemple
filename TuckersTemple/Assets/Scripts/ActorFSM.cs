@@ -370,7 +370,7 @@ public class LookAState : FSMState
                 {
                     if (ray.collider.tag == "Enemy")
                     {
-                        int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;
+                        int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;   
                         switch (controlref.direction)
                         {
                             case 0:
@@ -394,6 +394,10 @@ public class LookAState : FSMState
                                     break;
                                 }
                         }
+                        if (npc.GetComponent<ActorFSM>().actorName == "Tank" && isEnemyDead)
+                        {
+                            GameObject.Destroy(ray.collider.gameObject, 0.5f);
+                        }
                     }
                     else if (ray.collider.tag == "Goal")
                     {
@@ -415,6 +419,7 @@ public class LookAState : FSMState
         }
         else if (isEnemyDead)
         {
+            
             npc.GetComponent<ActorFSM>().SetTransition(Transition.EnemyFound);
             return;
         }
