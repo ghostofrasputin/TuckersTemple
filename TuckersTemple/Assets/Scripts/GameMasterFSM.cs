@@ -860,8 +860,9 @@ public class GameMasterFSM : MonoBehaviour
 				tileGrid [numCols - 1] [row].GetComponent<TileFSM> ().wrapGoalPos = new Vector2 ((numCols - 1) * tileSize, row * tileSize);
 				break;
 			}
+		moves++;
 		}
-	moves++;
+
     }
 
     public bool doneSliding()
