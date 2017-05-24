@@ -305,7 +305,7 @@ public class IdleAState : FSMState
 			return;
 		}
 
-		if (gm.GetComponent<GameMasterFSM>().sameTileCollide())
+		if (gm.GetComponent<GameMasterFSM>().sameTileCollide(npc.gameObject))
 		{
 			npc.GetComponent<ActorFSM>().SetTransition(Transition.IdleDeath); //to enemyDead
 		}
@@ -370,7 +370,7 @@ public class LookAState : FSMState
                 {
                     if (ray.collider.tag == "Enemy")
                     {
-                        int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;
+                        int enemyDir = ray.collider.gameObject.GetComponent<ActorFSM>().direction;   
                         switch (controlref.direction)
                         {
                             case 0:
@@ -394,6 +394,11 @@ public class LookAState : FSMState
                                     break;
                                 }
                         }
+                        if (npc.GetComponent<ActorFSM>().actorName == "Tank" && isEnemyDead)
+                        {
+                            ray.collider.GetComponent<ActorFSM>().SetTransition(Transition.TrapFound);
+                            isEnemyDead = false;
+                        }
                     }
                     else if (ray.collider.tag == "Goal")
                     {
@@ -415,6 +420,7 @@ public class LookAState : FSMState
         }
         else if (isEnemyDead)
         {
+            
             npc.GetComponent<ActorFSM>().SetTransition(Transition.EnemyFound);
             return;
         }
@@ -452,7 +458,7 @@ public class WalkAState : FSMState
 	{
         if (npc.transform.position.x == controlref.goalPos.x && npc.transform.position.y == controlref.goalPos.y)
         {
-            if (gm.GetComponent<GameMasterFSM>().sameTileCollide())
+            if (gm.GetComponent<GameMasterFSM>().sameTileCollide(npc.gameObject))
             {
                 npc.GetComponent<ActorFSM>().SetTransition(Transition.EnemyCollide); //to enemyDead
                 return;
@@ -515,13 +521,15 @@ public class WinAState : FSMState
 
     public override void Reason(GameObject gm, GameObject npc)
     {
+        
         if (npc.transform.position.x == controlref.goalPos.x && npc.transform.position.y == controlref.goalPos.y)
         {
-            if (gm.GetComponent<GameMasterFSM>().sameTileCollide())
+            /* Doesn't get called right now, and we like it, Happy little trees - Bob Ross
+            if (gm.GetComponent<GameMasterFSM>().sameTileCollide(npc.gameObject))
             {
                 npc.GetComponent<ActorFSM>().SetTransition(Transition.EnemyCollide1); //to enemyDead
                 return;
-            }
+            }*/
             gm.GetComponent<GameMasterFSM>().characters.Remove(npc);
             gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
             controlref.destroyObj();
