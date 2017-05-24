@@ -76,7 +76,7 @@ public class GameMasterFSM : MonoBehaviour
     public AudioClip playerdeathSound;
 	public AudioClip gameOverSound;
 	public AudioClip levelWinSound;
-
+    public AudioClip tileSlideOnly;
     // private:
     private RaycastHit hit;
     private GameObject touchTarget;
@@ -628,7 +628,7 @@ public class GameMasterFSM : MonoBehaviour
                                 wrapCopy1 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, -tileSize, 0), Quaternion.identity, wrapTile.transform);
                                 Destroy(wrapCopy1.GetComponent<TileFSM>());
                                 wrapTile.transform.localScale = origScale;
-
+                                SoundController.instance.RandomSfxTiles(tileSlideOnly, tileSlideOnly);
                                 wrapTile = tileGrid[Column][0];
                                 origScale = wrapTile.transform.localScale;
                                 wrapTile.transform.localScale = Vector3.one;
@@ -649,7 +649,7 @@ public class GameMasterFSM : MonoBehaviour
                                 wrapCopy1 = Instantiate(wrapTile, new Vector3(-tileSize, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
                                 Destroy(wrapCopy1.GetComponent<TileFSM>());
                                 wrapTile.transform.localScale = origScale;
-
+                                SoundController.instance.RandomSfxTiles(tileSlideOnly, tileSlideOnly);
                                 wrapTile = tileGrid[0][Row];
                                 origScale = wrapTile.transform.localScale;
                                 wrapTile.transform.localScale = Vector3.one;
@@ -1230,6 +1230,9 @@ public class OrderTilesState : FSMState
             if (controlref.incompleteTouch) {
                 npc.GetComponent<GameMasterFSM>().SetTransition(Transition.Incomplete); //to Input
             } else {
+                SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
+                Handheld.Vibrate();
+                GameObject.Find("Main Camera").GetComponent<ScreenShake>().startShaking();
                 npc.GetComponent<GameMasterFSM>().SetTransition(Transition.TilesDone); //to orderactors
             }
         }
