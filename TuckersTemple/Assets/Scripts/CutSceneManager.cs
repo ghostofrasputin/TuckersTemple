@@ -100,9 +100,9 @@ public class CutSceneManager : MonoBehaviour {
 		};
 
 		cutSceneFiles = new Dictionary<int, string>(){
-			{1, "CutScene_Opening"}, //these cutscenes play before the level
-			{15, "CutScene_EmilyAlone"},
-            {17, "CutScene_AlmostToJake" }
+			//{1, "CutScene_Opening"}, //these cutscenes play before the level
+			//{15, "CutScene_EmilyAlone"},
+            //{17, "CutScene_AlmostToJake" }
         };
 
 		//intialize GameObjects
