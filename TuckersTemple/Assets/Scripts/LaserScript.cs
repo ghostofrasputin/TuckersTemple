@@ -12,27 +12,30 @@ public class LaserScript : MonoBehaviour {
 	private Vector3 drawPoint;
 	public GameObject laserHit;
 	private GameObject currLaserHit;
+    private float promptTimer;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 		line = GetComponent<LineRenderer> ();
 		line.sortingLayerName = "Wall";
 		setEye (false);
-	}
+        promptTimer = 0;
+    }
 	
 	// Update is called once per frame
 	void Update () {
-		if(eyeOpen) {
-			//Draw the line to there
-			line.SetPosition (0, transform.position);
-			line.SetPosition (1, drawPoint);
-		}
-	}
+        //promptTimer += Time.deltaTime * 2;
+        //float scale = Mathf.Abs(Mathf.Sin(promptTimer)) * 0.01f + 0.06f;
+
+        line.startWidth = 0.02f;
+        line.endWidth = 0.07f;
+
+    }
 
 	void fireRayCast(){
 		//Shoot a raycast out to the next wall
 		RaycastHit2D laserRay = Physics2D.Raycast (transform.position, dir, 100f, LayerMask.GetMask ("Wall"));
-		drawPoint = (Vector3)laserRay.point;
+		drawPoint = laserRay.point;
 		if (laserRay.collider.gameObject.tag.Equals ("Wall")) {
             int[] walls = laserRay.collider.transform.parent.GetComponent<TileFSM>().walls;
             //if left wall and facing right, or similar situation, don't apply offset
@@ -58,9 +61,11 @@ public class LaserScript : MonoBehaviour {
 		}
 		//check if shot any characters
 		actorRay = Physics2D.RaycastAll (transform.position, dir, laserRay.distance, LayerMask.GetMask("Character"));
+        Debug.Log(dir + ", " + laserRay.distance);
 
 		//check if hit each actor and tell that actor they were hit
 		foreach (RaycastHit2D actorHit in actorRay) {
+            Debug.Log(actorHit.transform.gameObject.GetComponent<ActorFSM>().actorName);
 			if (actorHit.transform.CompareTag("Player")) {
 				actorHit.transform.gameObject.GetComponent<ActorFSM> ().setLaserHit (true);
 			}
@@ -86,7 +91,9 @@ public class LaserScript : MonoBehaviour {
 		if (eyeOpen) {
 			fireRayCast ();
 			currLaserHit = Instantiate (laserHit, drawPoint, Quaternion.identity, this.transform);
-		} else {
+            line.SetPosition(0, transform.position);
+            line.SetPosition(1, drawPoint);
+        } else {
 			actorRay = new RaycastHit2D[0];
 		}
 	}

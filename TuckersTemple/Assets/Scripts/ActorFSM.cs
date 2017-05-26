@@ -32,7 +32,7 @@ public class ActorFSM : MonoBehaviour
 
 	//deathtexts
 	private Dictionary<string, List<string>> deathTexts;
-	private bool hitByLaser = false;
+	public bool hitByLaser = false;
 
     // audio:
     public AudioClip playerfootsteps1;
