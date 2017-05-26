@@ -17,7 +17,9 @@ public class LaserScript : MonoBehaviour {
     // Use this for initialization
     void Start () {
 		line = GetComponent<LineRenderer> ();
-		line.sortingLayerName = "Wall";
+        line.startWidth = 0.02f;
+        line.endWidth = 0.07f;
+        line.sortingLayerName = "Wall";
 		setEye (false);
         promptTimer = 0;
     }
@@ -26,10 +28,6 @@ public class LaserScript : MonoBehaviour {
 	void Update () {
         //promptTimer += Time.deltaTime * 2;
         //float scale = Mathf.Abs(Mathf.Sin(promptTimer)) * 0.01f + 0.06f;
-
-        line.startWidth = 0.02f;
-        line.endWidth = 0.07f;
-
     }
 
 	void fireRayCast(){
