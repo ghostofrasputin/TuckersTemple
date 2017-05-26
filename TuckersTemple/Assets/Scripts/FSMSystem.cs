@@ -73,7 +73,8 @@ public enum Transition
     FinishedEnter,
     EnterLevel,
 	SecondMove,
-	IdleDeath,//endactor
+	IdleDeath,
+	CrossTank,//endactor
     LevelDone,//gamemaster
     RestartedLevelFromDeath,
     InputReceived,

@@ -117,6 +117,7 @@ public class ActorFSM : MonoBehaviour
         walk.AddTransition(Transition.FinishedWalk, StateID.IdleA);
         walk.AddTransition(Transition.EnemyCollide, StateID.EnemyDeadA);
 		walk.AddTransition(Transition.SecondMove, StateID.LookA);
+		walk.AddTransition (Transition.CrossTank, StateID.TrapDeadA);
 
         WinAState win = new WinAState(this);
         win.AddTransition(Transition.EnemyCollide1, StateID.EnemyDeadA);
@@ -396,8 +397,12 @@ public class LookAState : FSMState
                         }
                         if (npc.GetComponent<ActorFSM>().actorName == "Tank" && isEnemyDead)
                         {
-                            ray.collider.GetComponent<ActorFSM>().SetTransition(Transition.TrapFound);
-                            isEnemyDead = false;
+							if (ray.collider.GetComponent<ActorFSM> ().fsm.CurrentStateID == StateID.WalkA) {
+								ray.collider.GetComponent<ActorFSM> ().SetTransition (Transition.CrossTank);
+							} else {
+								ray.collider.GetComponent<ActorFSM> ().SetTransition (Transition.TrapFound);
+							}
+							isEnemyDead = false;
                         }
                     }
                     else if (ray.collider.tag == "Goal")
