@@ -117,6 +117,7 @@ public class ActorFSM : MonoBehaviour
         walk.AddTransition(Transition.FinishedWalk, StateID.IdleA);
         walk.AddTransition(Transition.EnemyCollide, StateID.EnemyDeadA);
 		walk.AddTransition(Transition.SecondMove, StateID.LookA);
+		walk.AddTransition (Transition.CrossTank, StateID.TrapDeadA);
 
         WinAState win = new WinAState(this);
         win.AddTransition(Transition.EnemyCollide1, StateID.EnemyDeadA);
@@ -162,7 +163,7 @@ public class ActorFSM : MonoBehaviour
     }
 
 	// Use to scale, tilt, or rotate for desired effect
-	public void wiggle(float scaleSpeed, float rotateSpeed, float lowerLimit=.6f, float upperLimit=0.63f, float rLL=0.3f, float rUL=0.6f){
+	public void wiggle(float scaleSpeed, float rotateSpeed, float lowerLimit=.9f, float upperLimit=1.1f, float rLL=0.3f, float rUL=0.6f){
 		// controls scaling:
 		if (scaleFlag) {
 			scaleFactor += scaleSpeed;
@@ -329,7 +330,7 @@ public class IdleAState : FSMState
 	{
 		// Idle Behavior similar to IMBROGLIO !!!
 		if (controlref.tag == "Player") {
-			npc.GetComponent<ActorFSM> ().wiggle (0.0005f, 0.05f);
+			npc.GetComponent<ActorFSM> ().wiggle (0.0005f, 0.075f);
 		}
 		if (controlref.tag == "Enemy") {
 			npc.GetComponent<ActorFSM> ().wiggle (0.0005f, 0.1f, 1.5f, 1.6f);
@@ -396,8 +397,12 @@ public class LookAState : FSMState
                         }
                         if (npc.GetComponent<ActorFSM>().actorName == "Tank" && isEnemyDead)
                         {
-                            ray.collider.GetComponent<ActorFSM>().SetTransition(Transition.TrapFound);
-                            isEnemyDead = false;
+							if (ray.collider.GetComponent<ActorFSM> ().fsm.CurrentStateID == StateID.WalkA) {
+								ray.collider.GetComponent<ActorFSM> ().SetTransition (Transition.CrossTank);
+							} else {
+								ray.collider.GetComponent<ActorFSM> ().SetTransition (Transition.TrapFound);
+							}
+							isEnemyDead = false;
                         }
                     }
                     else if (ray.collider.tag == "Goal")
@@ -497,10 +502,10 @@ public class WalkAState : FSMState
 
 		// walk behavior
 		if (controlref.tag == "Player") {
-			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.5f, 0.6f, 0.7f, 0.2f, 0.6f);
+			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.5f, 0.9f, 1.1f, 0.2f, 0.6f);
 		}
 		if (controlref.tag == "Enemy") {
-			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.5f, 1.5f, 1.6f, 0.2f, 0.6f);
+			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.5f, 1.1f, 1.3f, 0.2f, 0.6f);
 		}
 
         npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
@@ -588,11 +593,11 @@ public class TrapDeadAState : FSMState
     {
         if (controlref.tag == "Player")
         {
-            npc.GetComponent<ActorFSM>().wiggle(0.001f, 0.5f, 0.6f, 0.7f, 0.2f, 0.6f);
+            npc.GetComponent<ActorFSM>().wiggle(0.001f, 0.5f, 0.9f, 1.1f, 0.2f, 0.6f);
         }
         if (controlref.tag == "Enemy")
         {
-            npc.GetComponent<ActorFSM>().wiggle(0.001f, 0.5f, 1.5f, 1.6f, 0.2f, 0.6f);
+            npc.GetComponent<ActorFSM>().wiggle(0.001f, 0.5f, 1.1f, 1.3f, 0.2f, 0.6f);
         }
 
         npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);

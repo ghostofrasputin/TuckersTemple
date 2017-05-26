@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: cee386505a0af4b48858f44d55ab6d91
+timeCreated: 1495657354
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Volkhov
+  fontNames:
+  - Volkhov
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 35c414f5e18797244a036eedb6b570d2, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
