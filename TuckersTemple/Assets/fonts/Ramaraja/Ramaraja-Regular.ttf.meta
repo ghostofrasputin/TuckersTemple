@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 7bd38f9fdd9d9114ab25dbab56bc6bfc
+timeCreated: 1495657354
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Ramaraja
+  fontNames:
+  - Ramaraja
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
