@@ -24,10 +24,10 @@ public class InGameMenuManager : MonoBehaviour {
 		anim = ani.GetComponent<Animator>();
 		anim.enabled = false;
 		try {
-			Toggle music = GameObject.Find("MusicToggle").GetComponent<Toggle>();
+			/*Toggle music = GameObject.Find("MusicToggle").GetComponent<Toggle>();
 			music.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getMusicToggle();
 			Toggle sfx = GameObject.Find("SFXToggle").GetComponent<Toggle>();
-			sfx.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getSFXToggle();
+			sfx.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getSFXToggle();*/
 		} catch(System.Exception){
 			print ("ZombiePasser hasn't been created. Start from mainMenu scene.");
 		}
