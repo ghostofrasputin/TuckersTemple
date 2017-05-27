@@ -8,7 +8,6 @@ public class LaserScript : MonoBehaviour {
     private Vector2[] dirs = { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
 	private LineRenderer line;
 	public bool eyeOpen;
-	public RaycastHit2D[] actorRay;
 	private Vector3 drawPoint;
 	public GameObject laserHit;
 	private GameObject currLaserHit;
@@ -19,7 +18,7 @@ public class LaserScript : MonoBehaviour {
 		line = GetComponent<LineRenderer> ();
         line.startWidth = 0.02f;
         line.endWidth = 0.07f;
-        line.sortingLayerName = "Wall";
+        line.sortingLayerName = "Actor";
 		setEye (false);
         promptTimer = 0;
     }
@@ -57,19 +56,32 @@ public class LaserScript : MonoBehaviour {
                 drawPoint.y += offset * dir.y;
             }
 		}
-		//check if shot any characters
-		actorRay = Physics2D.RaycastAll (transform.position, dir, laserRay.distance, LayerMask.GetMask("Character"));
-        Debug.Log(dir + ", " + laserRay.distance);
+
+        RaycastHit2D[] actorRay;
+        //check if shot any characters
+        actorRay = Physics2D.RaycastAll (transform.position, dir, laserRay.distance, LayerMask.GetMask("Character"));
 
 		//check if hit each actor and tell that actor they were hit
 		foreach (RaycastHit2D actorHit in actorRay) {
-            Debug.Log(actorHit.transform.gameObject.GetComponent<ActorFSM>().actorName);
-			if (actorHit.transform.CompareTag("Player")) {
+			if (actorHit.transform.CompareTag("Player"))
+            {
 				actorHit.transform.gameObject.GetComponent<ActorFSM> ().setLaserHit (true);
 			}
 		}
-	}
 
+        RaycastHit2D[] enemyRay;
+        enemyRay = Physics2D.RaycastAll(transform.position, dir, laserRay.distance, LayerMask.GetMask("Collidables"));
+
+        //check if hit each actor and tell that actor they were hit
+        foreach (RaycastHit2D enemyHit in enemyRay)
+        {
+            if (enemyHit.transform.CompareTag("Enemy"))
+            {
+                enemyHit.transform.gameObject.GetComponent<ActorFSM>().setLaserHit(true);
+            }
+        }
+    }
+/*
 	public bool hitByLaser(Transform target){
 		if (actorRay != null) {
 			foreach (RaycastHit2D actorHit in actorRay) {
@@ -80,20 +92,19 @@ public class LaserScript : MonoBehaviour {
 		}
 		return false;
 	}
-
+    */
 	//Called by tile parent to turn the eye on or off if moving
 	public void setEye(bool state){
 		eyeOpen = state;
 		line.enabled = state;
 		GameObject.Destroy (currLaserHit);
-		if (eyeOpen) {
-			fireRayCast ();
-			currLaserHit = Instantiate (laserHit, drawPoint, Quaternion.identity, this.transform);
+        if (eyeOpen)
+        {
+            fireRayCast();
+            currLaserHit = Instantiate(laserHit, drawPoint, Quaternion.identity, this.transform);
             line.SetPosition(0, transform.position);
             line.SetPosition(1, drawPoint);
-        } else {
-			actorRay = new RaycastHit2D[0];
-		}
+        }
 	}
 
 	//called to set the initial direction

@@ -148,8 +148,9 @@ public class ActorFSM : MonoBehaviour
 	 */ 
 	public void foundItem(GameObject Item)
 	{
-		GameObject.Find("GameMaster").GetComponent<GameMasterFSM>().starRequirements["foundItem"] = true;
-		Destroy(Item);
+		gm.GetComponent<GameMasterFSM>().starRequirements["foundItem"] = true;
+        Item.GetComponent<ParticleSystem>().Play();
+        Destroy(Item, 1f);
 	}
 
     //This should always be called if the actor gets destroyed
@@ -674,9 +675,9 @@ public class LaserDeadAState : FSMState
 		}
 		else if (npc.tag == "Enemy")
 		{
-			//gm.GetComponent<GameMasterFSM>().enemies.Remove(npc);
-			//gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
-			//controlref.destroyObj();
+			gm.GetComponent<GameMasterFSM>().enemies.Remove(npc);
+			gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
+			controlref.destroyObj();
 		}
 	}
 } // LaserDeadAState
