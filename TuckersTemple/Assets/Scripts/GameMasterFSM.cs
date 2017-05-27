@@ -174,7 +174,6 @@ public class GameMasterFSM : MonoBehaviour
 		SoundController.instance.gameOver.Stop ();
         deathScreen.GetComponent<CanvasGroup>().interactable = false;
         deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
-        flipPause();
         attempts++;
         setupLevel(levelsList[currentLevel - 1]);
 		if (fsm.CurrentStateID == StateID.LevelDeath) {
