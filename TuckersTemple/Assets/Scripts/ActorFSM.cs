@@ -268,6 +268,7 @@ public class ActorFSM : MonoBehaviour
             case 2:
                 sr.sprite = downSprite;
                 WalkTo(new Vector2(0, -walkDistance));
+                GetComponent<SpriteRenderer>().sortingOrder *= -1;
                 break;
             case 3:
                 sr.sprite = leftSprite;
@@ -396,7 +397,7 @@ public class LookAState : FSMState
                                     break;
                                 }
                         }
-                        if (npc.GetComponent<ActorFSM>().actorName == "Tank" && isEnemyDead)
+                        if (isEnemyDead && npc.GetComponent<ActorFSM>().actorName == "Tank")
                         {
 							if (ray.collider.GetComponent<ActorFSM> ().fsm.CurrentStateID == StateID.WalkA) {
 								ray.collider.GetComponent<ActorFSM> ().SetTransition (Transition.CrossTank);
