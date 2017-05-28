@@ -280,12 +280,19 @@ public class GameMasterFSM : MonoBehaviour
 
         if (starRequirements.ContainsKey(levelsList[currentLevel - 1].Star))
         {
-            if (starRequirements[levelsList[currentLevel - 1].Star] == true) thirdStar = true;
-        }
+			if (starRequirements [levelsList [currentLevel - 1].Star] == true) thirdStar = true;
 
+        }
+		zombie.setStar (currentLevel - 1, 0);
         Invoke("setWinScreenEmily", 1.5f);
-        if(moves <= numMoves) { Invoke("setWinScreenJake", 2);}
-        if (thirdStar) { Invoke("setWinScreenRoy", 2.5f); }
+        if(moves <= numMoves) { 
+			zombie.setStar (currentLevel - 1, 1);
+			Invoke("setWinScreenJake", 2);
+		}
+        if (thirdStar) { 
+			zombie.setStar (currentLevel - 1, 2);
+			Invoke("setWinScreenRoy", 2.5f); 
+		}
 
 
         turnOffTileColliders();
