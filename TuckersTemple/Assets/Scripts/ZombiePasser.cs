@@ -59,6 +59,45 @@ public class ZombiePasser : MonoBehaviour {
 		levelData = Camera.main.GetComponent<LevelReader>();
 		levelsList = levelData.getLevels();
 
+		// Generate Level Icons:
+		GameObject levelSelection = GameObject.FindGameObjectWithTag("LevelSelection");
+		GameObject IconRef = GameObject.FindGameObjectWithTag("LevelIcon");
+		MainMenuManager mainMenu = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<MainMenuManager> ();
+		int xDiff = 30;
+		int yDiff = 40;
+		int yOffset = 0;
+		int chapterFlag = 0;
+		int chapterSeperationSpace = 90;
+		int counter = 1;
+		for (int i = 0; i < 10; i++) {
+			int xOffset = 0;
+			for (int j = 0; j < 5; j++) {
+				if (!(i == 0 && j == 0)) {
+					// create individual level icon with new positions, onclick functions, names.
+					Vector3 newPosition = new Vector3 (IconRef.transform.position.x + xOffset, IconRef.transform.position.y+yOffset, IconRef.transform.position.z);
+					GameObject newIconRef = Instantiate (IconRef, newPosition, Quaternion.identity, levelSelection.transform);
+					newIconRef.name = counter.ToString ();
+					int levelParamter = counter;
+					newIconRef.GetComponent<Button> ().onClick.RemoveAllListeners ();
+					newIconRef.GetComponent<Button>().onClick.AddListener( () => {
+						mainMenu.updateLevelNum (levelParamter);
+						mainMenu.loadScene("main");
+					});
+				}
+				xOffset += xDiff;
+				counter++;
+			}
+			// control the y offset spacing for levels by chapter
+			chapterFlag++;
+			if (chapterFlag == 2) {
+				chapterFlag = 0;
+				yOffset -= chapterSeperationSpace;
+			} else {
+				yOffset -= yDiff;
+			}
+			xOffset = xDiff;
+
+		}
 		// Binary Serialization Save System:
 		//setDefaultData ();
 		//Save ();
@@ -144,16 +183,15 @@ public class ZombiePasser : MonoBehaviour {
 	}
 
 	// set one of the 3 stars in the list for that level
-	/*public void setStar(int level, int star, bool starSetting)
+	public void setStar(int level, int star)
     {
 		if (star >= 3 || star < 0) {
 			Debug.Log ("error: star array range is 0-2.");
 			return;
 		}
 		//Debug.Log ("Level: " + level + " star number: " + star + " setting: " + starSetting);
-		string lev = level.ToString ();
-		starRatings[lev][star] = starSetting;
-    }*/
+		starRatings[level][star] = true;
+    }
 
 	//------------------------------------------------------------------------------------------------
 	// Get Functions
@@ -171,11 +209,10 @@ public class ZombiePasser : MonoBehaviour {
 	}
 
     // return a list of star values
-	/*public List<bool> getStars(int level)
+	public List<bool> getStars(int level)
     {
-		string lev = level.ToString ();
-		return starRatings[lev];
-    }*/
+		return starRatings[level];
+    }
 
 
 

@@ -153,6 +153,50 @@ public class GameMasterFSM : MonoBehaviour
         fsm.AddState(juice);
     }
 
+    public void startOrderActors()
+    {
+        StartCoroutine("OrderActors");
+    }
+
+    public void endOrderActors()
+    {
+        StopCoroutine("OrderActors");
+    }
+
+    System.Collections.IEnumerator OrderActors()
+    {
+        int orderCount = 0;
+        bool charactersDone = false;
+        bool enemiesDone    = false;
+        for (int i = 0; ; ++i)
+        {
+            if(i < characters.Count)
+            {
+                characters[i].GetComponent<ActorFSM>().doneSlide = true;
+                characters[i].GetComponent<SpriteRenderer>().sortingOrder = orderCount;
+            } else
+            {
+                charactersDone = true;
+            }
+            if(i < enemies.Count)
+            {
+                enemies[i].GetComponent<ActorFSM>().doneSlide = true;
+                enemies[i].GetComponent<SpriteRenderer>().sortingOrder = orderCount;
+            } else
+            {
+                enemiesDone = true;
+            }
+            if(charactersDone && enemiesDone)
+            {
+                break;
+            }
+                   
+            ++orderCount;
+            yield return new WaitForSeconds(.05f);
+        }
+        endOrderActors();
+    }
+
     public GameObject spawnActor(GameObject actor, int x, int y, int dir)
     {
         GameObject newActor = Instantiate(actor, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y, tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
@@ -174,7 +218,6 @@ public class GameMasterFSM : MonoBehaviour
 		SoundController.instance.gameOver.Stop ();
         deathScreen.GetComponent<CanvasGroup>().interactable = false;
         deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = false;
-        flipPause();
         attempts++;
         setupLevel(levelsList[currentLevel - 1]);
 		if (fsm.CurrentStateID == StateID.LevelDeath) {
@@ -229,28 +272,29 @@ public class GameMasterFSM : MonoBehaviour
             Debug.Log(error);
         }
 
-        Invoke("setWinScreenEmily", 1.5f);
-
-        //Checking stars for ZombiePasser
-        //zombie.setStar(currentLevel , 0, true);
-
-        int numMoves = levelsList[currentLevel-1].Moves;
-        if(moves <= numMoves)
-        {
-            Invoke("setWinScreenJake", 2);
-        }
-
-        //set the third star
         bool thirdStar = false;
         //check what the string requirement for this level is and check if it is satisfied
-        if(starRequirements.ContainsKey(levelsList[currentLevel - 1].Star))
+
+        int numMoves = levelsList[currentLevel - 1].Moves;
+
+
+        if (starRequirements.ContainsKey(levelsList[currentLevel - 1].Star))
         {
-            if (starRequirements[levelsList[currentLevel - 1].Star] == true) thirdStar = true;
+			if (starRequirements [levelsList [currentLevel - 1].Star] == true) thirdStar = true;
+
         }
-        if (thirdStar)
-        {
-            Invoke("setWinScreenRoy", 2.5f);
-        }
+		zombie.setStar (currentLevel - 1, 0);
+        Invoke("setWinScreenEmily", 1.5f);
+        if(moves <= numMoves) { 
+			zombie.setStar (currentLevel - 1, 1);
+			Invoke("setWinScreenJake", 2);
+		}
+        if (thirdStar) { 
+			zombie.setStar (currentLevel - 1, 2);
+			Invoke("setWinScreenRoy", 2.5f); 
+		}
+
+
         turnOffTileColliders();
         winScreen.GetComponent<InGameMenuManager>().playAnim("winEnter");
         ticking = false;
@@ -973,13 +1017,19 @@ public class GameMasterFSM : MonoBehaviour
     public void sameTileOffset()
     {
         List<GameObject> charList = new List<GameObject>();
+        List<GameObject> enemList = new List<GameObject>();
+
         foreach (GameObject tile in tiles)
         {
             foreach (Transform child in tile.transform)
             {
-                if (child.tag == "Player")
+                if (child.CompareTag("Player"))
                 {
                     charList.Add(child.gameObject);
+                }
+                else if (child.CompareTag("Enemy"))
+                {
+                    enemList.Add(child.gameObject);
                 }
             }
             
@@ -988,8 +1038,6 @@ public class GameMasterFSM : MonoBehaviour
                 case 2:
                     charList[0].transform.position -= new Vector3(tileSize / 4, 0, 0);
                     charList[1].transform.position += new Vector3(tileSize / 4, 0, 0);
-                    //charList[0].transform.localScale -= new Vector3(.5f, .5f, 1);
-                    //charList[1].transform.localScale -= new Vector3(10, .5f, 1);
                     break;
                 case 3:
                     charList[1].transform.position -= new Vector3(tileSize / 4,  tileSize / 6, 0);
@@ -1006,7 +1054,32 @@ public class GameMasterFSM : MonoBehaviour
                     //0, 1, or more than 4? do nothing
                     break;
             }
+
+            switch (enemList.Count)
+            {
+                case 2:
+                    enemList[0].transform.position -= new Vector3(tileSize / 4, 0, 0);
+                    enemList[1].transform.position += new Vector3(tileSize / 4, 0, 0);
+                    break;
+                case 3:
+                    enemList[1].transform.position -= new Vector3(tileSize / 4, tileSize / 6, 0);
+                    enemList[2].transform.position += new Vector3(tileSize / 4, -tileSize / 6, 0);
+                    enemList[0].transform.position += new Vector3(0, tileSize / 6, 0);
+
+                    break;
+                case 4:
+                    enemList[2].transform.position -= new Vector3(tileSize / 4, tileSize / 6, 0);
+                    enemList[3].transform.position += new Vector3(tileSize / 4, -tileSize / 6, 0);
+                    enemList[0].transform.position -= new Vector3(tileSize / 4, -tileSize / 6, 0);
+                    enemList[1].transform.position += new Vector3(tileSize / 4, tileSize / 6, 0);
+                    break;
+                default:
+                    //0, 1, or more than 4? do nothing
+                    break;
+            }
+
             charList.Clear();
+            enemList.Clear();
         }
     }
 
@@ -1016,7 +1089,7 @@ public class GameMasterFSM : MonoBehaviour
         {
             foreach (Transform child in tile.transform)
             {
-                if (child.tag == "Player")
+                if (child.CompareTag("Player") || child.CompareTag("Enemy"))
                 {
                     child.position = tile.transform.position;
                 }
@@ -1277,16 +1350,15 @@ public class OrderActorsState : FSMState
     public override void DoBeforeEntering()
     {
     	controlref.sameTileReset();
-
+        /*
         foreach (GameObject actor in controlref.actors)
         {
             actor.GetComponent<ActorFSM>().doneSlide = true;
-        }
-		foreach (GameObject child in controlref.lasers) {
-			if (child.tag == "Laser") {
-				child.GetComponent<LaserScript> ().setEye (false);
-			}
+        }*/
+		foreach (GameObject laser in controlref.lasers) {
+		    laser.GetComponent<LaserScript> ().setEye (false);
 		}
+        controlref.startOrderActors();
     }
 
     public override void Reason(GameObject gm, GameObject npc)

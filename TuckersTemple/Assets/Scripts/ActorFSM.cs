@@ -32,7 +32,7 @@ public class ActorFSM : MonoBehaviour
 
 	//deathtexts
 	private Dictionary<string, List<string>> deathTexts;
-	private bool hitByLaser = false;
+	public bool hitByLaser = false;
 
     // audio:
     public AudioClip playerfootsteps1;
@@ -148,8 +148,9 @@ public class ActorFSM : MonoBehaviour
 	 */ 
 	public void foundItem(GameObject Item)
 	{
-		GameObject.Find("GameMaster").GetComponent<GameMasterFSM>().starRequirements["foundItem"] = true;
-		Destroy(Item);
+		gm.GetComponent<GameMasterFSM>().starRequirements["foundItem"] = true;
+        Item.GetComponent<ParticleSystem>().Play();
+        Destroy(Item, 1f);
 	}
 
     //This should always be called if the actor gets destroyed
@@ -267,6 +268,7 @@ public class ActorFSM : MonoBehaviour
             case 2:
                 sr.sprite = downSprite;
                 WalkTo(new Vector2(0, -walkDistance));
+                GetComponent<SpriteRenderer>().sortingOrder *= -1;
                 break;
             case 3:
                 sr.sprite = leftSprite;
@@ -395,7 +397,7 @@ public class LookAState : FSMState
                                     break;
                                 }
                         }
-                        if (npc.GetComponent<ActorFSM>().actorName == "Tank" && isEnemyDead)
+                        if (isEnemyDead && npc.GetComponent<ActorFSM>().actorName == "Tank")
                         {
 							if (ray.collider.GetComponent<ActorFSM> ().fsm.CurrentStateID == StateID.WalkA) {
 								ray.collider.GetComponent<ActorFSM> ().SetTransition (Transition.CrossTank);
@@ -674,9 +676,9 @@ public class LaserDeadAState : FSMState
 		}
 		else if (npc.tag == "Enemy")
 		{
-			//gm.GetComponent<GameMasterFSM>().enemies.Remove(npc);
-			//gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
-			//controlref.destroyObj();
+			gm.GetComponent<GameMasterFSM>().enemies.Remove(npc);
+			gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
+			controlref.destroyObj();
 		}
 	}
 } // LaserDeadAState
