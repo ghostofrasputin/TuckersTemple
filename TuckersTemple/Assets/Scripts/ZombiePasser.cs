@@ -77,10 +77,10 @@ public class ZombiePasser : MonoBehaviour {
 					Vector3 newPosition = new Vector3 (IconRef.transform.position.x + xOffset, IconRef.transform.position.y+yOffset, IconRef.transform.position.z);
 					GameObject newIconRef = Instantiate (IconRef, newPosition, Quaternion.identity, levelSelection.transform);
 					newIconRef.name = counter.ToString ();
-					int levelParamter = counter;
+					int levelParameter = counter;
 					newIconRef.GetComponent<Button> ().onClick.RemoveAllListeners ();
 					newIconRef.GetComponent<Button>().onClick.AddListener( () => {
-						mainMenu.updateLevelNum (levelParamter);
+						mainMenu.updateLevelNum (levelParameter);
 						mainMenu.loadScene("main");
 					});
 				}
