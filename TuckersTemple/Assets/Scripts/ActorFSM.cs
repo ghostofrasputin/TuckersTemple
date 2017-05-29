@@ -66,15 +66,28 @@ public class ActorFSM : MonoBehaviour
 		List<string> texts = new List<string>();
 		texts.Add (" was swallowed by shadows.");
 		texts.Add (" was consumed by darkness.");
-		deathTexts.Add ("enemy", texts);
+        texts.Add(" ran into an enemy.");
+        texts.Add(" did not escape the temple guards.");
+        texts.Add(" was ripped by wraiths.");
+        texts.Add(" faded to black.");
+        deathTexts.Add ("enemy", texts);
 		texts = new List<string>();
 		texts.Add (" combusted.");
-		texts.Add (" did not stop, drop, and roll.");
-		deathTexts.Add ("trap", texts);
+		texts.Add (" burned to death.");
+        texts.Add(" was set on fire.");
+        texts.Add(" stepped on a trap.");
+        texts.Add(" was roasted.");
+        texts.Add(" was toasted.");
+        texts.Add(" turned to ash.");
+        deathTexts.Add ("trap", texts);
 		texts = new List<string>();
 		texts.Add (" was shot through the heart.");
 		texts.Add (" was hit by a laser beam.");
-		deathTexts.Add ("laser", texts);
+        texts.Add(" was vaporized.");
+        texts.Add(" walked into the line of fire.");
+        texts.Add(" was pierced by a laser.");
+        texts.Add(" was zapped by eye beams.");
+        deathTexts.Add ("laser", texts);
     }
 
     public void Update()
