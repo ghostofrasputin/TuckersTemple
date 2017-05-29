@@ -38,8 +38,16 @@ public class ActorFSM : MonoBehaviour
     public AudioClip playerfootsteps1;
     public AudioClip playerfootsteps2;
 	public AudioClip playerDeath;
+	public AudioClip royDeath;
+	public AudioClip jakeDeath;
+	public AudioClip emilyDeath;
+	public AudioClip tankDeath;
+	//public AudioClip shadowDeath;
+	//public AudioClip wraithDeath;
+	public AudioClip tankKills;
 	public AudioClip enemyKilled;
 	public AudioClip fireBlazin;
+	public AudioClip itemPickupSound;
 
     public void SetTransition(Transition t) { fsm.PerformTransition(t); }
 
@@ -150,6 +158,7 @@ public class ActorFSM : MonoBehaviour
 	{
 		gm.GetComponent<GameMasterFSM>().starRequirements["foundItem"] = true;
         Item.GetComponent<ParticleSystem>().Play();
+		SoundController.instance.RandomSfx (itemPickupSound, itemPickupSound);
         Destroy(Item, 1f);
 	}
 
@@ -401,6 +410,7 @@ public class LookAState : FSMState
                         {
 							if (ray.collider.GetComponent<ActorFSM> ().fsm.CurrentStateID == StateID.WalkA) {
 								ray.collider.GetComponent<ActorFSM> ().SetTransition (Transition.CrossTank);
+								//SoundController.instance.TankVoice (controlref.tankKills, controlref.tankKills);
 							} else {
 								ray.collider.GetComponent<ActorFSM> ().SetTransition (Transition.TrapFound);
 							}
@@ -567,8 +577,26 @@ public class TrapDeadAState : FSMState
         {
 			controlref.GetComponent<ActorFSM> ().setDeathText ("trap");
 			SoundController.instance.TrapOn (controlref.fireBlazin, controlref.fireBlazin);
-			SoundController.instance.RandomSfx (controlref.playerDeath, controlref.playerDeath);
+			if (controlref.actorName == "Roy") {
+				SoundController.instance.RoyVoice (controlref.royDeath, controlref.royDeath);
+			}
+			else if (controlref.actorName == "Jake"){
+				SoundController.instance.JakeVoice (controlref.jakeDeath, controlref.jakeDeath);
+			}
+			else if (controlref.actorName == "Emily"){
+				SoundController.instance.EmilyVoice (controlref.emilyDeath, controlref.emilyDeath);
+			}
+			else if (controlref.actorName == "Tank"){
+				SoundController.instance.TankVoice (controlref.tankDeath, controlref.tankDeath);
+			}
         }
+		else if (controlref.tag == "Enemy") {
+			if (controlref.actorName == "Shadow") {
+				SoundController.instance.ShadowVoice (controlref.enemyKilled, controlref.enemyKilled);
+			} else if (controlref.actorName == "Wraith") {
+				SoundController.instance.WraithVoice (controlref.enemyKilled, controlref.enemyKilled);
+			}
+		}
     }
 
     public override void Reason(GameObject gm, GameObject npc)
@@ -628,7 +656,16 @@ public class EnemyDeadAState : FSMState
         {
             UnityEngine.Object.Instantiate(controlref.slash, controlref.transform.position, Quaternion.identity);
             controlref.GetComponent<ActorFSM> ().setDeathText ("enemy");
-			SoundController.instance.RandomSfx (controlref.playerDeath, controlref.playerDeath);
+			//SoundController.instance.RandomSfx (controlref.playerDeath, controlref.playerDeath);
+			if (controlref.actorName == "Roy") {
+				SoundController.instance.RoyVoice (controlref.royDeath, controlref.royDeath);
+			}
+			else if (controlref.actorName == "Jake"){
+				SoundController.instance.JakeVoice (controlref.jakeDeath, controlref.jakeDeath);
+			}
+			else if (controlref.actorName == "Emily"){
+				SoundController.instance.EmilyVoice (controlref.emilyDeath, controlref.emilyDeath);
+			}		
         }
     }
 

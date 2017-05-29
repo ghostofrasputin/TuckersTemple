@@ -10,6 +10,12 @@ public class SoundController : MonoBehaviour {
 	public AudioSource sfxSourceTiles;
 	public AudioSource flameOn;
 	public AudioSource gameOver;
+	public AudioSource roySounds;
+	public AudioSource jakeSounds;
+	public AudioSource emilySounds;
+	public AudioSource tankSounds;
+	public AudioSource shadowSounds;
+	public AudioSource wraithSounds;
 
 	public static SoundController instance = null;
 
@@ -104,4 +110,63 @@ public class SoundController : MonoBehaviour {
 
 	}
 
+	public void RoyVoice (params AudioClip [] clips){
+		int randomIndex = Random.Range (0, clips.Length); // chooses randoml clip
+		float randomPitch = Random.Range (lowPitch, highPitch); // chooses range of pitch
+
+		roySounds.pitch = randomPitch; // set pitch
+		roySounds.clip = clips [randomIndex]; // set random index from array
+		roySounds.Play ();
+
+	}
+
+	public void JakeVoice (params AudioClip [] clips){
+		int randomIndex = Random.Range (0, clips.Length); // chooses randoml clip
+		float randomPitch = Random.Range (lowPitch, highPitch); // chooses range of pitch
+
+		jakeSounds.pitch = randomPitch; // set pitch
+		jakeSounds.clip = clips [randomIndex]; // set random index from array
+		jakeSounds.Play ();
+
+	}
+
+	public void EmilyVoice (params AudioClip [] clips){
+		int randomIndex = Random.Range (0, clips.Length); // chooses randoml clip
+		float randomPitch = Random.Range (lowPitch, highPitch); // chooses range of pitch
+
+		emilySounds.pitch = randomPitch; // set pitch
+		emilySounds.clip = clips [randomIndex]; // set random index from array
+		emilySounds.Play ();
+
+	}
+
+	public void TankVoice (params AudioClip [] clips){
+		int randomIndex = Random.Range (0, clips.Length); // chooses randoml clip
+		float randomPitch = Random.Range (lowPitch, highPitch); // chooses range of pitch
+
+		tankSounds.pitch = randomPitch; // set pitch
+		tankSounds.clip = clips [randomIndex]; // set random index from array
+		tankSounds.Play ();
+
+	}
+
+	public void ShadowVoice (params AudioClip [] clips){
+		int randomIndex = Random.Range (0, clips.Length); // chooses randoml clip
+		float randomPitch = Random.Range (lowPitch, highPitch); // chooses range of pitch
+
+		shadowSounds.pitch = randomPitch; // set pitch
+		shadowSounds.clip = clips [randomIndex]; // set random index from array
+		shadowSounds.Play ();
+
+	}
+
+	public void WraithVoice (params AudioClip [] clips){
+		int randomIndex = Random.Range (0, clips.Length); // chooses randoml clip
+		float randomPitch = Random.Range (lowPitch, highPitch); // chooses range of pitch
+
+		wraithSounds.pitch = randomPitch; // set pitch
+		wraithSounds.clip = clips [randomIndex]; // set random index from array
+		wraithSounds.Play ();
+
+	}
 }
