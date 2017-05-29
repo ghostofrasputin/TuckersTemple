@@ -63,14 +63,18 @@ public class ZombiePasser : MonoBehaviour {
 		GameObject levelSelection = GameObject.FindGameObjectWithTag("LevelSelection");
 		GameObject IconRef = GameObject.FindGameObjectWithTag("LevelIcon");
 		MainMenuManager mainMenu = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<MainMenuManager> ();
-		int xDiff = 30;
-		int yDiff = 40;
-		int yOffset = 0;
-		int chapterFlag = 0;
-		int chapterSeperationSpace = 90;
+		float scalarX = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<RectTransform> ().localScale.x;
+		float scalarY = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<RectTransform> ().localScale.y;
+		float iconWidth = IconRef.GetComponent<RectTransform> ().rect.width;
+		Debug.Log (iconWidth);
+		float xDiff = scalarX*(iconWidth*1.05f);
+		float yDiff = scalarY*(iconWidth*1.4f);
+		float yOffset = 0.0f;
+		float chapterFlag = 0.0f;
+		float chapterSeperationSpace = scalarY*(iconWidth*3.4f);
 		int counter = 1;
 		for (int i = 0; i < 10; i++) {
-			int xOffset = 0;
+			float xOffset = 0.0f;
 			for (int j = 0; j < 5; j++) {
 				if (!(i == 0 && j == 0)) {
 					// create individual level icon with new positions, onclick functions, names.
@@ -90,7 +94,7 @@ public class ZombiePasser : MonoBehaviour {
 			// control the y offset spacing for levels by chapter
 			chapterFlag++;
 			if (chapterFlag == 2) {
-				chapterFlag = 0;
+				chapterFlag = 0.0f;
 				yOffset -= chapterSeperationSpace;
 			} else {
 				yOffset -= yDiff;
