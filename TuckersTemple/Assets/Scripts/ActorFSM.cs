@@ -228,6 +228,13 @@ public class ActorFSM : MonoBehaviour
 		int msg = UnityEngine.Random.Range(0,texts.Count);
 		Debug.Log (msg + "/" + texts.Count);
 		gm.GetComponent<GameMasterFSM>().deathText.text = actorName + texts[msg];
+
+		//change background
+		if (cause == "enemy") {
+			GameObject.Find ("DeathBackground").GetComponent<Image> ().sprite = Resources.Load<Sprite> ("UI/GameOverDark");
+		} else {
+			GameObject.Find ("DeathBackground").GetComponent<Image> ().sprite = Resources.Load<Sprite> ("UI/GameOverFire");
+		}
 	}
 
 	public void setLaserHit(bool hit){
