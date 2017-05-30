@@ -215,7 +215,7 @@
         ],
         "shadow": [
           [
-            2,
+            1,
             0,
             3
           ],
@@ -513,7 +513,7 @@
           ]
         ]
       },
-      "moves": 3,
+      "moves": 4,
       "star": "foundItem"
     },
     "level9": {
@@ -666,7 +666,7 @@
           ]
         ]
       },
-      "moves": 5,
+      "moves": 4,
       "star": "foundItem"
     }
 }
