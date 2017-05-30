@@ -43,7 +43,7 @@ public class LevelReader : MonoBehaviour {
 	// FILE PARSING
 	void Start () {
        // TextAsset levelFile = Resources.Load("betaLevels") as TextAsset;
-		TextAsset levelFile = Resources.Load("31-40_EmilyAndOrTank") as TextAsset;
+		TextAsset levelFile = Resources.Load("betaLevels") as TextAsset;
 		jsonString = levelFile.ToString();
 		levelData = JsonMapper.ToObject(jsonString);
 		for(int i = 1; i < levelData.Count+1; i++) {

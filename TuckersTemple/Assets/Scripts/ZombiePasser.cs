@@ -6,29 +6,20 @@
  * Controls musicToggle, sfx, vibration bools
  */
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 
-[Serializable]
-class GameData {
-	public string settings;
-	public string lockedLevels;
-	public string starRatings;
-}
 
 public class ZombiePasser : MonoBehaviour {
 
 	// public:
 
 	// default string data
-	public string settingsString;
-	public string lockedLevelsString;
-	public string starRatingsString;
+	public const string settingsString = "ttf";
+    public const string lockedLevelsString = "fttttttttttttttttttttttttttttttttttttttttttttttttt";
+	public const string starRatingsString = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
+
 	// data to save
 	public SaveSystem saveSys;
 	public bool musicToggle = true;
@@ -102,9 +93,7 @@ public class ZombiePasser : MonoBehaviour {
 			xOffset = xDiff;
 
 		}
-		// Binary Serialization Save System:
-		//setDefaultData ();
-		//Save ();
+
 		Load();
 
 		// keep zombie awake:
@@ -244,44 +233,20 @@ public class ZombiePasser : MonoBehaviour {
 	//------------------------------------------------------------------------------------------------
 
 	public void Save() {
-		BinaryFormatter bf = new BinaryFormatter ();
-		FileStream file = File.Create (Application.persistentDataPath + "/GameData.dat");
 
-		GameData data = new GameData ();
-		data.settings = listToString(settings);
-		data.lockedLevels = listToString (lockedLevels);
-		data.starRatings = doubleListToString (starRatings);
+		PlayerPrefs.SetString("settings", listToString(settings));
+        PlayerPrefs.Save();
+        PlayerPrefs.SetString("locked", listToString(lockedLevels));
+        PlayerPrefs.Save();
+        PlayerPrefs.SetString("stars", matrixToString(starRatings));
+        PlayerPrefs.Save();
+    }
 
-		bf.Serialize (file, data);
-		file.Close ();
-	}
-
-	public void Load() {
-		if (File.Exists (Application.persistentDataPath + "/GameData.dat")) {
-			BinaryFormatter bf = new BinaryFormatter ();
-			FileStream file = File.Open (Application.persistentDataPath + "/GameData.dat", FileMode.Open);
-
-			GameData data = (GameData)bf.Deserialize (file);
-
-			file.Close ();
-			settings = listFromString (data.settings);
-			lockedLevels = listFromString (data.lockedLevels);
-			starRatings = doubleListFromString (data.starRatings);
-		} else {
-			setDefaultData ();
-			Save ();
-			Load ();
-		}
-	}
-
-	public void setDefaultData(){
-		settingsString = "ttt";
-		lockedLevelsString = "fttttttttttttttttttttttttttttttttttttttttttttttttt";
-		starRatingsString = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
-		settings = listFromString(settingsString);
-		lockedLevels = listFromString(lockedLevelsString);
-		starRatings = doubleListFromString (starRatingsString);
-	}
+    public void Load() {
+        settings = listFromString(PlayerPrefs.GetString("settings", settingsString));
+        lockedLevels = listFromString(PlayerPrefs.GetString("locked", lockedLevelsString));
+        starRatings = matrixFromString(PlayerPrefs.GetString("stars", starRatingsString));
+    }
 
 	public string listToString(List<bool> dataList){
 		string data = "";
@@ -312,7 +277,7 @@ public class ZombiePasser : MonoBehaviour {
 		return data;
 	}
 
-	public string doubleListToString(List<List<bool>> dataList){
+	public string matrixToString(List<List<bool>> dataList){
 		string data = "";
 
 		for (int i = 0; i < dataList.Count; i++) {
@@ -330,7 +295,7 @@ public class ZombiePasser : MonoBehaviour {
 		return data;
 	}
 
-	public List<List<bool>> doubleListFromString(string dataString){
+	public List<List<bool>> matrixFromString(string dataString){
 		List<List<bool>> data = new List<List<bool>> ();
 
 		for (int i = 0; i < dataString.Length; i+=3) {

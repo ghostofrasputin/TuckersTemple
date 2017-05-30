@@ -127,6 +127,7 @@ public class ActorFSM : MonoBehaviour
 		idle.AddTransition (Transition.EnterLevel, StateID.EnterA);
 		idle.AddTransition (Transition.IdleDeath, StateID.EnemyDeadA);
 		idle.AddTransition (Transition.LaserCollide, StateID.LaserDeadA);
+        idle.AddTransition(Transition.CrossTankIdle, StateID.TrapDeadA);
 
         LookAState look = new LookAState(this);
         look.AddTransition(Transition.EnemyFound, StateID.EnemyDeadA);
@@ -277,11 +278,13 @@ public class ActorFSM : MonoBehaviour
     {
         //decide where to move and call WalkTo based on direction
         float walkDistance = gm.GetComponent<GameMasterFSM>().tileSize;
+        float multiCharOffset = walkDistance * .1f;
         switch (direction)
         {
             case 0:
                 sr.sprite = upSprite;
                 WalkTo(new Vector2(0, walkDistance));
+                multiCharOffset *= -1;
                 break;
             case 1:
                 sr.sprite = rightSprite;
@@ -290,7 +293,6 @@ public class ActorFSM : MonoBehaviour
             case 2:
                 sr.sprite = downSprite;
                 WalkTo(new Vector2(0, -walkDistance));
-                GetComponent<SpriteRenderer>().sortingOrder *= -1;
                 break;
             case 3:
                 sr.sprite = leftSprite;
@@ -299,6 +301,9 @@ public class ActorFSM : MonoBehaviour
             default:
                 break;
         }
+        float speed = multiCharOffset * GetComponent<SpriteRenderer>().sortingOrder;
+        Debug.Log(speed+", "+ multiCharOffset +", "+ GetComponent<SpriteRenderer>().sortingOrder);
+        transform.position = Vector2.MoveTowards(transform.position, goalPos, speed);
     }
 
     public void WalkTo(Vector2 pos)
@@ -421,12 +426,19 @@ public class LookAState : FSMState
                         }
                         if (isEnemyDead && npc.GetComponent<ActorFSM>().actorName == "Tank")
                         {
-							if (ray.collider.GetComponent<ActorFSM> ().fsm.CurrentStateID == StateID.WalkA) {
-								ray.collider.GetComponent<ActorFSM> ().SetTransition (Transition.CrossTank);
-								//SoundController.instance.TankVoice (controlref.tankKills, controlref.tankKills);
-							} else {
-								ray.collider.GetComponent<ActorFSM> ().SetTransition (Transition.TrapFound);
-							}
+                            if (ray.collider.GetComponent<ActorFSM>().fsm.CurrentStateID == StateID.WalkA)
+                            {
+                                ray.collider.GetComponent<ActorFSM>().SetTransition(Transition.CrossTank);
+                                //SoundController.instance.TankVoice (controlref.tankKills, controlref.tankKills);
+                            }
+                            else if (ray.collider.GetComponent<ActorFSM>().fsm.CurrentStateID == StateID.IdleA)
+                            {
+                                ray.collider.GetComponent<ActorFSM>().SetTransition(Transition.CrossTankIdle);
+                            }
+                            else
+                            {
+                                ray.collider.GetComponent<ActorFSM>().SetTransition(Transition.TrapFound);
+                            }
 							isEnemyDead = false;
                         }
                     }
