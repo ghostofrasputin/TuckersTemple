@@ -3,7 +3,7 @@
     "image": "templeInfront",
     "line1": {
       "image": "blank",
-      "text": "They had traversed the jungle through the night, yet their fatigue had not deterred them from their quest.",
+      "text": "They traversed the jungle through the night, yet their fatigue had not deterred them from their quest.",
       "sound":  ""
     }
   },
@@ -49,6 +49,14 @@
     }
   },
   "scene4": {
+    "image": "blackScreen",
+    "line1": {
+      "image": "blank",
+      "text": "-rumble-",
+      "sound": ""
+    }
+  },
+  "scene5": {
     "image":  "templeCollapse",
     "line1": {
       "image": "EmilyScared",
