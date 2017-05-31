@@ -221,7 +221,7 @@ public class GameMasterFSM : MonoBehaviour
     public void setWinScreenEmily()
     {
         GameObject temp1 = GameObject.Find("Star1");
-        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
         temp1.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily");
     }
@@ -229,17 +229,19 @@ public class GameMasterFSM : MonoBehaviour
     public void setWinScreenJake()
     {
         GameObject temp2 = GameObject.Find("Star2");
-        temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
         temp2.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("jakeWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake");
+        GameObject.Find("NumMoves").GetComponent<Text>().text = "";
     }
 
     public void setWinScreenRoy()
     {
         GameObject temp3 = GameObject.Find("Star3");
-        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
         temp3.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy");
+        temp3.transform.GetChild(0).gameObject.SetActive(false);
     }
 
     //Called when the level is won
@@ -264,7 +266,9 @@ public class GameMasterFSM : MonoBehaviour
         //check what the string requirement for this level is and check if it is satisfied
 
         int numMoves = levelsList[currentLevel - 1].Moves;
-
+        Text moveText = GameObject.Find("NumMoves").GetComponent<Text>();
+        moveText.text = moves + "/" + numMoves;
+        moveText.color = Color.red;
 
         if (starRequirements.ContainsKey(levelsList[currentLevel - 1].Star))
         {
@@ -273,7 +277,8 @@ public class GameMasterFSM : MonoBehaviour
         }
 		zombie.setStar (currentLevel - 1, 0);
         Invoke("setWinScreenEmily", 1.5f);
-        if(moves <= numMoves) { 
+        if(moves <= numMoves) {
+            moveText.color = Color.green;
 			zombie.setStar (currentLevel - 1, 1);
 			Invoke("setWinScreenJake", 2);
 		}
@@ -1166,11 +1171,12 @@ public class LevelJuiceState : FSMState
 		}
 
         GameObject temp1 = GameObject.Find("Star1");
-        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
         GameObject temp2 = GameObject.Find("Star2");
-        temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+        temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
         GameObject temp3 = GameObject.Find("Star3");
-        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
+        temp3.transform.GetChild(0).gameObject.SetActive(true);
 
         temp1.GetComponent<ParticleSystem>().Stop();
         temp2.GetComponent<ParticleSystem>().Stop();
