@@ -1,20 +1,28 @@
 {
 	"scene1": {
-	  "image": "templeInside",
-	 	"line1": {
-			"image": "EmilyScared",
-			"text": "Emily: Where am I?",
-			"sound": ""
-		},
-		"line2": {
-			"image": "EmilyScared",
-			"text": "Emily: It feels like the walls are shifting, and I keep seeing things moving in the shadows.",
-			"sound": ""
-		},
-		"line3": {
-			"image": "EmilyCurious",
-			"text": "Emily: Well, Dad always said the unknown is just an oppertunity for knowledge.  I have to keep moving.",
-			"sound": ""
+		"image": "emilyBegin",
+	  		"line1": {
+				"image": "blank",
+				"text": "While she managed to escape the fall unscathed from any injury, Emily could not stop fearing for her family's safety.",
+				"sound": ""
+			}
+	},
+	"scene2": {
+		"image": "templeInside",
+			"line1": {
+				"image": "EmilyScared",
+				"text": "Hello?! Is anyone there?!",
+				"sound": ""
+			},
+			"line2": {
+				"image": "EmilyScared",
+				"text": "Emily: It feels like the walls are shifting, and I keep seeing things moving in the shadows.",
+				"sound": ""
+			},
+			"line3": {
+				"image": "EmilyCurious",
+				"text": "I have to keep moving. I need to find them...",
+				"sound": ""
 		}
 	}
 }
