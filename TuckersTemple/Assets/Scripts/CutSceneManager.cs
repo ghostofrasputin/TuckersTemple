@@ -4,8 +4,8 @@
  * Reads in from CutScene json files to create and display cutscenes.
  * 
  * Andrew Cousins
- * Last Modified: 4/27/17
- * Version: 1.1
+ * Last Modified: 5/31/17
+ * Version: 2.0
  ***/
 
 using System.Collections;
@@ -18,22 +18,22 @@ using UnityEngine.UI;
 
 /*
  * Class CharacterLine holds information about a single line
- * characterImage is the sprite of the character for this line
+ * characterImage is the location of the sprite of the character for this line
  * LineText is the string to display
  * soundByte is the sound effect to play
  */
 public class CharacterLine {
-	public Sprite characterImage { get; set; }
+	public string characterImage { get; set; }
 	public string LineText { get; set; }
-	public AudioClip soundByte { get; set; }
+	public string soundByte { get; set; }
 }
 
 /* Class CutScene holds information about a 'scene'
- * BackgroundImage is the image for this scene
+ * BackgroundImage is location the image for this scene
  * Lines is a list of the CharacterLines, in order, to be shown
  */
 public class CutScene {
-	public Sprite BackgroundImage { get; set; }
+	public string BackgroundImage { get; set; }
 	public List<CharacterLine> Lines { get; set; }
 }
 
@@ -62,41 +62,41 @@ public class CutSceneManager : MonoBehaviour {
 
 	Dictionary<int, string> cutSceneFiles; //holds the list of cutscene jsons
 
-	Dictionary<string, AudioClip> sounds;
-	Dictionary<string, Sprite> backgrounds;
-	Dictionary<string, Sprite> actorImages;
+	Dictionary<string, string> sounds;
+	Dictionary<string, string> backgrounds;
+	Dictionary<string, string> actorImages;
 
 	// Use this for initialization
 	void Start () {
 		//fill the dictionaries
-		actorImages = new Dictionary<string, Sprite> () {
-            {"blank", Resources.Load<Sprite>("CutScenes/blank")},
-            {"RoyStandard", Resources.Load<Sprite>("CutScenes/royNEUTRAL_cutscene_2")},
-            {"RoyDetermined", Resources.Load<Sprite>("CutScenes/royDETERMINEDL_cutscene_5")},
-            {"RoyScared", Resources.Load<Sprite>("CutScenes/roySCARED_cutscene_10")},
-            {"RoyHappy", Resources.Load<Sprite>("CutScenes/royHAPPY_cutscene_3")},
-            {"EmilyCurious", Resources.Load<Sprite>("CutScenes/emilyCURIOUS_cutscene_3")},
-            {"EmilyScared", Resources.Load<Sprite>("CutScenes/emilySCARED_cutscene_8")},
-            {"JakeScared", Resources.Load<Sprite>("CutScenes/jakeSCAREDcutscene_8")},
-            {"JakeCurious", Resources.Load<Sprite>("CutScenes/jakeCURIOUScutscene_4")},
-            {"JakeHappy", Resources.Load<Sprite>("CutScenes/jakeHAPPYScutscene_2")},
-            {"TankStandard", Resources.Load<Sprite>("CutScenes/tank")}
+		actorImages = new Dictionary<string, string> () {
+            {"blank", "CutScenes/blank"},
+            {"RoyStandard", "CutScenes/royNEUTRAL_cutscene_2"},
+            {"RoyDetermined", "CutScenes/royDETERMINEDL_cutscene_5"},
+            {"RoyScared", "CutScenes/roySCARED_cutscene_10"},
+            {"RoyHappy", "CutScenes/royHAPPY_cutscene_3"},
+            {"EmilyCurious", "CutScenes/emilyCURIOUS_cutscene_3"},
+            {"EmilyScared", "CutScenes/emilySCARED_cutscene_8"},
+            {"JakeScared", "CutScenes/jakeSCAREDcutscene_8"},
+            {"JakeCurious", "CutScenes/jakeCURIOUScutscene_4"},
+            {"JakeHappy", "CutScenes/jakeHAPPYScutscene_2"},
+            {"TankStandard", "CutScenes/tank"}
         };
-		backgrounds = new Dictionary<string, Sprite> () {
-			{"templeOutside", Resources.Load<Sprite>("CutScenes/temple_outside")},
-            {"templeInfront", Resources.Load<Sprite>("CutScenes/cutscene_1")},
-            {"templeStairs", Resources.Load<Sprite>("CutScenes/cutscene_7")},
-            {"templeCollapse", Resources.Load<Sprite>("CutScenes/cutscene_9")},
-            {"templeInside", Resources.Load<Sprite>("CutScenes/template_episode_2")},
-            {"foundJake", Resources.Load<Sprite>("CutScenes/cutscene_4")}, 
-			{"emilyBegin", Resources.Load<Sprite>("Cutscenes/cutscene_Emily-alone")},
-			{"tankBegin", Resources.Load<Sprite>("Cutscenes/cutscene_Tank-alone")},
-			{"emilyandtank", Resources.Load<Sprite>("Cutscenes/cutscene_EmilyandTank")}
+		backgrounds = new Dictionary<string, string> () {
+			{"templeOutside", "CutScenes/temple_outside"},
+            {"templeInfront", "CutScenes/cutscene_1"},
+            {"templeStairs", "CutScenes/cutscene_7"},
+            {"templeCollapse", "CutScenes/cutscene_9"},
+            {"templeInside", "CutScenes/template_episode_2"},
+            {"foundJake", "CutScenes/cutscene_4"}, 
+			{"emilyBegin", "Cutscenes/cutscene_Emily-alone"},
+			{"tankBegin", "Cutscenes/cutscene_Tank-alone"},
+			{"emilyandtank", "Cutscenes/cutscene_EmilyandTank"}
         };
-		sounds = new Dictionary<string, AudioClip> () {
-			{"roy_hmm", Resources.Load<AudioClip>("CutScenes/Andre-Hmm")},
-			{"roy_notsure", Resources.Load<AudioClip>("CutScenes/Andre-ImNotSureAboutThis")},
-			{"roy_confused", Resources.Load<AudioClip>("CutScenes/Andre-WhatWasThat")}
+		sounds = new Dictionary<string, string> () {
+			{"roy_hmm", "CutScenes/Andre-Hmm"},
+			{"roy_notsure", "CutScenes/Andre-ImNotSureAboutThis"},
+			{"roy_confused", "CutScenes/Andre-WhatWasThat"}
 		};
 
 		cutSceneFiles = new Dictionary<int, string>(){
@@ -161,7 +161,7 @@ public class CutSceneManager : MonoBehaviour {
 		}
 
 		//set background to first image, and make the text box invisible
-		background.GetComponent<Image> ().sprite = cutScenes[0].BackgroundImage;
+		background.GetComponent<Image> ().sprite = Resources.Load<Sprite>(cutScenes[0].BackgroundImage);
 		textBox.GetComponent<CanvasGroup>().alpha = 0f;
 		nextLine ();
     }
@@ -217,7 +217,7 @@ public class CutSceneManager : MonoBehaviour {
 		sceneIndex++;
 		lineIndex = -1; //reset line index
 		//load in the new image
-		background.GetComponent<Image> ().sprite = cutScenes [sceneIndex].BackgroundImage;
+		background.GetComponent<Image> ().sprite = Resources.Load<Sprite>(cutScenes [sceneIndex].BackgroundImage);
 		//turn off the text box
 		textBox.GetComponent<CanvasGroup>().alpha = 0f;
 		tapPrompt.SetActive (true);
@@ -238,9 +238,9 @@ public class CutSceneManager : MonoBehaviour {
 			//cutScenes [sceneIndex].Lines [lineIndex].LineText;
 		transform.Find("Text").GetComponent<DialogueWriter>().writeDialogue(cutScenes [sceneIndex].Lines [lineIndex].LineText);
 		if (cutScenes [sceneIndex].Lines [lineIndex].soundByte != null) {
-			sound.PlayOneShot (cutScenes [sceneIndex].Lines [lineIndex].soundByte);
+			sound.PlayOneShot (Resources.Load<AudioClip>(cutScenes [sceneIndex].Lines [lineIndex].soundByte));
 		}
 		//set the appropriate image for the text box
-		textBox.GetComponent<Image>().sprite = cutScenes [sceneIndex].Lines [lineIndex].characterImage;
+		textBox.GetComponent<Image>().sprite = Resources.Load<Sprite>(cutScenes [sceneIndex].Lines [lineIndex].characterImage);
 	}
 }

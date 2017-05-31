@@ -32,15 +32,16 @@ public class MainMenuManager : MonoBehaviour {
 	// settings menu controls:
 	private int settingsScroll;
 	private RectTransform settingsPanel;
-	private float speed = 7.0f;
+	private float speed;
 	private float lowerLimit;
 	private float upperLimit;
+	float scalarX;
+	float scalarY;
 
 	// Use this for initialization
 	void Start () {
 		settingsPanel = GameObject.FindWithTag("settingsPan").GetComponent<RectTransform>();
-		lowerLimit = settingsPanel.transform.position.y;
-		upperLimit = lowerLimit-(settingsPanel.rect.height-30);
+
 		settingsScroll = 0;
 		anim = ani.GetComponent<Animator>();
 		anim.enabled = false;
@@ -49,6 +50,18 @@ public class MainMenuManager : MonoBehaviour {
 		music.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getMusicToggle();
 		Toggle sfx = GameObject.Find("SFXToggle").GetComponent<Toggle>();
 		sfx.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getSFXToggle();
+		Toggle vib = GameObject.Find("VibrationToggle").GetComponent<Toggle>();
+		vib.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getVibToggle();
+
+		scalarX = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<RectTransform> ().localScale.x;
+		//scalarY = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<RectTransform> ().localScale.y;
+		lowerLimit = settingsPanel.transform.position.y;
+
+
+		upperLimit = scalarX*140.0f;
+
+		speed = scalarX*15;
+		Debug.Log (lowerLimit);
 
 	}
 		
@@ -58,8 +71,8 @@ public class MainMenuManager : MonoBehaviour {
 		// it just bugs out and looks bad so this fixes it
 
 		float currentPos = settingsPanel.transform.position.y;
-		//Debug.Log (currentPos);
-		//Debug.Log ("upper"+upperLimit);
+		Debug.Log (currentPos);
+
 		// scroll down
 		if (settingsScroll == 1) {
 			currentPos -= speed;
@@ -85,6 +98,10 @@ public class MainMenuManager : MonoBehaviour {
 
 	public void sfxToggle(){
 		GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setSFXToggle();
+	}
+
+	public void vibToggle(){
+		GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setVibToggle();
 	}
 
 	// sets level through zombie passer

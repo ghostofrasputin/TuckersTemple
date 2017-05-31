@@ -38,8 +38,16 @@ public class ActorFSM : MonoBehaviour
     public AudioClip playerfootsteps1;
     public AudioClip playerfootsteps2;
 	public AudioClip playerDeath;
+	public AudioClip royDeath;
+	public AudioClip jakeDeath;
+	public AudioClip emilyDeath;
+	public AudioClip tankDeath;
+	//public AudioClip shadowDeath;
+	//public AudioClip wraithDeath;
+	public AudioClip tankKills;
 	public AudioClip enemyKilled;
 	public AudioClip fireBlazin;
+	public AudioClip itemPickupSound;
 
     public void SetTransition(Transition t) { fsm.PerformTransition(t); }
 
@@ -58,15 +66,28 @@ public class ActorFSM : MonoBehaviour
 		List<string> texts = new List<string>();
 		texts.Add (" was swallowed by shadows.");
 		texts.Add (" was consumed by darkness.");
-		deathTexts.Add ("enemy", texts);
+        texts.Add(" ran into an enemy.");
+        texts.Add(" did not escape the temple guards.");
+        texts.Add(" was ripped by wraiths.");
+        texts.Add(" faded to black.");
+        deathTexts.Add ("enemy", texts);
 		texts = new List<string>();
 		texts.Add (" combusted.");
-		texts.Add (" did not stop, drop, and roll.");
-		deathTexts.Add ("trap", texts);
+		texts.Add (" burned to death.");
+        texts.Add(" was set on fire.");
+        texts.Add(" stepped on a trap.");
+        texts.Add(" was roasted.");
+        texts.Add(" was toasted.");
+        texts.Add(" turned to ash.");
+        deathTexts.Add ("trap", texts);
 		texts = new List<string>();
 		texts.Add (" was shot through the heart.");
 		texts.Add (" was hit by a laser beam.");
-		deathTexts.Add ("laser", texts);
+        texts.Add(" was vaporized.");
+        texts.Add(" walked into the line of fire.");
+        texts.Add(" was pierced by a laser.");
+        texts.Add(" was zapped by eye beams.");
+        deathTexts.Add ("laser", texts);
     }
 
     public void Update()
@@ -106,6 +127,7 @@ public class ActorFSM : MonoBehaviour
 		idle.AddTransition (Transition.EnterLevel, StateID.EnterA);
 		idle.AddTransition (Transition.IdleDeath, StateID.EnemyDeadA);
 		idle.AddTransition (Transition.LaserCollide, StateID.LaserDeadA);
+        idle.AddTransition(Transition.CrossTankIdle, StateID.TrapDeadA);
 
         LookAState look = new LookAState(this);
         look.AddTransition(Transition.EnemyFound, StateID.EnemyDeadA);
@@ -150,6 +172,7 @@ public class ActorFSM : MonoBehaviour
 	{
 		gm.GetComponent<GameMasterFSM>().starRequirements["foundItem"] = true;
         Item.GetComponent<ParticleSystem>().Play();
+		SoundController.instance.RandomSfx (itemPickupSound, itemPickupSound);
         Destroy(Item, 1f);
 	}
 
@@ -205,6 +228,13 @@ public class ActorFSM : MonoBehaviour
 		int msg = UnityEngine.Random.Range(0,texts.Count);
 		Debug.Log (msg + "/" + texts.Count);
 		gm.GetComponent<GameMasterFSM>().deathText.text = actorName + texts[msg];
+
+		//change background
+		if (cause == "enemy") {
+			GameObject.Find ("DeathBackground").GetComponent<Image> ().sprite = Resources.Load<Sprite> ("UI/GameOverDark");
+		} else {
+			GameObject.Find ("DeathBackground").GetComponent<Image> ().sprite = Resources.Load<Sprite> ("UI/GameOverFire");
+		}
 	}
 
 	public void setLaserHit(bool hit){
@@ -255,11 +285,13 @@ public class ActorFSM : MonoBehaviour
     {
         //decide where to move and call WalkTo based on direction
         float walkDistance = gm.GetComponent<GameMasterFSM>().tileSize;
+        float multiCharOffset = walkDistance * .1f;
         switch (direction)
         {
             case 0:
                 sr.sprite = upSprite;
                 WalkTo(new Vector2(0, walkDistance));
+                multiCharOffset *= -1;
                 break;
             case 1:
                 sr.sprite = rightSprite;
@@ -268,7 +300,6 @@ public class ActorFSM : MonoBehaviour
             case 2:
                 sr.sprite = downSprite;
                 WalkTo(new Vector2(0, -walkDistance));
-                GetComponent<SpriteRenderer>().sortingOrder *= -1;
                 break;
             case 3:
                 sr.sprite = leftSprite;
@@ -277,6 +308,9 @@ public class ActorFSM : MonoBehaviour
             default:
                 break;
         }
+        float speed = multiCharOffset * GetComponent<SpriteRenderer>().sortingOrder;
+        Debug.Log(speed+", "+ multiCharOffset +", "+ GetComponent<SpriteRenderer>().sortingOrder);
+        transform.position = Vector2.MoveTowards(transform.position, goalPos, speed);
     }
 
     public void WalkTo(Vector2 pos)
@@ -399,11 +433,19 @@ public class LookAState : FSMState
                         }
                         if (isEnemyDead && npc.GetComponent<ActorFSM>().actorName == "Tank")
                         {
-							if (ray.collider.GetComponent<ActorFSM> ().fsm.CurrentStateID == StateID.WalkA) {
-								ray.collider.GetComponent<ActorFSM> ().SetTransition (Transition.CrossTank);
-							} else {
-								ray.collider.GetComponent<ActorFSM> ().SetTransition (Transition.TrapFound);
-							}
+                            if (ray.collider.GetComponent<ActorFSM>().fsm.CurrentStateID == StateID.WalkA)
+                            {
+                                ray.collider.GetComponent<ActorFSM>().SetTransition(Transition.CrossTank);
+                                //SoundController.instance.TankVoice (controlref.tankKills, controlref.tankKills);
+                            }
+                            else if (ray.collider.GetComponent<ActorFSM>().fsm.CurrentStateID == StateID.IdleA)
+                            {
+                                ray.collider.GetComponent<ActorFSM>().SetTransition(Transition.CrossTankIdle);
+                            }
+                            else
+                            {
+                                ray.collider.GetComponent<ActorFSM>().SetTransition(Transition.TrapFound);
+                            }
 							isEnemyDead = false;
                         }
                     }
@@ -567,8 +609,26 @@ public class TrapDeadAState : FSMState
         {
 			controlref.GetComponent<ActorFSM> ().setDeathText ("trap");
 			SoundController.instance.TrapOn (controlref.fireBlazin, controlref.fireBlazin);
-			SoundController.instance.RandomSfx (controlref.playerDeath, controlref.playerDeath);
+			if (controlref.actorName == "Roy") {
+				SoundController.instance.RoyVoice (controlref.royDeath, controlref.royDeath);
+			}
+			else if (controlref.actorName == "Jake"){
+				SoundController.instance.JakeVoice (controlref.jakeDeath, controlref.jakeDeath);
+			}
+			else if (controlref.actorName == "Emily"){
+				SoundController.instance.EmilyVoice (controlref.emilyDeath, controlref.emilyDeath);
+			}
+			else if (controlref.actorName == "Tank"){
+				SoundController.instance.TankVoice (controlref.tankDeath, controlref.tankDeath);
+			}
         }
+		else if (controlref.tag == "Enemy") {
+			if (controlref.actorName == "Shadow") {
+				SoundController.instance.ShadowVoice (controlref.enemyKilled, controlref.enemyKilled);
+			} else if (controlref.actorName == "Wraith") {
+				SoundController.instance.WraithVoice (controlref.enemyKilled, controlref.enemyKilled);
+			}
+		}
     }
 
     public override void Reason(GameObject gm, GameObject npc)
@@ -628,7 +688,16 @@ public class EnemyDeadAState : FSMState
         {
             UnityEngine.Object.Instantiate(controlref.slash, controlref.transform.position, Quaternion.identity);
             controlref.GetComponent<ActorFSM> ().setDeathText ("enemy");
-			SoundController.instance.RandomSfx (controlref.playerDeath, controlref.playerDeath);
+			//SoundController.instance.RandomSfx (controlref.playerDeath, controlref.playerDeath);
+			if (controlref.actorName == "Roy") {
+				SoundController.instance.RoyVoice (controlref.royDeath, controlref.royDeath);
+			}
+			else if (controlref.actorName == "Jake"){
+				SoundController.instance.JakeVoice (controlref.jakeDeath, controlref.jakeDeath);
+			}
+			else if (controlref.actorName == "Emily"){
+				SoundController.instance.EmilyVoice (controlref.emilyDeath, controlref.emilyDeath);
+			}		
         }
     }
 

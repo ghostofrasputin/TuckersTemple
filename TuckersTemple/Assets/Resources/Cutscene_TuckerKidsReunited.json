@@ -1,0 +1,84 @@
+﻿{
+	"scene1": {
+		"image": "templeInside",
+	  		"line1": {
+				"image": "EmilyCurious",
+				"text": "I...I thought I heard someone, Tank!",
+				"sound": ""
+			},
+			"line2": {
+				"image": "EmilyScared", 
+				"text": "Roy!? Jake?!",
+				"sound": ""
+			}, 
+			"line3": {
+				"image": "TankStandard", 
+				"text": "-Loud Roar-",
+				"sound": ""
+			}
+	},
+	"scene2": {
+		"image": "blackScreen",
+			"line1": {
+				"image": "blank",
+				"text": "Emily?",
+				"sound": ""
+			}
+	},
+	"scene3": {
+		"image": "tuckersreunited",
+			"line1": {
+				"image": "blank",
+				"text": "...You're all okay!",
+				"sound": ""
+			}
+	}, 
+	"scene4": {
+		"image": "templeInside",
+			"line1": {
+				"image": "RoyHappy",
+				"text": "Finally! Thank goodness we're all still here!",
+				"sound": ""
+			},
+			"line2": {
+				"image": "EmilyScared",
+				"text": "This place is insane! There's always something dangerous at every turn!",
+				"sound": ""
+			},
+			"line3": {
+				"image": "RoyStandard",
+				"text": "I know. Who knows how big this place really is...",
+				"sound": ""
+			},
+			"line4": {
+				"image": "JakeScared",
+				"text": "But we still have to find Dad!",
+				"sound": ""
+			}, 
+			"line5": {
+				"image": "EmilyScared",
+				"text": "Jake... Even if we continue on, Dad could still be anywhere!",
+				"sound": ""
+			},
+			"line6": {
+				"image": "RoyDetermined",
+				"text": "But we have to keep going! Or else Dad will be trapped here forever...",
+				"sound": ""
+			}, 
+			"line7": {
+				"image": "EmilyCurious",
+				"text": "Well, as long as we stay together...",
+				"sound": ""
+			}, 
+			"line8": {
+				"image": "JakeHappy",
+				"text": "That's the spirit, Em!",
+				"sound": ""
+			},
+			"line9": {
+				"image": "TankStandard",
+				"text": "-Enthusiatic roar-",
+				"sound": ""
+			}
+	}
+}

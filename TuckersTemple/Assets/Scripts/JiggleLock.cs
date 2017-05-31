@@ -15,7 +15,7 @@ using UnityEngine.UI;
 public class JiggleLock : MonoBehaviour {
 
 	// public:
-
+	public AudioClip jigglelocksound;
 	// private:
 	private bool jiggleFlag = false;
 	private float rotateSpeed;
@@ -56,6 +56,7 @@ public class JiggleLock : MonoBehaviour {
 
 	private void jiggleLock(){
 		gameObject.transform.RotateAround (this.gameObject.transform.position, new Vector3 (0, 0, 1), rotateSpeed);
+		SoundController.instance.RandomSfx (jigglelocksound, jigglelocksound);
 	}
 
 }

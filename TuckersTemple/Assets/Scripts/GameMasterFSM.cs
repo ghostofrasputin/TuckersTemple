@@ -48,6 +48,7 @@ public class GameMasterFSM : MonoBehaviour
     public Dictionary<string, bool> starRequirements;
     public string[] starCriteria = { "foundItem", "killAll", "killNone" };
 	public List<GameObject> lasers;
+    public GameObject tutorial;
 
     public GameObject UIBorder;
     public bool isPaused;
@@ -153,17 +154,7 @@ public class GameMasterFSM : MonoBehaviour
         fsm.AddState(juice);
     }
 
-    public void startOrderActors()
-    {
-        StartCoroutine("OrderActors");
-    }
-
-    public void endOrderActors()
-    {
-        StopCoroutine("OrderActors");
-    }
-
-    System.Collections.IEnumerator OrderActors()
+    public void sameTileOrder()
     {
         int orderCount = 0;
         bool charactersDone = false;
@@ -189,12 +180,9 @@ public class GameMasterFSM : MonoBehaviour
             if(charactersDone && enemiesDone)
             {
                 break;
-            }
-                   
+            }           
             ++orderCount;
-            yield return new WaitForSeconds(.05f);
         }
-        endOrderActors();
     }
 
     public GameObject spawnActor(GameObject actor, int x, int y, int dir)
@@ -233,7 +221,7 @@ public class GameMasterFSM : MonoBehaviour
     public void setWinScreenEmily()
     {
         GameObject temp1 = GameObject.Find("Star1");
-        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
         temp1.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily");
     }
@@ -241,17 +229,19 @@ public class GameMasterFSM : MonoBehaviour
     public void setWinScreenJake()
     {
         GameObject temp2 = GameObject.Find("Star2");
-        temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
         temp2.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("jakeWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake");
+        GameObject.Find("NumMoves").GetComponent<Text>().text = "";
     }
 
     public void setWinScreenRoy()
     {
         GameObject temp3 = GameObject.Find("Star3");
-        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/GoldStar");
+        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
         temp3.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy");
+        temp3.transform.GetChild(0).gameObject.SetActive(false);
     }
 
     //Called when the level is won
@@ -276,7 +266,9 @@ public class GameMasterFSM : MonoBehaviour
         //check what the string requirement for this level is and check if it is satisfied
 
         int numMoves = levelsList[currentLevel - 1].Moves;
-
+        Text moveText = GameObject.Find("NumMoves").GetComponent<Text>();
+        moveText.text = moves + "/" + numMoves;
+        moveText.color = Color.red;
 
         if (starRequirements.ContainsKey(levelsList[currentLevel - 1].Star))
         {
@@ -285,7 +277,8 @@ public class GameMasterFSM : MonoBehaviour
         }
 		zombie.setStar (currentLevel - 1, 0);
         Invoke("setWinScreenEmily", 1.5f);
-        if(moves <= numMoves) { 
+        if(moves <= numMoves) {
+            moveText.color = Color.green;
 			zombie.setStar (currentLevel - 1, 1);
 			Invoke("setWinScreenJake", 2);
 		}
@@ -311,6 +304,8 @@ public class GameMasterFSM : MonoBehaviour
 
 		// save game data:
 		zombie.Save();
+
+
     }
 
     private void setCanvas(Canvas c, bool b)
@@ -1176,11 +1171,12 @@ public class LevelJuiceState : FSMState
 		}
 
         GameObject temp1 = GameObject.Find("Star1");
-        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
         GameObject temp2 = GameObject.Find("Star2");
-        temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+        temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
         GameObject temp3 = GameObject.Find("Star3");
-        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/BlackStar");
+        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
+        temp3.transform.GetChild(0).gameObject.SetActive(true);
 
         temp1.GetComponent<ParticleSystem>().Stop();
         temp2.GetComponent<ParticleSystem>().Stop();
@@ -1189,6 +1185,13 @@ public class LevelJuiceState : FSMState
         GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily_blank");
         GameObject.FindWithTag("royWin"  ).GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy_blank");
         GameObject.FindWithTag("jakeWin" ).GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake_blank");
+
+        //check if first level, if so show tutorial.
+        if(controlref.currentLevel == 1)
+        {
+            GameObject.FindWithTag("pauseButton").GetComponent<Button>().onClick.Invoke();
+            controlref.tutorial.SetActive(true);
+        }
     }
 
 } // LevelJuiceState
@@ -1305,7 +1308,10 @@ public class OrderTilesState : FSMState
                 npc.GetComponent<GameMasterFSM>().SetTransition(Transition.Incomplete); //to Input
             } else {
                 SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
-                Handheld.Vibrate();
+				ZombiePasser zombie = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ();
+				if(zombie.getVibToggle() == true){
+					Handheld.Vibrate();
+				}
                 GameObject.Find("Main Camera").GetComponent<ScreenShake>().startShaking();
                 npc.GetComponent<GameMasterFSM>().SetTransition(Transition.TilesDone); //to orderactors
             }
@@ -1350,15 +1356,11 @@ public class OrderActorsState : FSMState
     public override void DoBeforeEntering()
     {
     	controlref.sameTileReset();
-        /*
-        foreach (GameObject actor in controlref.actors)
-        {
-            actor.GetComponent<ActorFSM>().doneSlide = true;
-        }*/
-		foreach (GameObject laser in controlref.lasers) {
+        controlref.sameTileOrder();
+        foreach (GameObject laser in controlref.lasers) {
 		    laser.GetComponent<LaserScript> ().setEye (false);
 		}
-        controlref.startOrderActors();
+        //controlref.startOrderActors();
     }
 
     public override void Reason(GameObject gm, GameObject npc)
