@@ -18,13 +18,14 @@ public class ZombiePasser : MonoBehaviour {
 	// default string data
 	public const string settingsString = "ttf";
     public const string lockedLevelsString = "fttttttttttttttttttttttttttttttttttttttttttttttttt";
+	public const string unlockedLevelsString="ffffffffffffffffffffffffffffffffffffffffffffffffff";
 	public const string starRatingsString = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
 
 	// data to save
 	public SaveSystem saveSys;
 	public bool musicToggle = true;
 	public bool sfxToggle = true;
-	public bool vibToggle = true;
+	public bool vibToggle = false;
 	public List<bool> settings = new List<bool> ();
 	public List<bool> lockedLevels = new List<bool>();
 	public List<List<bool>> starRatings = new List<List<bool>>();
@@ -57,7 +58,7 @@ public class ZombiePasser : MonoBehaviour {
 		float scalarX = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<RectTransform> ().localScale.x;
 		float scalarY = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<RectTransform> ().localScale.y;
 		float iconWidth = IconRef.GetComponent<RectTransform> ().rect.width;
-		Debug.Log (iconWidth);
+		//Debug.Log (iconWidth);
 		float xDiff = scalarX*(iconWidth*1.05f);
 		float yDiff = scalarY*(iconWidth*1.4f);
 		float yOffset = 0.0f;
@@ -190,7 +191,6 @@ public class ZombiePasser : MonoBehaviour {
 	// Get Functions
 	//------------------------------------------------------------------------------------------------
 
-
 	// return the private level int
 	public int getLevel(){
 		return levelNum;
@@ -206,9 +206,7 @@ public class ZombiePasser : MonoBehaviour {
     {
 		return starRatings[level];
     }
-
-
-
+		
 	public bool getLockedLevelBool(int index){
 		if (index > lockedLevels.Count-1 || index < 0) {
 			Debug.Log ("error: index out of range. The index put is: "+index +" in array of size: "+lockedLevels.Count);
@@ -233,7 +231,9 @@ public class ZombiePasser : MonoBehaviour {
 	//------------------------------------------------------------------------------------------------
 
 	public void Save() {
-
+		settings [0] = musicToggle; 
+		settings [1] = sfxToggle;
+		settings [2] = vibToggle;
 		PlayerPrefs.SetString("settings", listToString(settings));
         PlayerPrefs.Save();
         PlayerPrefs.SetString("locked", listToString(lockedLevels));
@@ -244,7 +244,13 @@ public class ZombiePasser : MonoBehaviour {
 
     public void Load() {
         settings = listFromString(PlayerPrefs.GetString("settings", settingsString));
-        lockedLevels = listFromString(PlayerPrefs.GetString("locked", lockedLevelsString));
+		musicToggle = settings [0]; 
+		sfxToggle = settings [1];
+		vibToggle= settings [2];
+		// !!!!!!!!!!
+		// all levels are set to unlocked right now
+		// use the commented out code below to use locked levels again
+		lockedLevels = listFromString(unlockedLevelsString); //listFromString(PlayerPrefs.GetString("locked", lockedLevelsString));
         starRatings = matrixFromString(PlayerPrefs.GetString("stars", starRatingsString));
     }
 

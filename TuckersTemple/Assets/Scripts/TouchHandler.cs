@@ -124,7 +124,7 @@ public class TouchHandler : MonoBehaviour {
 		Vector3 rect1 = anchor1.transform.position;
 		Rect rect2 = canvas.GetComponent<Canvas> ().pixelRect;
 		bool x = (rect1.x < rect2.x + rect2.width && rect1.x + 1 > rect2.x && rect1.y < rect2.y + rect2.height && 1 + rect1.y > rect2.y);
-		Debug.Log (x);
+		//Debug.Log (x);
 		return x;
 	}
 

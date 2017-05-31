@@ -1308,7 +1308,10 @@ public class OrderTilesState : FSMState
                 npc.GetComponent<GameMasterFSM>().SetTransition(Transition.Incomplete); //to Input
             } else {
                 SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
-                //Handheld.Vibrate();
+				ZombiePasser zombie = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ();
+				if(zombie.getVibToggle() == true){
+					Handheld.Vibrate();
+				}
                 GameObject.Find("Main Camera").GetComponent<ScreenShake>().startShaking();
                 npc.GetComponent<GameMasterFSM>().SetTransition(Transition.TilesDone); //to orderactors
             }
