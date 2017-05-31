@@ -1,7 +1,7 @@
 {
 	"scene1": {
 	  "image": "foundJake"
-	}
+	},
 	"scene2": {
 	  "image": "templeInside", 
 		"line1": {
