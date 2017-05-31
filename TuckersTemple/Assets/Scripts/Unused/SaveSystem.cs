@@ -29,7 +29,7 @@ public class SaveSystem : MonoBehaviour {
 	 * Binary Serialization Version        *
 	 ***************************************/
 	public ZombiePasser zombie;
-
+/*
 	public void Save() {
 		zombie = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ();
 		BinaryFormatter bf = new BinaryFormatter ();
@@ -38,7 +38,7 @@ public class SaveSystem : MonoBehaviour {
 		GameData data = new GameData ();
 		data.settings = zombie.listToString(zombie.settings);
 		data.lockedLevels = zombie.listToString (zombie.lockedLevels);
-		data.starRatings = zombie.doubleListToString (zombie.starRatings);
+		data.starRatings = zombie.matrixToString (zombie.starRatings);
 
 		bf.Serialize (file, data);
 		file.Close ();
@@ -63,7 +63,7 @@ public class SaveSystem : MonoBehaviour {
 		}
 	}
 
-
+    */
 	/***************************************
 	 * JSON version: only works in Unity.  *
 	 * keep this code for future reference *

@@ -48,6 +48,7 @@ public class GameMasterFSM : MonoBehaviour
     public Dictionary<string, bool> starRequirements;
     public string[] starCriteria = { "foundItem", "killAll", "killNone" };
 	public List<GameObject> lasers;
+    public GameObject tutorial;
 
     public GameObject UIBorder;
     public bool isPaused;
@@ -153,17 +154,7 @@ public class GameMasterFSM : MonoBehaviour
         fsm.AddState(juice);
     }
 
-    public void startOrderActors()
-    {
-        StartCoroutine("OrderActors");
-    }
-
-    public void endOrderActors()
-    {
-        StopCoroutine("OrderActors");
-    }
-
-    System.Collections.IEnumerator OrderActors()
+    public void sameTileOrder()
     {
         int orderCount = 0;
         bool charactersDone = false;
@@ -189,12 +180,9 @@ public class GameMasterFSM : MonoBehaviour
             if(charactersDone && enemiesDone)
             {
                 break;
-            }
-                   
+            }           
             ++orderCount;
-            yield return new WaitForSeconds(.05f);
         }
-        endOrderActors();
     }
 
     public GameObject spawnActor(GameObject actor, int x, int y, int dir)
@@ -311,6 +299,8 @@ public class GameMasterFSM : MonoBehaviour
 
 		// save game data:
 		zombie.Save();
+
+
     }
 
     private void setCanvas(Canvas c, bool b)
@@ -1189,6 +1179,13 @@ public class LevelJuiceState : FSMState
         GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily_blank");
         GameObject.FindWithTag("royWin"  ).GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy_blank");
         GameObject.FindWithTag("jakeWin" ).GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake_blank");
+
+        //check if first level, if so show tutorial.
+        if(controlref.currentLevel == 1)
+        {
+            GameObject.FindWithTag("pauseButton").GetComponent<Button>().onClick.Invoke();
+            controlref.tutorial.SetActive(true);
+        }
     }
 
 } // LevelJuiceState
@@ -1305,7 +1302,7 @@ public class OrderTilesState : FSMState
                 npc.GetComponent<GameMasterFSM>().SetTransition(Transition.Incomplete); //to Input
             } else {
                 SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
-                Handheld.Vibrate();
+                //Handheld.Vibrate();
                 GameObject.Find("Main Camera").GetComponent<ScreenShake>().startShaking();
                 npc.GetComponent<GameMasterFSM>().SetTransition(Transition.TilesDone); //to orderactors
             }
@@ -1350,15 +1347,11 @@ public class OrderActorsState : FSMState
     public override void DoBeforeEntering()
     {
     	controlref.sameTileReset();
-        /*
-        foreach (GameObject actor in controlref.actors)
-        {
-            actor.GetComponent<ActorFSM>().doneSlide = true;
-        }*/
-		foreach (GameObject laser in controlref.lasers) {
+        controlref.sameTileOrder();
+        foreach (GameObject laser in controlref.lasers) {
 		    laser.GetComponent<LaserScript> ().setEye (false);
 		}
-        controlref.startOrderActors();
+        //controlref.startOrderActors();
     }
 
     public override void Reason(GameObject gm, GameObject npc)

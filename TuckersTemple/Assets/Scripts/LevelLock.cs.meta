@@ -1,10 +1,11 @@
 fileFormatVersion: 2
 guid: b7cd735481ce694418019d757b247f38
-timeCreated: 1489369753
+timeCreated: 1496094935
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - jigglelock: {fileID: 8300000, guid: 12e98568b7eb44dfbbda2af5d9639114, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
