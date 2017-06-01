@@ -100,7 +100,7 @@ public class CutSceneManager : MonoBehaviour {
             {"kidsReading", "Cutscenes/cutscene_Reading"},
             {"kidsGrownUp", "Cutscenes/cutscene_GrownUp"},
             {"familyPictures", "Cutscenes/cutscene_FamilyPictures"},
-            {"blackScreen", "Cutscenes/blackscreen"},
+            {"blackScreen", "Cutscenes/black-screen"},
 			{"johnTuckerFigure","Cutscenes/johnTuckerFigure"}
         };
 		sounds = new Dictionary<string, string> () {
