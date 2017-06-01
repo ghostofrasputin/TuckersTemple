@@ -356,3 +356,20 @@
 "emily1" beaten in 2 moves in 0 seconds in 1 attempts.
 "emily2" beaten in 2 moves in 0 seconds in 3 attempts.
 "emily1" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"In the way" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"In the way" beaten in 2 moves in 0 seconds in 1 attempts.
+"Enemy Appears" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"In the way" beaten in 2 moves in 0 seconds in 1 attempts.
+"Enemy Appears" beaten in 2 moves in 0 seconds in 1 attempts.
+"Close Call" beaten in 2 moves in 0 seconds in 1 attempts.
+"Traps" beaten in 2 moves in 0 seconds in 1 attempts.
+"Mines" beaten in 2 moves in 0 seconds in 1 attempts.
+"Journey" beaten in 15 moves in 0 seconds in 1 attempts.
