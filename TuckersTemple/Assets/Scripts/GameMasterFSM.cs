@@ -101,8 +101,14 @@ public class GameMasterFSM : MonoBehaviour
 
 		//intitialize cutscenes
 		cutscenes = new List<int>();
-        //cutscenes.Add (15);
-        //cutscenes.Add(17);
+        cutscenes.Add(6);
+        cutscenes.Add(11);
+        cutscenes.Add(21);
+        cutscenes.Add(31);
+        cutscenes.Add(35);
+        cutscenes.Add(37);
+        cutscenes.Add(41);
+        cutscenes.Add(51);
 
         boundary = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
 	    scalar = .006f;
