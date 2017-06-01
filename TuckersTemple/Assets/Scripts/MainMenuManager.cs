@@ -17,6 +17,7 @@ public class MainMenuManager : MonoBehaviour {
 	//publics:
 	public GameObject ani;
 	public GameObject panel;
+    public GameObject credits;
 
 	// load screen
 	public GameObject loadingImage;
@@ -181,6 +182,15 @@ public class MainMenuManager : MonoBehaviour {
 		settingsScroll = 2;
 	}
 
+    public void creditsOn()
+    {
+        credits.SetActive(true);
+    }
+
+    public void creditsOff()
+    {
+        credits.SetActive(false);
+    }
 }
 
 
