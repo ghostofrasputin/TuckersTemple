@@ -78,6 +78,9 @@ public class GameMasterFSM : MonoBehaviour
 	public AudioClip gameOverSound;
 	public AudioClip levelWinSound;
     public AudioClip tileSlideOnly;
+	public AudioClip royWin, royWin2, royWin3;
+	public AudioClip jakeWin1, jakeWin2, jakeWin3;
+	public AudioClip emilyWin1, emilyWin2, emilyWin3;
     // private:
     private RaycastHit hit;
     private GameObject touchTarget;
@@ -277,14 +280,17 @@ public class GameMasterFSM : MonoBehaviour
         }
 		zombie.setStar (currentLevel - 1, 0);
         Invoke("setWinScreenEmily", 1.5f);
+		SoundController.instance.RoyVoice (royWin, royWin2, royWin3);
         if(moves <= numMoves) {
             moveText.color = Color.green;
 			zombie.setStar (currentLevel - 1, 1);
 			Invoke("setWinScreenJake", 2);
+			SoundController.instance.JakeVoice (jakeWin1, jakeWin2, jakeWin3);
 		}
         if (thirdStar) { 
 			zombie.setStar (currentLevel - 1, 2);
 			Invoke("setWinScreenRoy", 2.5f); 
+			SoundController.instance.EmilyVoice (emilyWin1, emilyWin2, emilyWin3);
 		}
 
 

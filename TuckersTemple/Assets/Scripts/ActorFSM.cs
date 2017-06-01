@@ -734,6 +734,33 @@ public class LaserDeadAState : FSMState
 
 	}
 
+	public override void DoBeforeEntering ()
+	{
+		if (controlref.tag == "Player")
+		{
+			//controlref.GetComponent<ActorFSM> ().setDeathText ("trap");
+			SoundController.instance.TrapOn (controlref.fireBlazin, controlref.fireBlazin);
+			if (controlref.actorName == "Roy") {
+				SoundController.instance.RoyVoice (controlref.royDeath, controlref.royDeath);
+			}
+			else if (controlref.actorName == "Jake"){
+				SoundController.instance.JakeVoice (controlref.jakeDeath, controlref.jakeDeath);
+			}
+			else if (controlref.actorName == "Emily"){
+				SoundController.instance.EmilyVoice (controlref.emilyDeath, controlref.emilyDeath);
+			}
+			else if (controlref.actorName == "Tank"){
+				SoundController.instance.TankVoice (controlref.tankDeath, controlref.tankDeath);
+			}
+		}else if (controlref.tag == "Enemy") {
+			if (controlref.actorName == "Shadow") {
+				SoundController.instance.ShadowVoice (controlref.enemyKilled, controlref.enemyKilled);
+			} else if (controlref.actorName == "Wraith") {
+				SoundController.instance.WraithVoice (controlref.enemyKilled, controlref.enemyKilled);
+			}
+		}
+	}
+
 	public override void Act(GameObject gm, GameObject npc)
 	{
 		if (npc.tag == "Player")

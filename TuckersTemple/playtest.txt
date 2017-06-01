@@ -356,3 +356,83 @@
 "emily1" beaten in 2 moves in 0 seconds in 1 attempts.
 "emily2" beaten in 2 moves in 0 seconds in 3 attempts.
 "emily1" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"In the way" beaten in 2 moves in 0 seconds in 1 attempts.
+"Enemy Appears" beaten in 2 moves in 0 seconds in 2 attempts.
+"Close Call" beaten in 2 moves in 0 seconds in 1 attempts.
+"Traps" beaten in 2 moves in 0 seconds in 1 attempts.
+"Mines" beaten in 2 moves in 0 seconds in 1 attempts.
+"Mines" beaten in 2 moves in 0 seconds in 1 attempts.
+"Elliot" beaten in 2 moves in 0 seconds in 1 attempts.
+"Mix together" beaten in 5 moves in 0 seconds in 1 attempts.
+"A challenge" beaten in 6 moves in 0 seconds in 1 attempts.
+"Trap Room" beaten in 3 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"In the way" beaten in 2 moves in 0 seconds in 1 attempts.
+"Enemy Appears" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"In the way" beaten in 2 moves in 0 seconds in 1 attempts.
+"Enemy Appears" beaten in 2 moves in 0 seconds in 1 attempts.
+"Close Call" beaten in 3 moves in 0 seconds in 1 attempts.
+"Close Call" beaten in 2 moves in 0 seconds in 2 attempts.
+"Traps" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"In the way" beaten in 2 moves in 0 seconds in 1 attempts.
+"Enemy Appears" beaten in 2 moves in 0 seconds in 2 attempts.
+"Close Call" beaten in 2 moves in 0 seconds in 1 attempts.
+"Traps" beaten in 2 moves in 0 seconds in 2 attempts.
+"Mines" beaten in 2 moves in 0 seconds in 1 attempts.
+"Elliot" beaten in 2 moves in 0 seconds in 1 attempts.
+"Mix together" beaten in 3 moves in 0 seconds in 1 attempts.
+"A challenge" beaten in 3 moves in 0 seconds in 4 attempts.
+"Trap Room" beaten in 3 moves in 0 seconds in 1 attempts.
+"level" beaten in 5 moves in 0 seconds in 3 attempts.
+"Lasers" beaten in 4 moves in 0 seconds in 1 attempts.
+"Lasers" beaten in 2 moves in 0 seconds in 2 attempts.
+"Limbo" beaten in 4 moves in 0 seconds in 2 attempts.
+"Thread the needle" beaten in 2 moves in 0 seconds in 1 attempts.
+"TheChase" beaten in 4 moves in 0 seconds in 2 attempts.
+"Emily2" beaten in 3 moves in 0 seconds in 4 attempts.
+"emily3" beaten in 2 moves in 0 seconds in 1 attempts.
+"Emily4" beaten in 3 moves in 0 seconds in 1 attempts.
+"tank1" beaten in 7 moves in 0 seconds in 1 attempts.
+"level" beaten in 4 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"In the way" beaten in 2 moves in 0 seconds in 1 attempts.
+"Enemy Appears" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"In the way" beaten in 2 moves in 0 seconds in 1 attempts.
+"Enemy Appears" beaten in 2 moves in 0 seconds in 1 attempts.
+"Close Call" beaten in 2 moves in 0 seconds in 1 attempts.
+"Traps" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"In the way" beaten in 2 moves in 0 seconds in 1 attempts.
+"Enemy Appears" beaten in 2 moves in 0 seconds in 1 attempts.
+"Close Call" beaten in 2 moves in 0 seconds in 1 attempts.
+"Traps" beaten in 2 moves in 0 seconds in 1 attempts.
+"Mines" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"All Open" beaten in 2 moves in 0 seconds in 1 attempts.
+"In the way" beaten in 2 moves in 0 seconds in 1 attempts.
+"Enemy Appears" beaten in 2 moves in 0 seconds in 1 attempts.
+"Close Call" beaten in 2 moves in 0 seconds in 1 attempts.
