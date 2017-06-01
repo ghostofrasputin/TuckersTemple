@@ -81,7 +81,7 @@ public class CutSceneManager : MonoBehaviour {
             {"JakeCurious", "CutScenes/jakeCURIOUScutscene_4"},
             {"JakeHappy", "CutScenes/jakeHAPPYScutscene_2"},
             {"TankStandard", "CutScenes/tank"},
-            {"emilyHAPPY", "Cutscenes/emilyHAPPY"}
+            {"EmilyHappy", "Cutscenes/emilyHAPPY"}
         };
 		backgrounds = new Dictionary<string, string> () {
 			{"templeOutside", "CutScenes/cutscene_Outside"},
@@ -92,7 +92,7 @@ public class CutSceneManager : MonoBehaviour {
             {"foundJake", "CutScenes/cutscene_4"}, 
 			{"emilyBegin", "Cutscenes/cutscene_Emily-alone"},
 			{"tankBegin", "Cutscenes/cutscene_TankAlone"},
-			{"emilyandtank", "Cutscenes/cutscene_EmilyAndTank"},
+			{"emilyandtank", "Cutscenes/cutscene_EmilyandTank"},
             {"tuckersreunited", "Cutscenes/cutscene_Reunited"},
             {"tankPup", "Cutscenes/cutscene_TankPup"},
             {"tankGrownUp", "Cutscenes/cutscene_Family"},
@@ -100,7 +100,8 @@ public class CutSceneManager : MonoBehaviour {
             {"kidsReading", "Cutscenes/cutscene_Reading"},
             {"kidsGrownUp", "Cutscenes/cutscene_GrownUp"},
             {"familyPictures", "Cutscenes/cutscene_FamilyPictures"},
-            {"blackScreen", "Cutscenes/blackscreen"}
+            {"blackScreen", "Cutscenes/blackscreen"},
+			{"johnTuckerFigure","Cutscenes/johnTuckerFigure"}
         };
 		sounds = new Dictionary<string, string> () {
 			{"roy_hmm", "CutScenes/Andre-Hmm"},
