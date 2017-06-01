@@ -1,20 +1,54 @@
 ﻿{
-	"scene1": {
-	  "image": "tankBegin",
-	 	"line1": {
-			"image": "blank",
-			"text": "Tank descended down the temple steps cautiously, tracking down any sign of the kids.",
-			"sound": ""
-		},
-		"line2": {
-			"image": "blank",
-			"text": "The loyal companion would stop at nothing to find them...",
-			"sound": ""
-		},
-		"line3": {
-			"image": "blank",
-			"text": "...even if it meant destroying anyone or anything in her way.",
-			"sound": ""
-		}
-	}
+  "scene1": {
+    "image": "tankBegin",
+    "line1": {
+      "image": "blank",
+      "text": "",
+      "sound": ""
+    }
+  },
+  "scene2": {
+    "image": "tankPup",
+    "line1": {
+      "image": "blank",
+      "text": "I found Tank on one of our adventures. We thought she was a puppy that had either been lost or abandoned.",
+      "sound": ""
+    },
+    "line2": {
+      "image": "blank",
+      "text": "We loved her instantly, and it took us a lot of begging to convince Mom to let us keep her.",
+      "sound": ""
+    }
+  },
+  "scene3": {
+    "image": "tankGrownUp",
+    "line1": {
+      "image": "blank",
+      "text": "Little did we know, Tank was actually a bear cub, so it was quite surprising to see how big she had grown within a year.",
+      "sound": ""
+    },
+    "line2": {
+      "image": "blank",
+      "text": "It scared Mom a lot at first, but I guess she realized how helpful Tank was with taking care of us, especially when Dad was away. So she let us keep her.",
+      "sound": ""
+    }
+  },
+  "scene4": {
+    "image": "tankBegin",
+    "line1": {
+      "image": "blank",
+      "text": "Tank descended down the temple steps cautiously, tracking down any sign of the kids.",
+      "sound": ""
+    },
+    "line2": {
+      "image": "blank",
+      "text": "The loyal companion would stop at nothing to find them...",
+      "sound": ""
+    },
+    "line3": {
+      "image": "blank",
+      "text": "...even if it meant destroying anyone or anything in her way.",
+      "sound": ""
+    }
+  }
 }

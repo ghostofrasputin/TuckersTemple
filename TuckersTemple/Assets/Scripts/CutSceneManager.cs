@@ -80,18 +80,28 @@ public class CutSceneManager : MonoBehaviour {
             {"JakeScared", "CutScenes/jakeSCAREDcutscene_8"},
             {"JakeCurious", "CutScenes/jakeCURIOUScutscene_4"},
             {"JakeHappy", "CutScenes/jakeHAPPYScutscene_2"},
-            {"TankStandard", "CutScenes/tank"}
+            {"TankStandard", "CutScenes/tank"},
+            {"EmilyHappy", "Cutscenes/emilyHAPPY"}
         };
 		backgrounds = new Dictionary<string, string> () {
-			{"templeOutside", "CutScenes/temple_outside"},
+			{"templeOutside", "CutScenes/cutscene_Outside"},
             {"templeInfront", "CutScenes/cutscene_1"},
             {"templeStairs", "CutScenes/cutscene_7"},
             {"templeCollapse", "CutScenes/cutscene_9"},
-            {"templeInside", "CutScenes/template_episode_2"},
+            {"templeInside", "CutScenes/cutscene_Inside"},
             {"foundJake", "CutScenes/cutscene_4"}, 
 			{"emilyBegin", "Cutscenes/cutscene_Emily-alone"},
-			{"tankBegin", "Cutscenes/cutscene_Tank-alone"},
-			{"emilyandtank", "Cutscenes/cutscene_EmilyandTank"}
+			{"tankBegin", "Cutscenes/cutscene_TankAlone"},
+			{"emilyandtank", "Cutscenes/cutscene_EmilyandTank"},
+            {"tuckersreunited", "Cutscenes/cutscene_Reunited"},
+            {"tankPup", "Cutscenes/cutscene_TankPup"},
+            {"tankGrownUp", "Cutscenes/cutscene_Family"},
+            {"sadFamily", "Cutscenes/cutscene_SadFamily"},
+            {"kidsReading", "Cutscenes/cutscene_Reading"},
+            {"kidsGrownUp", "Cutscenes/cutscene_GrownUp"},
+            {"familyPictures", "Cutscenes/cutscene_FamilyPictures"},
+            {"blackScreen", "Cutscenes/blackscreen"},
+			{"johnTuckerFigure","Cutscenes/johnTuckerFigure"}
         };
 		sounds = new Dictionary<string, string> () {
 			{"roy_hmm", "CutScenes/Andre-Hmm"},
@@ -100,9 +110,15 @@ public class CutSceneManager : MonoBehaviour {
 		};
 
 		cutSceneFiles = new Dictionary<int, string>(){
-			//{1, "CutScene_Opening"}, //these cutscenes play before the level
-			//{15, "CutScene_EmilyAlone"},
-            //{17, "CutScene_AlmostToJake" }
+			{1, "CutScene_Opening"}, //these cutscenes play before the level
+            {6, "CutScene_Flashback1"},
+            {11, "CutScene_Flashback2"},
+            {21, "CutScene_JakeFound"},
+            {31, "CutScene_EmilyAlone"},
+            {35, "CutScene_TankAlone"},
+            {37, "CutScene_EmilyAndTank"},
+            {41, "CutScene_TuckerKidsReunited"},
+            {51, "CutScene_Conclusion"}
         };
 
 		//intialize GameObjects
@@ -205,11 +221,19 @@ public class CutSceneManager : MonoBehaviour {
 		tapPrompt.GetComponent<CanvasGroup> ().alpha = (1 + Mathf.Sin (promptTimer)) / 2;
     }
 
-	//ends the cut scene and loads in the game
-	public void endCutScene(){
-		loadingImage.SetActive (true);
-		SceneManager.LoadScene ("main");
-	}
+    //ends the cut scene and loads in the game
+    public void endCutScene()
+    {
+        loadingImage.SetActive(true);
+        if (GameObject.Find("ZombiePasser").GetComponent<ZombiePasser>().getLevel() > 50)
+        {
+            SceneManager.LoadScene("mainMenu");
+        }
+        else
+        {
+            SceneManager.LoadScene("main");
+        }
+    }
 		
 
 	//goes to the next scene

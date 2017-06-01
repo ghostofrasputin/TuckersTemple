@@ -1,6 +1,11 @@
 {
 	"scene1": {
-	  "image": "foundJake"
+	  "image": "foundJake",
+	  "line1": {
+			"image": "blank",
+			"text": "",
+			"sound": ""
+	  }
 	},
 	"scene2": {
 	  "image": "templeInside", 
