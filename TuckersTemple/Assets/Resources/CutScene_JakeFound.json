@@ -1,5 +1,28 @@
 {
 	"scene1": {
 	  "image": "foundJake"
+	},
+	"scene2": {
+	  "image": "templeInside", 
+		"line1": {
+			"image": "JakeHappy",
+			"text": "Roy!!!",
+			"sound": ""
+		},
+		"line2": {
+			"image": "RoyHappy",
+			"text": "Jake, thank goodness you're okay!",
+			"sound": ""
+		},
+		"line3": {
+			"image": "JakeCurious",
+			"text": "I tried to look for you, Emily, and Tank, but there were too many monsters and traps...",
+			"sound": ""
+		},
+		"line4": {
+			"image": "RoyDetermined",
+			"text": "Don't worry, we'll go look for them together...",
+			"sound": ""
+		}
 	}
 }

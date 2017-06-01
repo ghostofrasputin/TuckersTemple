@@ -3,17 +3,17 @@
 	  "image": "tankBegin",
 	 	"line1": {
 			"image": "blank",
-			"text": "",
+			"text": "Tank descended down the temple steps cautiously, tracking down any sign of the kids.",
 			"sound": ""
 		},
 		"line2": {
-			"image": "EmilyScared",
-			"text": "Emily: It feels like the walls are shifting, and I keep seeing things moving in the shadows.",
+			"image": "blank",
+			"text": "The loyal companion would stop at nothing to find them...",
 			"sound": ""
 		},
 		"line3": {
-			"image": "EmilyCurious",
-			"text": "Emily: Well, Dad always said the unknown is just an oppertunity for knowledge.  I have to keep moving.",
+			"image": "blank",
+			"text": "...even if it meant destroying anyone or anything in her way.",
 			"sound": ""
 		}
 	}
