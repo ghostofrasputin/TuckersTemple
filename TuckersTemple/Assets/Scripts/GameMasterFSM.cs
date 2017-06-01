@@ -220,11 +220,12 @@ public class GameMasterFSM : MonoBehaviour
 
     public void setWinScreenEmily()
     {
-        GameObject temp1 = GameObject.Find("Star3");
-        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
-        temp1.GetComponent<ParticleSystem>().Play();
+        GameObject temp3 = GameObject.Find("Star3");
+        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
+        temp3.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily");
-        temp1.transform.GetChild(0).gameObject.SetActive(false);
+        GameObject.Find("NumMoves").GetComponent<Text>().text = "";
+
     }
 
     public void setWinScreenJake()
@@ -233,14 +234,14 @@ public class GameMasterFSM : MonoBehaviour
         temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
         temp2.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("jakeWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake");
-        GameObject.Find("NumMoves").GetComponent<Text>().text = "";
+        temp2.transform.GetChild(0).gameObject.SetActive(false);
     }
 
     public void setWinScreenRoy()
     {
-        GameObject temp3 = GameObject.Find("Star1");
-        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
-        temp3.GetComponent<ParticleSystem>().Play();
+        GameObject temp1 = GameObject.Find("Star1");
+        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
+        temp1.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy");
 
     }
@@ -459,9 +460,10 @@ public class GameMasterFSM : MonoBehaviour
         List<List<string>> tileInfo = currentLevel.Tiles;
         Dictionary<string, List<int>> actorInfo = currentLevel.Actors;
         Dictionary<string, List<int>> staticObjectInfo = currentLevel.StaticObjects;
-
-		//zoom the camera and scale the background
-		GameObject mainCamera = GameObject.Find("Main Camera");
+        
+        GameObject.FindGameObjectWithTag("Level-Num").GetComponent<Text>().text = "" + GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevel();
+        //zoom the camera and scale the background
+        GameObject mainCamera = GameObject.Find("Main Camera");
 		GameObject UIBorder = GameObject.Find ("UIBorderPause");
 		//Debug.Log ("UI Border: " + UIBorder.transform.position + " " + UIBorder.transform.localScale);
 		if (numCols == 4) {
