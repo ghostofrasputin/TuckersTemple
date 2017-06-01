@@ -20,6 +20,7 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject Goal;
     public GameObject Laser;
     public GameObject Item;
+    public GameObject shadowPS;
     public FSMSystem fsm;
     public Vector2 lastPos = new Vector2(0, 0); //holds the last position for mouse input to calculate deltaPosition
     public int numRows; //number of tiles to size
@@ -990,6 +991,7 @@ public class GameMasterFSM : MonoBehaviour
                 {
                     if (actor.GetComponent<ActorFSM>().actorName == "Tank")
                     {
+                        enemy.GetComponent<ActorFSM>().sprayShadows();
                         actors.Remove(enemy.gameObject);
                         enemies.Remove(enemy.gameObject);
                         GameObject.Destroy(enemy.gameObject);

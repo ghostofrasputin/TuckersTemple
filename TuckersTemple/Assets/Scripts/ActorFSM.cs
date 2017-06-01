@@ -317,6 +317,11 @@ public class ActorFSM : MonoBehaviour
     {
         goalPos = new Vector2(pos.x + transform.position.x, pos.y + transform.position.y);
     }
+
+    public void sprayShadows()
+    {
+        Instantiate(gm.GetComponent<GameMasterFSM>().shadowPS, this.transform.position, Quaternion.identity);
+    }
 }
 
 public class IdleAState : FSMState
@@ -644,6 +649,7 @@ public class TrapDeadAState : FSMState
             }
             else if (npc.tag == "Enemy")
             {
+                controlref.sprayShadows();
                 gm.GetComponent<GameMasterFSM>().enemies.Remove(npc);
                 gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
                 controlref.destroyObj();
@@ -745,7 +751,8 @@ public class LaserDeadAState : FSMState
 		}
 		else if (npc.tag == "Enemy")
 		{
-			gm.GetComponent<GameMasterFSM>().enemies.Remove(npc);
+            controlref.sprayShadows();
+            gm.GetComponent<GameMasterFSM>().enemies.Remove(npc);
 			gm.GetComponent<GameMasterFSM>().actors.Remove(npc);
 			controlref.destroyObj();
 		}
