@@ -220,10 +220,11 @@ public class GameMasterFSM : MonoBehaviour
 
     public void setWinScreenEmily()
     {
-        GameObject temp1 = GameObject.Find("Star1");
+        GameObject temp1 = GameObject.Find("Star3");
         temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
         temp1.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily");
+        temp1.transform.GetChild(0).gameObject.SetActive(false);
     }
 
     public void setWinScreenJake()
@@ -237,11 +238,11 @@ public class GameMasterFSM : MonoBehaviour
 
     public void setWinScreenRoy()
     {
-        GameObject temp3 = GameObject.Find("Star3");
+        GameObject temp3 = GameObject.Find("Star1");
         temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
         temp3.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy");
-        temp3.transform.GetChild(0).gameObject.SetActive(false);
+
     }
 
     //Called when the level is won
@@ -262,7 +263,7 @@ public class GameMasterFSM : MonoBehaviour
             Debug.Log(error);
         }
 
-        bool thirdStar = false;
+        bool secondStar = false;
         //check what the string requirement for this level is and check if it is satisfied
 
         int numMoves = levelsList[currentLevel - 1].Moves;
@@ -272,20 +273,21 @@ public class GameMasterFSM : MonoBehaviour
 
         if (starRequirements.ContainsKey(levelsList[currentLevel - 1].Star))
         {
-			if (starRequirements [levelsList [currentLevel - 1].Star] == true) thirdStar = true;
+			if (starRequirements [levelsList [currentLevel - 1].Star] == true) secondStar = true;
 
         }
 		zombie.setStar (currentLevel - 1, 0);
-        Invoke("setWinScreenEmily", 1.5f);
-        if(moves <= numMoves) {
+        Invoke("setWinScreenRoy", 1.5f);
+
+        if(secondStar) {
             moveText.color = Color.green;
 			zombie.setStar (currentLevel - 1, 1);
 			Invoke("setWinScreenJake", 2);
 		}
-        if (thirdStar) { 
+        if (moves <= numMoves) { 
 			zombie.setStar (currentLevel - 1, 2);
-			Invoke("setWinScreenRoy", 2.5f); 
-		}
+            Invoke("setWinScreenEmily", 2.5f);
+        }
 
 
         turnOffTileColliders();
@@ -331,9 +333,9 @@ public class GameMasterFSM : MonoBehaviour
     public void nextLevel()
     {
         currentLevel++;
-
-		//check if there is a cutscene before next level
-		if (cutscenes.Contains(currentLevel)) {
+        GameObject.FindGameObjectWithTag("Level-Num").GetComponent<Text>().text = "" + currentLevel;
+        //check if there is a cutscene before next level
+        if (cutscenes.Contains(currentLevel)) {
 			loadingScreen.SetActive (true);
 			GameObject.Find("ZombiePasser").GetComponent<ZombiePasser>().setLevel(currentLevel);
 			GameObject.Find("pauseScreen").GetComponent<InGameMenuManager>().loadScene ("cutScene");
@@ -349,6 +351,7 @@ public class GameMasterFSM : MonoBehaviour
 
         reset();
         ticking = true;
+
         SoundController.instance.PlaySingle(nextLevelSound);
 
         //reset already sets a transition, so this is throwing an error.  Not sure why it was here? -Andrew
