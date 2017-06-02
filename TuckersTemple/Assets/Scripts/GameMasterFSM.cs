@@ -119,6 +119,9 @@ public class GameMasterFSM : MonoBehaviour
         boundary = Instantiate(outerWall, Vector3.zero, Quaternion.identity);
         scalar = .006f;
         setStarRequirements();
+
+        GameObject.FindGameObjectWithTag("Level-Num").GetComponent<Text>().text = "" + GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevel();
+
     }
 
     public void Update()
@@ -239,10 +242,11 @@ public class GameMasterFSM : MonoBehaviour
 
     public void setWinScreenEmily()
     {
-        GameObject temp1 = GameObject.Find("Star1");
-        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
-        temp1.GetComponent<ParticleSystem>().Play();
+        GameObject temp3 = GameObject.Find("Star3");
+        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
+        temp3.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily");
+        GameObject.Find("NumMoves").GetComponent<Text>().text = "";
     }
 
     public void setWinScreenJake()
@@ -251,16 +255,20 @@ public class GameMasterFSM : MonoBehaviour
         temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
         temp2.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("jakeWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake");
-        GameObject.Find("NumMoves").GetComponent<Text>().text = "";
+        temp2.transform.GetChild(0).gameObject.SetActive(false);
     }
 
     public void setWinScreenRoy()
     {
-        GameObject temp3 = GameObject.Find("Star3");
-        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
-        temp3.GetComponent<ParticleSystem>().Play();
+        GameObject temp1 = GameObject.Find("Star1");
+        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
+        temp1.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy");
-        temp3.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+    public void setWinScreenTank()
+    {
+        GameObject.FindWithTag("tankWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/Jumping-Tank");
     }
 
     //Called when the level is won
@@ -294,7 +302,7 @@ public class GameMasterFSM : MonoBehaviour
             Debug.Log(error);
         }
 
-        bool thirdStar = false;
+        bool itemStar = false;
         //check what the string requirement for this level is and check if it is satisfied
 
         int numMoves = levelsList[currentLevel - 1].Moves;
@@ -304,24 +312,28 @@ public class GameMasterFSM : MonoBehaviour
 
         if (starRequirements.ContainsKey(levelsList[currentLevel - 1].Star))
         {
-            if (starRequirements[levelsList[currentLevel - 1].Star] == true) thirdStar = true;
+            if (starRequirements[levelsList[currentLevel - 1].Star] == true) itemStar = true;
 
         }
         zombie.setStar(currentLevel - 1, 0);
-        Invoke("setWinScreenEmily", 1.5f);
+        Invoke("setWinScreenRoy", 1.5f);
         SoundController.instance.RoyVoice(royWin1, royWin2, royWin3);
         if (moves <= numMoves)
         {
             moveText.color = Color.green;
             zombie.setStar(currentLevel - 1, 1);
-            Invoke("setWinScreenJake", 2);
-            SoundController.instance.JakeVoice(jakeWin1, jakeWin2, jakeWin3);
+            Invoke("setWinScreenEmily", 2.5f);
+            SoundController.instance.EmilyVoice(emilyWin1, emilyWin2, emilyWin3);
+            if (itemStar)
+            {
+                Invoke("setWinScreenTank", 3f);
+            }
         }
-        if (thirdStar)
+        if (itemStar)
         {
             zombie.setStar(currentLevel - 1, 2);
-            Invoke("setWinScreenRoy", 2.5f);
-            SoundController.instance.EmilyVoice(emilyWin1, emilyWin2, emilyWin3);
+            Invoke("setWinScreenJake", 2f);
+            SoundController.instance.JakeVoice(jakeWin1, jakeWin2, jakeWin3);
         }
 
 
@@ -368,6 +380,7 @@ public class GameMasterFSM : MonoBehaviour
     public void nextLevel()
     {
         currentLevel++;
+        GameObject.FindGameObjectWithTag("Level-Num").GetComponent<Text>().text = currentLevel.ToString();
 
         //check if there is a cutscene before next level
         if (cutscenes.Contains(currentLevel))
@@ -708,17 +721,22 @@ public class GameMasterFSM : MonoBehaviour
                         {
                             if (!wrapLatch)
                             {
+                                //Spawn a tile below
                                 wrapTile = tileGrid[Column][numRows - 1];
                                 origScale = wrapTile.transform.localScale;
                                 wrapTile.transform.localScale = Vector3.one;
                                 wrapCopy1 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, -tileSize, 0), Quaternion.identity, wrapTile.transform);
+                                wrapCopy1.GetComponent<TileFSM>().setSortingLayer(1);
                                 Destroy(wrapCopy1.GetComponent<TileFSM>());
                                 wrapTile.transform.localScale = origScale;
                                 SoundController.instance.RandomSfxTiles(tileSlideOnly, tileSlideOnly);
+
+                                //spawn a tile above
                                 wrapTile = tileGrid[Column][0];
                                 origScale = wrapTile.transform.localScale;
                                 wrapTile.transform.localScale = Vector3.one;
                                 wrapCopy2 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, tileSize * numRows, 0), Quaternion.identity, wrapTile.transform);
+                                wrapCopy2.GetComponent<TileFSM>().setSortingLayer(-5);
                                 Destroy(wrapCopy2.GetComponent<TileFSM>());
                                 wrapTile.transform.localScale = origScale;
 
@@ -1242,6 +1260,7 @@ public class LevelJuiceState : FSMState
         GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily_blank");
         GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy_blank");
         GameObject.FindWithTag("jakeWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake_blank");
+        GameObject.FindWithTag("tankWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("CutScenes/blank");
 
         //check if first level, if so show tutorial.
         if (controlref.currentLevel == 1)
