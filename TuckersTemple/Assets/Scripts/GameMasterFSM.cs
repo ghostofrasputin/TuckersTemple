@@ -327,6 +327,7 @@ public class GameMasterFSM : MonoBehaviour
             if (itemStar)
             {
                 Invoke("setWinScreenTank", 3f);
+				SoundController.instance.TankVoice (tankWin1, tankWin1);
             }
         }
         if (itemStar)

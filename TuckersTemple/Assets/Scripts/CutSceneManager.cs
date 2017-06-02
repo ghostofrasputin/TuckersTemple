@@ -81,7 +81,9 @@ public class CutSceneManager : MonoBehaviour {
             {"JakeCurious", "CutScenes/jakeCURIOUScutscene_4"},
             {"JakeHappy", "CutScenes/jakeHAPPYScutscene_2"},
             {"TankStandard", "CutScenes/tank"},
-            {"EmilyHappy", "Cutscenes/emilyHAPPY"}
+            {"EmilyHappy", "CutScenes/emilyHAPPY"},
+			{"DadScared", "CutScenes/fatherSCARED"},
+			{"DadHappy", "CutScenes/fatherHAPPY"}
         };
 		backgrounds = new Dictionary<string, string> () {
 			{"templeOutside", "CutScenes/cutscene_Outside"},
@@ -104,9 +106,34 @@ public class CutSceneManager : MonoBehaviour {
 			{"johnTuckerFigure","Cutscenes/johnTuckerFigure"}
         };
 		sounds = new Dictionary<string, string> () {
-			{"roy_hmm", "CutScenes/Andre-Hmm"},
-			{"roy_notsure", "CutScenes/Andre-ImNotSureAboutThis"},
-			{"roy_confused", "CutScenes/Andre-WhatWasThat"}
+			{"roy_hmm", "CutScenes/Roy/Roy - Thinking"},
+		//	{"roy_notsure", "CutScenes/Andre-ImNotSureAboutThis"},
+		//	{"roy_confused", "CutScenes/Andre-WhatWasThat"}, 
+			{"roy_relieved", "CutScenes/Roy/Roy - Relieved"},
+			{"roy_spooked", "CutScenes/Roy/Roy - Shook"},
+			{"roy_unsure", "CutScenes/Roy/Roy - Unsure"},
+			{"roy_determined", "CutScenes/Roy/Roy - Determined"},
+			{"roy_pumped", "CutScenes/Roy/Roy - EndLevel1"},
+			{"emily_determined", "CutScenes/Emily/Emily - Determined"},
+			{"emily_disturbed", "CutScenes/Emily/Emily - Disturbed"},
+			{"emily_happylaugh", "CutScenes/Emily/Emily - HappyLaugh"},
+			{"emily_relief", "CutScenes/Emily/Emily - Relief"},
+			{"emily_spooked", "CutScenes/Emily/Emily - Shook"},
+			{"emily_thinking", "CutScenes/Emily/Emily - Thinking"},
+			{"jake_affirmative", "CutScenes/Jake/Jake - Affirmative"},
+			{"jake_confused", "CutScenes/Jake/Jake - Confused"},
+			{"jake_scared", "CutScenes/Jake/Jake - Really Scared or Death"},
+			{"jake_relief", "CutScenes/Jake/Jake - Relieved"},
+			{"jake_spooked", "CutScenes/Jake/Jake - Shook"},
+			{"jake_unsure", "CutScenes/Jake/Jake - Unsure"},
+			{"tank_cautious", "CutScenes/Tank/Tank - Cautious"},
+			{"tank_concerned", "CutScenes/Tank/Tank - Concerned"},
+			{"tank_distressed", "CutScenes/Tank/Tank - Distressed"},
+			{"tank_happy", "CutScenes/Tank/Tank - Happy2"},
+			{"tank_loudroar", "CutScenes/Tank/Tank - Death"},
+			{"temple_rumble", "CutScenes/templerumbling"},
+			{"temple_collapse", "CutScenes/Temple Falling"}
+
 		};
 
 		cutSceneFiles = new Dictionary<int, string>(){
