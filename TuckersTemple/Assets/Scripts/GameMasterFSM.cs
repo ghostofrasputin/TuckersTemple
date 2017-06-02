@@ -507,7 +507,7 @@ public class GameMasterFSM : MonoBehaviour
 		int darkLevel = 31;
 		GameObject background = GameObject.FindGameObjectWithTag ("Background");
 		GameObject foreground = GameObject.FindGameObjectWithTag ("Foreground");
-		if (currentLevel > darkLevel) {
+		if (currentLevel >= darkLevel) {
 			background.GetComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("BackgroundPurple");
 			foreground.GetComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("ForegroundPurple");
 		}
@@ -530,7 +530,7 @@ public class GameMasterFSM : MonoBehaviour
         if (numCols == 4)
         {
             mainCamera.transform.localScale = new Vector3(1.31f, 1.333f, 1);
-            mainCamera.transform.position = new Vector3(2.25f, 1.6f, -10);
+            mainCamera.transform.position = new Vector3(2.3f, 1.6f, -10);
             mainCamera.GetComponent<Camera>().orthographicSize = 7;
             // scale UI border to work with new camera paramters
             UIBorder.transform.localScale = new Vector3(1.76075f, 1.915672f, 1f);
@@ -539,7 +539,7 @@ public class GameMasterFSM : MonoBehaviour
         if (numCols == 3)
         {
             mainCamera.transform.localScale = new Vector3(1f, 1f, 1);
-            mainCamera.transform.position = new Vector3(1.5f, 1f, -10);
+            mainCamera.transform.position = new Vector3(1.55f, 1f, -10);
             mainCamera.GetComponent<Camera>().orthographicSize = 5;
             // scale UI border to work with new camera paramters
             UIBorder.transform.localScale = new Vector3(1.26393f, 1.371209f, 1f);
@@ -664,6 +664,10 @@ public class GameMasterFSM : MonoBehaviour
         //Add in outer walls to the grid
         boundary.transform.localScale = new Vector3((numCols * 4 / 3) * tileSize, (numRows * 4 / 3) * tileSize, 1);
         boundary.transform.position = new Vector3((numCols * 4 / 3) * tileSize / 4, (numRows * 4 / 3) * tileSize / 4, 0);
+		if (numCols == 4) {
+			boundary.transform.localScale = new Vector3(8.25f, 8.25f, 1);
+			boundary.transform.position = new Vector3(2.25f, 2.25f, 0);
+		}
         //Debug.Log(boundary.transform.localScale.ToString());
     }
 

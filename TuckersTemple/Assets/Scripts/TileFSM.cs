@@ -65,6 +65,7 @@ public class TileFSM : MonoBehaviour
 
     public void Update()
     {
+		Debug.Log (fsm.CurrentStateID);
         fsm.CurrentState.Reason(gm, gameObject);
         fsm.CurrentState.Act(gm, gameObject);
     }
