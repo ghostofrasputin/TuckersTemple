@@ -10,6 +10,7 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject gm;
     public GameObject outerWall;
     public GameObject Tile; //The tile prefab to spawn in
+	public GameObject TileDark;
     public GameObject Character;
     public GameObject Emily;
     public GameObject Jake;
@@ -18,8 +19,10 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject Enemy;
     public GameObject Wraith;
     public GameObject Goal;
+	public GameObject GoalDark;
     public GameObject Laser;
     public GameObject Item;
+	public GameObject ItemDark;
     public GameObject shadowPS;
     public FSMSystem fsm;
     public Vector2 lastPos = new Vector2(0, 0); //holds the last position for mouse input to calculate deltaPosition
@@ -500,24 +503,35 @@ public class GameMasterFSM : MonoBehaviour
     }
 
     // takes in the current level and creates it:
-    public void generateLevel(Level currentLevel)
+    public void generateLevel(Level currLevel)
     {
+		int darkLevel = 31;
+		GameObject background = GameObject.FindGameObjectWithTag ("Background");
+		GameObject foreground = GameObject.FindGameObjectWithTag ("Foreground");
+		if (currentLevel >= darkLevel) {
+			background.GetComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("BackgroundPurple");
+			foreground.GetComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("ForegroundPurple");
+		}
+		else {
+			background.GetComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("BackgroundGold");
+			foreground.GetComponent<SpriteRenderer> ().sprite = Resources.Load<Sprite> ("ForegroundGold");
+		}
         // extract level info:
-        string name = currentLevel.Name;
-        numRows = currentLevel.Rows;
-        numCols = currentLevel.Cols;
-        List<List<string>> tileInfo = currentLevel.Tiles;
-        Dictionary<string, List<int>> actorInfo = currentLevel.Actors;
-        Dictionary<string, List<int>> staticObjectInfo = currentLevel.StaticObjects;
+        string name = currLevel.Name;
+        numRows = currLevel.Rows;
+        numCols = currLevel.Cols;
+        List<List<string>> tileInfo = currLevel.Tiles;
+        Dictionary<string, List<int>> actorInfo = currLevel.Actors;
+        Dictionary<string, List<int>> staticObjectInfo = currLevel.StaticObjects;
 
         //zoom the camera and scale the background
-        GameObject mainCamera = GameObject.Find("Main Camera");
-        GameObject UIBorder = GameObject.Find("UIBorderPause");
+        GameObject mainCamera = GameObject.FindWithTag("MainCamera");
+        GameObject UIBorder = GameObject.FindWithTag("UI-Border");
         //Debug.Log ("UI Border: " + UIBorder.transform.position + " " + UIBorder.transform.localScale);
         if (numCols == 4)
         {
             mainCamera.transform.localScale = new Vector3(1.31f, 1.333f, 1);
-            mainCamera.transform.position = new Vector3(2.25f, 1.6f, -10);
+            mainCamera.transform.position = new Vector3(2.3f, 1.6f, -10);
             mainCamera.GetComponent<Camera>().orthographicSize = 7;
             // scale UI border to work with new camera paramters
             UIBorder.transform.localScale = new Vector3(1.76075f, 1.915672f, 1f);
@@ -526,7 +540,7 @@ public class GameMasterFSM : MonoBehaviour
         if (numCols == 3)
         {
             mainCamera.transform.localScale = new Vector3(1f, 1f, 1);
-            mainCamera.transform.position = new Vector3(1.5f, 1f, -10);
+            mainCamera.transform.position = new Vector3(1.55f, 1f, -10);
             mainCamera.GetComponent<Camera>().orthographicSize = 5;
             // scale UI border to work with new camera paramters
             UIBorder.transform.localScale = new Vector3(1.26393f, 1.371209f, 1f);
@@ -546,7 +560,11 @@ public class GameMasterFSM : MonoBehaviour
                 List<string> row = tileInfo[numRows - r - 1];
                 string currentTileType = row[c];
                 //instantiate a tile at the proper grid position
-                tileGrid[c][r] = Instantiate(Tile, new Vector3(c * tileSize, r * tileSize, 0), Quaternion.identity, RootTile.transform);
+				if ( currentLevel >= darkLevel) {
+					tileGrid [c] [r] = Instantiate (TileDark, new Vector3 (c * tileSize, r * tileSize, 0), Quaternion.identity, RootTile.transform);
+				} else {
+					tileGrid [c] [r] = Instantiate (Tile, new Vector3 (c * tileSize, r * tileSize, 0), Quaternion.identity, RootTile.transform);
+				}
                 tiles.Add(tileGrid[c][r]);
                 // pass the tile object the type indicator string where it will
                 // create a tile based on that string
@@ -606,8 +624,13 @@ public class GameMasterFSM : MonoBehaviour
             {
                 int x = value[0];
                 int y = value[1];
-                Instantiate(Goal, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y,
-                    tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
+				if (currentLevel >= darkLevel) {
+					Instantiate (GoalDark, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y,
+						tileGrid [x] [y].transform.position.z), Quaternion.identity, tileGrid [x] [y].transform);
+					} else {
+					Instantiate (Goal, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y,
+						tileGrid [x] [y].transform.position.z), Quaternion.identity, tileGrid [x] [y].transform);
+				}
             }
             if (key.Contains("trap"))
             {
@@ -630,13 +653,22 @@ public class GameMasterFSM : MonoBehaviour
             {
                 int x = value[0];
                 int y = value[1];
-                Instantiate(Item, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y,
-                    tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
+				if (currentLevel >= darkLevel) {
+					Instantiate (ItemDark, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y,
+						tileGrid [x] [y].transform.position.z), Quaternion.identity, tileGrid [x] [y].transform);
+					} else {
+					Instantiate (Item, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y,
+						tileGrid [x] [y].transform.position.z), Quaternion.identity, tileGrid [x] [y].transform);
+				}
             }
         }
         //Add in outer walls to the grid
         boundary.transform.localScale = new Vector3((numCols * 4 / 3) * tileSize, (numRows * 4 / 3) * tileSize, 1);
         boundary.transform.position = new Vector3((numCols * 4 / 3) * tileSize / 4, (numRows * 4 / 3) * tileSize / 4, 0);
+		if (numCols == 4) {
+			boundary.transform.localScale = new Vector3(8.25f, 8.25f, 1);
+			boundary.transform.position = new Vector3(2.25f, 2.25f, 0);
+		}
         //Debug.Log(boundary.transform.localScale.ToString());
     }
 
