@@ -260,14 +260,18 @@ public class TileFSM : MonoBehaviour
 
     public void setSortingLayer(int layer)
     {
+        Debug.Log(layer);
         for (int i = 0; i < transform.childCount; i++)
         {
             GameObject Go = transform.GetChild(i).gameObject;
-            if(Go.GetComponent<SideWall>() != null)
+            if (Go.CompareTag("WallCorner") || Go.CompareTag("Wall"))
             {
-                layer++;
+                if (Go.GetComponent<SideWall>() != null)
+                {
+                    layer++;
+                }
+                Go.GetComponent<SpriteRenderer>().sortingOrder = layer;
             }
-            Go.GetComponent<SpriteRenderer>().sortingOrder = layer ;
         }
     }
 }
@@ -330,6 +334,7 @@ public class IdleState : FSMState
         controlref.startPos.x = controlref.transform.position.x;
         controlref.startPos.y = controlref.transform.position.y;
         controlref.maxDist = new Vector2(controlref.tileSize, controlref.tileSize);
+        controlref.setSortingLayer(-(int)Mathf.Floor(controlref.transform.position.y / controlref.tileSize));
         //Debug.Log (controlref.maxDist);
     }
 
@@ -339,7 +344,6 @@ public class IdleState : FSMState
         {
             npc.GetComponent<TileFSM>().SetTransition(Transition.UserSwiped); //to follow
         }
-        controlref.setSortingLayer(-(int)Mathf.Floor(controlref.transform.position.y / controlref.tileSize));
     }
 
     public override void Act(GameObject gm, GameObject npc)
@@ -448,6 +452,16 @@ public class WrapState : FSMState
         controlref = control;
     }
 
+    public override void DoBeforeEntering()
+    {
+        int sl = -(int)Mathf.Floor(controlref.goalPos.y / controlref.tileSize);
+        if (controlref.goalPos.y > controlref.transform.position.y)
+        {
+            --sl;
+        }
+        controlref.GetComponent<TileFSM>().setSortingLayer(sl);
+    }
+
     public override void Reason(GameObject gm, GameObject npc)
     {
         //magic number hack for tile scale
@@ -458,8 +472,8 @@ public class WrapState : FSMState
     }
 
     public override void Act(GameObject gm, GameObject npc)
-    {
-        npc.transform.position = new Vector2(controlref.goalPos.x, controlref.goalPos.y);
+    {        
+        npc.transform.position = new Vector2(controlref.goalPos.x, controlref.goalPos.y);      
     }
 
 } // WrapState

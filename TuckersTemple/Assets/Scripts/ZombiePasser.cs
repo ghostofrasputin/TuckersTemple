@@ -43,12 +43,16 @@ public class ZombiePasser : MonoBehaviour {
 	// Make this game object and all its transform children
 	// survive when loading a new scene.
 	private void Awake () {
-		//set the screen orientation.  We do this in ZombiePasser since it exists in
-		//every screen. This is untested and needs to be tried in an apk. -Andrew
-		//Screen.orientation = ScreenOrientation.Portrait; //never mind we can do this in player settings
+        //set the screen orientation.  We do this in ZombiePasser since it exists in
+        //every screen. This is untested and needs to be tried in an apk. -Andrew
+        //Screen.orientation = ScreenOrientation.Portrait; //never mind we can do this in player settings
+        if (Application.platform == RuntimePlatform.WindowsPlayer)
+        {
+            Screen.SetResolution(640, 1136, false);
+        }
 
-		// extract level JSON file here:
-		levelData = Camera.main.GetComponent<LevelReader>();
+        // extract level JSON file here:
+        levelData = Camera.main.GetComponent<LevelReader>();
 		levelsList = levelData.getLevels();
 
 		// Generate Level Icons:
