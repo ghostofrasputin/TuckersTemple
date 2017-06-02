@@ -239,10 +239,11 @@ public class GameMasterFSM : MonoBehaviour
 
     public void setWinScreenEmily()
     {
-        GameObject temp1 = GameObject.Find("Star1");
-        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
-        temp1.GetComponent<ParticleSystem>().Play();
+        GameObject temp3 = GameObject.Find("Star3");
+        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
+        temp3.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily");
+        GameObject.Find("NumMoves").GetComponent<Text>().text = "";
     }
 
     public void setWinScreenJake()
@@ -251,16 +252,15 @@ public class GameMasterFSM : MonoBehaviour
         temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
         temp2.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("jakeWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake");
-        GameObject.Find("NumMoves").GetComponent<Text>().text = "";
+        temp2.transform.GetChild(0).gameObject.SetActive(false);
     }
 
     public void setWinScreenRoy()
     {
-        GameObject temp3 = GameObject.Find("Star3");
-        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
-        temp3.GetComponent<ParticleSystem>().Play();
+        GameObject temp1 = GameObject.Find("Star1");
+        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars");
+        temp1.GetComponent<ParticleSystem>().Play();
         GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy");
-        temp3.transform.GetChild(0).gameObject.SetActive(false);
     }
 
     //Called when the level is won
@@ -294,7 +294,7 @@ public class GameMasterFSM : MonoBehaviour
             Debug.Log(error);
         }
 
-        bool thirdStar = false;
+        bool itemStar = false;
         //check what the string requirement for this level is and check if it is satisfied
 
         int numMoves = levelsList[currentLevel - 1].Moves;
@@ -304,24 +304,24 @@ public class GameMasterFSM : MonoBehaviour
 
         if (starRequirements.ContainsKey(levelsList[currentLevel - 1].Star))
         {
-            if (starRequirements[levelsList[currentLevel - 1].Star] == true) thirdStar = true;
+            if (starRequirements[levelsList[currentLevel - 1].Star] == true) itemStar = true;
 
         }
         zombie.setStar(currentLevel - 1, 0);
-        Invoke("setWinScreenEmily", 1.5f);
+        Invoke("setWinScreenR", 1.5f);
         SoundController.instance.RoyVoice(royWin1, royWin2, royWin3);
         if (moves <= numMoves)
         {
             moveText.color = Color.green;
             zombie.setStar(currentLevel - 1, 1);
-            Invoke("setWinScreenJake", 2);
-            SoundController.instance.JakeVoice(jakeWin1, jakeWin2, jakeWin3);
+            Invoke("setWinScreenEmily", 2.5f);
+            SoundController.instance.EmilyVoice(emilyWin1, emilyWin2, emilyWin3);
         }
-        if (thirdStar)
+        if (itemStar)
         {
             zombie.setStar(currentLevel - 1, 2);
-            Invoke("setWinScreenRoy", 2.5f);
-            SoundController.instance.EmilyVoice(emilyWin1, emilyWin2, emilyWin3);
+            Invoke("setWinScreenJake", 2f);
+            SoundController.instance.JakeVoice(jakeWin1, jakeWin2, jakeWin3);
         }
 
 
@@ -368,6 +368,7 @@ public class GameMasterFSM : MonoBehaviour
     public void nextLevel()
     {
         currentLevel++;
+        GameObject.FindGameObjectWithTag("Level-Num").GetComponent<Text>().text = "" + currentLevel;
 
         //check if there is a cutscene before next level
         if (cutscenes.Contains(currentLevel))
@@ -495,6 +496,8 @@ public class GameMasterFSM : MonoBehaviour
         List<List<string>> tileInfo = currentLevel.Tiles;
         Dictionary<string, List<int>> actorInfo = currentLevel.Actors;
         Dictionary<string, List<int>> staticObjectInfo = currentLevel.StaticObjects;
+
+        GameObject.FindGameObjectWithTag("Level-Num").GetComponent<Text>().text = "" + GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevel();
 
         //zoom the camera and scale the background
         GameObject mainCamera = GameObject.Find("Main Camera");
