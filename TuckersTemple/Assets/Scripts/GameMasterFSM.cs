@@ -269,7 +269,20 @@ public class GameMasterFSM : MonoBehaviour
     {
         SoundController.instance.RandomSfxTiles(levelWinSound, levelWinSound);
         ZombiePasser zombie = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>();
-
+        // So enemies aren't heard in Level Win Screen 
+		GameObject[] enemies = GameObject.FindGameObjectsWithTag("Trap");
+		GameObject[] enemies1 = GameObject.FindGameObjectsWithTag("Enemy");
+		GameObject[] enemies2 = GameObject.FindGameObjectsWithTag("Laser");
+		foreach (GameObject enemy in enemies) {
+			GameObject.Destroy (enemy);
+		}
+		foreach (GameObject enemy in enemies1) {
+			GameObject.Destroy (enemy);
+		}
+		foreach (GameObject enemy in enemies2) {
+			GameObject.Destroy (enemy);
+		}
+			
         try
         {
             // unlocks the next level. 
