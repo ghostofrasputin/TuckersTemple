@@ -29,6 +29,7 @@ public class ActorFSM : MonoBehaviour
 	public float scaleFactor;
 	public bool rotateFlag;
 	public float rotateFactor;
+    public float speed;
 
 	//deathtexts
 	private Dictionary<string, List<string>> deathTexts;
@@ -54,6 +55,7 @@ public class ActorFSM : MonoBehaviour
     public void Start()
     {
         gm = GameObject.FindGameObjectWithTag("GameController");
+        speed = 2f;
         doneSlide = false;
 		scaleFlag = false;
 		rotateFlag = false;
@@ -203,7 +205,9 @@ public class ActorFSM : MonoBehaviour
 			scaleFactor = upperLimit;
 			scaleFlag = false;
 		}
-		gameObject.transform.localScale = new Vector3 (scaleFactor, scaleFactor, 0.0f); 
+        //scaleFactor *= Time.deltaTime;
+
+        gameObject.transform.localScale = new Vector3 (scaleFactor, scaleFactor, 0.0f); 
 
 		// controls rotation:
 		if (rotateFlag) {
@@ -220,7 +224,7 @@ public class ActorFSM : MonoBehaviour
 			rotateFactor = rUL;
 			rotateFlag = false;
 		}
-		gameObject.transform.RotateAround(gameObject.transform.position,new Vector3(0,0,1),rotateSpeed);
+		gameObject.transform.RotateAround(gameObject.transform.position,new Vector3(0,0,1), rotateSpeed);
 	}
 
 	public void setDeathText(string cause){
@@ -308,7 +312,7 @@ public class ActorFSM : MonoBehaviour
             default:
                 break;
         }
-        float speed = multiCharOffset * GetComponent<SpriteRenderer>().sortingOrder;
+        float speed = multiCharOffset * GetComponent<SpriteRenderer>().sortingOrder * Time.deltaTime;
         Debug.Log(speed+", "+ multiCharOffset +", "+ GetComponent<SpriteRenderer>().sortingOrder);
         transform.position = Vector2.MoveTowards(transform.position, goalPos, speed);
     }
@@ -500,7 +504,6 @@ public class LookAState : FSMState
 public class WalkAState : FSMState
 {
 	ActorFSM controlref;
-    private float speed = .03f;
 
     public WalkAState(ActorFSM control)
 	{
@@ -557,7 +560,7 @@ public class WalkAState : FSMState
 			npc.GetComponent<ActorFSM> ().wiggle (0.001f, 0.5f, 1.1f, 1.3f, 0.2f, 0.6f);
 		}
 
-        npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
+        npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, controlref.speed * Time.deltaTime);
     }
 
 } // WalkAState
@@ -565,7 +568,6 @@ public class WalkAState : FSMState
 public class WinAState : FSMState
 {
     ActorFSM controlref;
-    private float speed = .07f;
 
     public WinAState(ActorFSM control)
     {
@@ -592,7 +594,7 @@ public class WinAState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
-        npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
+        npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, controlref.speed* 2f * Time.deltaTime);
     }
 
 } // WinState
@@ -600,7 +602,6 @@ public class WinAState : FSMState
 public class TrapDeadAState : FSMState
 {
     ActorFSM controlref;
-    private float speed = .07f;
 
     public TrapDeadAState(ActorFSM control)
     {
@@ -668,7 +669,7 @@ public class TrapDeadAState : FSMState
             npc.GetComponent<ActorFSM>().wiggle(0.001f, 0.5f, 1.1f, 1.3f, 0.2f, 0.6f);
         }
 
-        npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
+        npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, controlref.speed * Time.deltaTime);
     }
 
 } // TrapDeadState
@@ -790,7 +791,6 @@ public class LaserDeadAState : FSMState
 public class EnterState : FSMState
 {
 	ActorFSM controlref;
-	private float speed = .07f;
 
 	public EnterState(ActorFSM control)
 	{
@@ -809,7 +809,7 @@ public class EnterState : FSMState
 
 	public override void Act(GameObject gm, GameObject npc)
 	{
-		npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
+		npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, controlref.speed * Time.deltaTime);
 	}
 		
 } // EnterState
