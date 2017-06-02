@@ -56,6 +56,8 @@ public class TileFSM : MonoBehaviour
         offGrid = false;
         touchReleased = false;
 
+        setSortingLayer(-(int)Mathf.Floor(transform.position.y / tileSize));
+
         MakeFSM();
     }
 
@@ -102,7 +104,8 @@ public class TileFSM : MonoBehaviour
         int[] wallCheck = { 0, 0, 0, 0 };
         GameObject wall;
         GameObject paths = Instantiate(pathOverlay, transform.position, Quaternion.identity, transform);
-        Instantiate(corners, transform.position, Quaternion.identity, transform);
+        GameObject newCorners = Instantiate(corners, transform.position, Quaternion.identity, transform);
+        newCorners.transform.localPosition = new Vector2(0, -0.5f);
 
         switch (currentTileType)
         {
@@ -223,7 +226,7 @@ public class TileFSM : MonoBehaviour
                 // wall.transform.localScale = new Vector3 (.01f, .05f, .1f);
                 SpriteRenderer sr = wall.GetComponent<SpriteRenderer>();
                 offset = wall.GetComponent<Renderer>().bounds.size.x;
-                // right wall:
+                // top wall:
                 if (i == 0)
                 {
                     sr.sprite = upWall;
@@ -233,23 +236,38 @@ public class TileFSM : MonoBehaviour
                 if (i == 1)
                 {
                     sr.sprite = rightWall;
-                    wall.transform.Translate(new Vector3(offset, 0.1f, 0));
-                    wall.transform.localScale = new Vector3(1, 1.4f, 1);
+                    wall.transform.Translate(new Vector3(offset, 0.12f, 0));
+                    wall.transform.localScale = new Vector3(1, 1.3f, 1);
+                    wall.AddComponent<SideWall>();
                 }
                 // bottom wall:
                 if (i == 2)
                 {
                     sr.sprite = downWall;
-                    wall.transform.Translate(new Vector3(0, offset * -1, 0));
+                    wall.transform.Translate(new Vector3(0, offset * -1.75f, 0));
                 }
                 // left wall:
                 if (i == 3)
                 {
                     sr.sprite = leftWall;
-                    wall.transform.Translate(new Vector3(offset * -1, 0.1f, 0));
-                    wall.transform.localScale = new Vector3(1, 1.4f, 1);
+                    wall.transform.Translate(new Vector3(offset * -1, 0.12f, 0));
+                    wall.transform.localScale = new Vector3(1, 1.3f, 1);
+                    wall.AddComponent<SideWall>();
                 }
             }
+        }
+    }
+
+    public void setSortingLayer(int layer)
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            GameObject Go = transform.GetChild(i).gameObject;
+            if(Go.GetComponent<SideWall>() != null)
+            {
+                layer++;
+            }
+            Go.GetComponent<SpriteRenderer>().sortingOrder = layer ;
         }
     }
 }
@@ -321,7 +339,7 @@ public class IdleState : FSMState
         {
             npc.GetComponent<TileFSM>().SetTransition(Transition.UserSwiped); //to follow
         }
-
+        controlref.setSortingLayer(-(int)Mathf.Floor(controlref.transform.position.y / controlref.tileSize));
     }
 
     public override void Act(GameObject gm, GameObject npc)
