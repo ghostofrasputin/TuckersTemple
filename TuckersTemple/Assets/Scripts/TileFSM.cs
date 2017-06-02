@@ -39,9 +39,11 @@ public class TileFSM : MonoBehaviour
     public bool touchReleased;
     public bool incompleteMove;
 
+
     public void Start()
     {
         gm = GameObject.FindGameObjectWithTag("GameController").gameObject;
+
         goalPos = transform.position;
         tileSize = gm.GetComponent<GameMasterFSM>().tileSize;
         if (goalPos.y / tileSize % 2 == 0)
