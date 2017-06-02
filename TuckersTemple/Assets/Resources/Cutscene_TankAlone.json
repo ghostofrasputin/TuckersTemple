@@ -11,12 +11,12 @@
     "image": "tankPup",
     "line1": {
       "image": "blank",
-      "text": "I found Tank on one of our adventures. We thought she was a puppy that had either been lost or abandoned.",
+      "text": "Emily: I found Tank on one of our adventures. We thought she was a puppy that had either been lost or abandoned.",
       "sound": ""
     },
     "line2": {
       "image": "blank",
-      "text": "We loved her instantly, and it took us a lot of begging to convince Mom to let us keep her.",
+      "text": "Emily: We loved her instantly, and it took a lot of begging to convince Mom to let us keep her.",
       "sound": ""
     }
   },
@@ -24,12 +24,12 @@
     "image": "tankGrownUp",
     "line1": {
       "image": "blank",
-      "text": "Little did we know, Tank was actually a bear cub, so it was quite surprising to see how big she had grown within a year.",
+      "text": "Emily: Tank grew tremendously within the first few months, and it took one visit to the vet for us to find out that Tank was actually a bear.",
       "sound": ""
     },
     "line2": {
       "image": "blank",
-      "text": "It scared Mom a lot at first, but I guess she realized how helpful Tank was with taking care of us, especially when Dad was away. So she let us keep her.",
+      "text": "Emily: It scared Mom a lot at first, but I guess she realized how helpful Tank was with taking care of us, especially when Dad was away. So she let us keep her.",
       "sound": ""
     }
   },
@@ -48,7 +48,7 @@
     "line3": {
       "image": "blank",
       "text": "...even if it meant destroying anyone or anything in her way.",
-      "sound": ""
+      "sound": "tank-distressed"
     }
   }
 }

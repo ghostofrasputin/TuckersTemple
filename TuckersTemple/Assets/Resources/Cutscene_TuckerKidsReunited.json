@@ -3,18 +3,18 @@
 		"image": "templeInside",
 	  		"line1": {
 				"image": "EmilyCurious",
-				"text": "I...I thought I heard someone, Tank!",
-				"sound": ""
+				"text": "Emily: I...I thought I heard someone, Tank!",
+				"sound": "emily_spooked"
 			},
 			"line2": {
 				"image": "EmilyScared", 
-				"text": "Roy!? Jake?!",
+				"text": "Emily: Roy!? Jake?!",
 				"sound": ""
 			}, 
 			"line3": {
 				"image": "TankStandard", 
-				"text": "-Loud Roar-",
-				"sound": ""
+				"text": "Tank: -Loud Roar-",
+				"sound": "tank_loudroar"
 			}
 	},
 	"scene2": {
@@ -22,63 +22,63 @@
 			"line1": {
 				"image": "blank",
 				"text": "Emily?",
-				"sound": ""
+				"sound": "roy_spooked"
 			}
 	},
 	"scene3": {
 		"image": "tuckersreunited",
 			"line1": {
 				"image": "blank",
-				"text": "...You're all okay!",
-				"sound": ""
+				"text": "Emily: ...You're all okay!",
+				"sound": "emily_happylaugh"
 			}
 	}, 
 	"scene4": {
 		"image": "templeInside",
 			"line1": {
 				"image": "RoyHappy",
-				"text": "Finally! Thank goodness we're all still here!",
-				"sound": ""
+				"text": "Roy: Finally! Thank goodness we're all still here!",
+				"sound": "roy_relieved"
 			},
 			"line2": {
 				"image": "EmilyScared",
-				"text": "This place is insane! There's always something dangerous at every turn!",
-				"sound": ""
+				"text": "Emily: This place is insane! There's always something dangerous at every turn!",
+				"sound": "emily_disturbed"
 			},
 			"line3": {
 				"image": "RoyStandard",
-				"text": "I know. Who knows how big this place really is...",
-				"sound": ""
+				"text": "Roy: I know. Who knows how big this place really is...",
+				"sound": "roy_hmm"
 			},
 			"line4": {
 				"image": "JakeScared",
-				"text": "But we still have to find Dad!",
-				"sound": ""
+				"text": "Jake: But we still have to find Dad!",
+				"sound": "jake_spooked"
 			}, 
 			"line5": {
 				"image": "EmilyScared",
-				"text": "Jake... Even if we continue on, Dad could still be anywhere!",
-				"sound": ""
+				"text": "Emily: Jake... Even if we continue on, Dad could still be anywhere!",
+				"sound": "emily_thinking"
 			},
 			"line6": {
 				"image": "RoyDetermined",
-				"text": "But we have to keep going! Or else Dad will be trapped here forever...",
+				"text": "Roy: But we have to keep going! Or else Dad will be trapped here forever...",
 				"sound": ""
 			}, 
 			"line7": {
 				"image": "EmilyCurious",
-				"text": "Well, as long as we stay together...",
-				"sound": ""
+				"text": "Emily: Well, as long as we stay together...",
+				"sound": "emily_thinking"
 			}, 
 			"line8": {
 				"image": "JakeHappy",
-				"text": "That's the spirit, Em!",
-				"sound": ""
+				"text": "Jake: That's the spirit, Em!",
+				"sound": "jake_relief"
 			},
 			"line9": {
 				"image": "TankStandard",
-				"text": "-Enthusiatic roar-",
-				"sound": ""
+				"text": "Tank: -Enthusiatic roar-",
+				"sound": "tank_happy"
 			}
 	}
 }

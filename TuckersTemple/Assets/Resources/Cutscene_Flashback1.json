@@ -3,12 +3,12 @@
 		"image": "johnTuckerFigure",
 	  		"line1": {
 				"image": "blank",
-				"text": "Who was John Tucker? He was the greatest explorer around, always searching for the next adventure.",
+				"text": "Roy: Who was John Tucker? He was the greatest explorer around, always searching for the next adventure.",
 				"sound": ""
 			},
 			"line2": {
 				"image": "blank", 
-				"text": "He was also my Dad...",
+				"text": "Roy: He was also my Dad...",
 				"sound": ""
 			}
 	},
@@ -16,12 +16,12 @@
 		"image": "familyPictures",
 			"line1": {
 				"image": "blank",
-				"text": "When he wasn't out traveling the world, he was with us.",
+				"text": "Roy: When he wasn't out traveling the world, he was with us.",
 				"sound": ""
 			},
 			"line2": {
 				"image": "blank",
-				"text": "Each time he returned with a new story, and it inspired us all of us to strive and be like him.",
+				"text": "Roy: Each time he returned with a new story, and it inspired us all of us to strive and be like him.",
 				"sound": ""
 			}
 	}, 
@@ -29,22 +29,22 @@
 		"image": "sadFamily",
 			"line1": {
 				"image": "blank", 
-				"text": "So when he didn't come back home from his last adventure, it devastated us.",
+				"text": "Roy: So when he didn't come back home from his last adventure, it devastated us.",
 				"sound": ""
 			},
 			"line2": {
 				"image": "blank", 
-				"text": "No one could find him, and after many search parties came back empty handed, he was officially declared lost... It was a nightmare we thought could never happen to him.",
+				"text": "Roy: No one could find him, and after many search parties came back empty handed, he was officially declared lost... It was a nightmare we thought could never happen to him.",
 				"sound": ""
 			},
 			"line3": {
 				"image": "blank", 
-				"text": "We were supportive, especially for our Mom. She did her best to help us all, even when we didn't know what the future held.",
+				"text": "Roy: Mom did her best to help us all, even when we didn't know what the future held.",
 				"sound": ""
 			},
 			"line4": {
 				"image": "blank", 
-				"text": "But after hearing her cry for countless nights, we decided it was up to us to find Dad and bring him back.",
+				"text": "Roy: But after hearing her cry for countless nights, we decided it was up to us to find Dad and bring him back.",
 				"sound": ""
 			}
 	}

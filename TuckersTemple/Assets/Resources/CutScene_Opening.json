@@ -12,32 +12,32 @@
     "line1": {
       "image": "RoyStandard",
       "text": "Roy: Doesn't look like much...",
-      "sound": ""
+      "sound": "roy_hmm"
     },
     "line2": {
       "image": "EmilyCurious",
       "text": "Emily: From Dad's archives and mappings, it looks as if the temple descends deep into the Earth.",
-      "sound": ""
+      "sound": "emily_thinking"
     },
     "line3": {
       "image": "JakeScared",
       "text": "Jake: Well, where's the entrance?",
-      "sound": ""
+      "sound": "jake_confused"
     },
     "line4": {
       "image": "RoyDetermined",
       "text": "Roy: If Dad found it, then so can we.  We have to... for his sake.",
-      "sound": ""
+      "sound": "roy_determined"
     },
     "line5": {
       "image": "TankStandard",
       "text": "Tank: (Low growl)",
-      "sound": ""
+      "sound": "tank_cautious"
     },
     "line6": {
       "image": "JakeHappy",
       "text": "Jake: See, Tank knows we'll find Dad!",
-      "sound": ""
+      "sound": "jake_affirmative"
     }
   },
   "scene3": {
@@ -53,7 +53,7 @@
     "line1": {
       "image": "blank",
       "text": "-rumble-",
-      "sound": ""
+      "sound": "temple_rumble"
     }
   },
   "scene5": {
@@ -61,17 +61,17 @@
 	"line1": {
       "image": "blank",
       "text": "",
-      "sound": ""
+      "sound": "temple_collapse"
     },
     "line2": {
       "image": "EmilyScared",
       "text": "Emily: AHHHHH, WHAT'S HAPPENING",
-      "sound": ""
+      "sound": "emily_spooked"
     },
     "line3": {
       "image": "JakeScared",
-      "text": "Jake: -Screams-",
-      "sound": ""
+      "text": "Jake: !!!",
+      "sound": "jake_scared"
     },
     "line4": {
       "image": "blank",
@@ -81,7 +81,7 @@
     "line5": {
       "image": "RoyScared",
       "text": "Roy: Emily?!!  Jake?!!  I'll save you!",
-      "sound": ""
+      "sound": "roy_spooked"
     },
     "line6": {
       "image": "blank",
