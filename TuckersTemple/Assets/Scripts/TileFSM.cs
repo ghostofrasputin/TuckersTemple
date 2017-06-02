@@ -366,7 +366,7 @@ public class FollowState : FSMState
 public class SnappingState : FSMState
 {
 	TileFSM controlref;
-	private float speed = .05f;
+	private float speed = 2.5f;
 
 	public SnappingState(TileFSM control)
 	{
@@ -406,7 +406,7 @@ public class SnappingState : FSMState
 		if (controlref.incompleteMove) {
 			controlref.goalPos = new Vector2 (controlref.startPos.x, controlref.startPos.y);
 		}
-		npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
+		npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed * Time.deltaTime);
 	}
 
 } // SnappingState
@@ -440,7 +440,7 @@ public class WrapState : FSMState
 public class SetupState : FSMState
 {
 	public TileFSM controlref;
-	private float speed = .05f;
+	private float speed = 3.5f;
 
 	public SetupState(TileFSM control)
 	{
@@ -458,7 +458,7 @@ public class SetupState : FSMState
 
 	public override void Act(GameObject gm, GameObject npc)
 	{
-		controlref.transform.position = Vector2.MoveTowards(controlref.transform.position, controlref.goalPos, speed);
+		controlref.transform.position = Vector2.MoveTowards(controlref.transform.position, controlref.goalPos, speed * Time.deltaTime);
 	}
 
 } //SetupState

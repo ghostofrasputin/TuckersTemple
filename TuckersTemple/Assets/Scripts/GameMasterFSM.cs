@@ -742,15 +742,13 @@ public class GameMasterFSM : MonoBehaviour
                     float swipeDist;
                     //float tileSize = tileGrid [0] [0].GetComponent<Renderer> ().bounds.size.x * gridScale;
                     bool validSwipe;
-                    Destroy(wrapCopy1, 0.5f);
-                    Destroy(wrapCopy2, 0.5f);
                     wrapLatch = false;
 
                     //Debug.Log (isVert);
                     if (isVert)
                     {
                         swipeDist = (touchPosition.y - touchStart.y) * scalar;
-                        if (Mathf.Abs(swipeDist) < tileSize / 2)
+                        if (Mathf.Abs(touchTarget.GetComponent<TileFSM>().currentDist.x) < tileSize / 2 && Mathf.Abs(touchTarget.GetComponent<TileFSM>().currentDist.y) < tileSize / 2)
                         {
                             validSwipe = false;
                             incompleteTouch = true;
@@ -1326,7 +1324,7 @@ public class OrderTilesState : FSMState
                 SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
 				ZombiePasser zombie = GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ();
 				if(zombie.getVibToggle() == true){
-					Handheld.Vibrate();
+					//Handheld.Vibrate();
 				}
                 GameObject.Find("Main Camera").GetComponent<ScreenShake>().startShaking();
                 npc.GetComponent<GameMasterFSM>().SetTransition(Transition.TilesDone); //to orderactors
@@ -1354,6 +1352,8 @@ public class OrderTilesState : FSMState
     {
         SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
         controlref.spinGear(0);
+        MonoBehaviour.Destroy(controlref.wrapCopy1);
+        MonoBehaviour.Destroy(controlref.wrapCopy2);
     }
 
 } // OrderTilesState
