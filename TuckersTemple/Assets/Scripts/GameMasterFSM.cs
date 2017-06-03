@@ -110,9 +110,9 @@ public class GameMasterFSM : MonoBehaviour
 
         //intitialize cutscenes
         cutscenes = new List<int>();
-        cutscenes.Add(6);
         cutscenes.Add(11);
         cutscenes.Add(21);
+		cutscenes.Add(26);
         cutscenes.Add(31);
         cutscenes.Add(35);
         cutscenes.Add(37);

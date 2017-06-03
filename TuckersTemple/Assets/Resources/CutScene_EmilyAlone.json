@@ -3,12 +3,12 @@
 		"image": "emilyBegin",
 	  		"line1": {
 				"image": "blank",
-				"text": "While she managed to escape the fall unscathed from any injury, Emily could not stop fearing for her family's safety.",
+				"text": "While she managed to escape the fall unscathed, Emily could not stop fearing for her family's safety.",
 				"sound": ""
 			}
 	},
 	"scene2": {
-		"image": "templeInside",
+		"image": "emilyBegin",
 			"line1": {
 				"image": "EmilyScared",
 				"text": "Emily: Hello?! Is anyone there?!",

@@ -138,9 +138,9 @@ public class CutSceneManager : MonoBehaviour {
 
 		cutSceneFiles = new Dictionary<int, string>(){
 			{1, "CutScene_Opening"}, //these cutscenes play before the level
-            {6, "CutScene_Flashback1"},
-            {11, "CutScene_Flashback2"},
+            {11, "CutScene_Flashback1"},
             {21, "CutScene_JakeFound"},
+			{26, "CutScene_Flashback2"},
             {31, "CutScene_EmilyAlone"},
             {35, "CutScene_TankAlone"},
             {37, "CutScene_EmilyAndTank"},

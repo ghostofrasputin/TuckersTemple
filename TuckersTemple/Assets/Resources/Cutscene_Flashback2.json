@@ -3,7 +3,7 @@
 		"image": "kidsReading",
 	  		"line1": {
 				"image": "blank",
-				"text": "Jake: Dad taught us everything about exploring! Even when we were too young to go out into the real world, we had our own adventures right in our backyard.",
+				"text": "Jake: Dad taught us everything about exploring! Mom wouldn't let us go with him on his trips, so we had our own adventures right in our backyard.",
 				"sound": ""
 			},
 			"line2": {
@@ -16,12 +16,12 @@
 		"image": "kidsGrownUp",
 			"line1": {
 				"image": "blank",
-				"text": "Jake: But we got older and had fewer adventures with each other. Most times, they were busy with other stuff.",
+				"text": "Jake: But we got older and had fewer adventures with each other. Most of the time, they were busy.",
 				"sound": ""
 			},
 			"line2": {
 				"image": "blank",
-				"text": "Jake: I missed those times. Hopefully, one day, we could start again...",
+				"text": "Jake: I miss those times. Even though I'm scared, I'm having fun spending time with Roy and Emily again.",
 				"sound": ""
 			}
 	}

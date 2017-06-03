@@ -3,7 +3,7 @@
     "image": "templeInfront",
     "line1": {
       "image": "blank",
-      "text": "They traversed the jungle through the night, yet their fatigue had not deterred them from their quest.",
+      "text": "",
       "sound":  ""
     }
   },
@@ -16,17 +16,17 @@
     },
     "line2": {
       "image": "EmilyCurious",
-      "text": "Emily: From Dad's archives and mappings, it looks as if the temple descends deep into the Earth.",
+      "text": "Emily: From Dad's research, it looks as if the temple descends deep into the Earth.",
       "sound": "emily_thinking"
     },
     "line3": {
       "image": "JakeScared",
-      "text": "Jake: Well, where's the entrance?",
+      "text": "Jake: Well, what do we do now?",
       "sound": "jake_confused"
     },
     "line4": {
       "image": "RoyDetermined",
-      "text": "Roy: If Dad found it, then so can we.  We have to... for his sake.",
+      "text": "Roy: If Dad figured it out, then so can we.  We have to... for his sake.",
       "sound": "roy_determined"
     },
     "line5": {
@@ -44,7 +44,7 @@
     "image": "templeStairs",
     "line1": {
       "image": "blank",
-      "text": "Roy trekked up the cracked stairs to the Temple's entrance as Emily, Jake, and Tank lagged behind.",
+      "text": "Roy pushed onward, up the cracked stairs to the Temple's entrance as Emily, Jake, and Tank lagged behind.",
       "sound": ""
     }
   },
@@ -52,7 +52,7 @@
     "image": "blackScreen",
     "line1": {
       "image": "blank",
-      "text": "-rumble-",
+      "text": "",
       "sound": "temple_rumble"
     }
   },
@@ -65,17 +65,17 @@
     },
     "line2": {
       "image": "EmilyScared",
-      "text": "Emily: AHHHHH, WHAT'S HAPPENING",
+      "text": "Emily: AH!",
       "sound": "emily_spooked"
     },
     "line3": {
       "image": "JakeScared",
-      "text": "Jake: !!!",
+      "text": "Jake: AHHHH!!!",
       "sound": "jake_scared"
     },
     "line4": {
       "image": "blank",
-      "text": "Before Roy could act,  the temple had devoured his family.  All Roy could do was stare into the dark abyss.",
+      "text": "Before Roy could act,  the temple devoured his family.",
       "sound": ""
     },
     "line5": {
@@ -85,7 +85,7 @@
     },
     "line6": {
       "image": "blank",
-      "text": "With only a moment's hesitation, Roy leaped into the abyss.",
+      "text": "After a moment of hesitation, Roy leapt into the abyss.",
       "sound": ""
     }
   }

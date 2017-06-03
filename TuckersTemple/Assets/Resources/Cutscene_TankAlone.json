@@ -1,13 +1,5 @@
 ﻿{
   "scene1": {
-    "image": "tankBegin",
-    "line1": {
-      "image": "blank",
-      "text": "",
-      "sound": ""
-    }
-  },
-  "scene2": {
     "image": "tankPup",
     "line1": {
       "image": "blank",
@@ -16,11 +8,11 @@
     },
     "line2": {
       "image": "blank",
-      "text": "Emily: We loved her instantly, and it took a lot of begging to convince Mom to let us keep her.",
+      "text": "Emily: We loved her instantly, but it took a lot of begging to convince Mom to let us keep her.",
       "sound": ""
     }
   },
-  "scene3": {
+  "scene2": {
     "image": "tankGrownUp",
     "line1": {
       "image": "blank",
@@ -29,20 +21,20 @@
     },
     "line2": {
       "image": "blank",
-      "text": "Emily: It scared Mom a lot at first, but I guess she realized how helpful Tank was with taking care of us, especially when Dad was away. So she let us keep her.",
+      "text": "Emily: It scared Mom a lot at first, but I guess she realized how helpful Tank was. Tank kept us safe, especially when Dad was away. So Mom let us keep her.",
       "sound": ""
     }
   },
-  "scene4": {
+  "scene3": {
     "image": "tankBegin",
     "line1": {
       "image": "blank",
-      "text": "Tank descended down the temple steps cautiously, tracking down any sign of the kids.",
+      "text": "Tank got up from her fall, and looked at the sky far above, then back down at the shapes moving in the shadows.",
       "sound": ""
     },
     "line2": {
       "image": "blank",
-      "text": "The loyal companion would stop at nothing to find them...",
+      "text": "The loyal companion would stop at nothing to find her family...",
       "sound": ""
     },
     "line3": {

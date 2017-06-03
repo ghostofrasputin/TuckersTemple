@@ -8,7 +8,7 @@
 			},
 			"line2": {
 				"image": "blank", 
-				"text": "Roy: He was also my Dad...",
+				"text": "Roy: He's also my Dad...",
 				"sound": ""
 			}
 	},
@@ -21,7 +21,7 @@
 			},
 			"line2": {
 				"image": "blank",
-				"text": "Roy: Each time he returned with a new story, and it inspired us all of us to strive and be like him.",
+				"text": "Roy: Each time he returned with a new story, and the tales of his adventures inspired me to be more like him.",
 				"sound": ""
 			}
 	}, 
@@ -29,22 +29,22 @@
 		"image": "sadFamily",
 			"line1": {
 				"image": "blank", 
-				"text": "Roy: So when he didn't come back home from his last adventure, it devastated us.",
+				"text": "Roy: So when he didn't come back from his last adventure, it devastated us.",
 				"sound": ""
 			},
 			"line2": {
 				"image": "blank", 
-				"text": "Roy: No one could find him, and after many search parties came back empty handed, he was officially declared lost... It was a nightmare we thought could never happen to him.",
+				"text": "Roy: No one could find him, and he was officially declared dead... It was a nightmare...  We thought that could never happen to him.",
 				"sound": ""
 			},
 			"line3": {
 				"image": "blank", 
-				"text": "Roy: Mom did her best to help us all, even when we didn't know what the future held.",
+				"text": "Roy: Mom did her best to help us all, and stayed strong.",
 				"sound": ""
 			},
 			"line4": {
 				"image": "blank", 
-				"text": "Roy: But after hearing her cry for countless nights, we decided it was up to us to find Dad and bring him back.",
+				"text": "Roy: But one night, we found her in tears, and decided it was up to us to find Dad and bring him back.",
 				"sound": ""
 			}
 	}
