@@ -1284,7 +1284,7 @@ public class LevelJuiceState : FSMState
         temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
         GameObject temp3 = GameObject.Find("Star3");
         temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
-        temp3.transform.GetChild(0).gameObject.SetActive(true);
+        temp2.transform.GetChild(0).gameObject.SetActive(true);
 
         temp1.GetComponent<ParticleSystem>().Stop();
         temp2.GetComponent<ParticleSystem>().Stop();

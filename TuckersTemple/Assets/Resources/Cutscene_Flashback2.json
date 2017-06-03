@@ -8,7 +8,7 @@
 			},
 			"line2": {
 				"image": "blank", 
-				"text": "Jake: It never got boring with Roy and Emily...",
+				"text": "Jake: It never got boring being with Roy and Emily.",
 				"sound": ""
 			}
 	},
@@ -16,12 +16,12 @@
 		"image": "kidsGrownUp",
 			"line1": {
 				"image": "blank",
-				"text": "Jake: But we got older and had fewer adventures with each other. Most of the time, they were busy.",
+				"text": "Jake: But they got older, and we stopped having adventures. Most of the time they were busy.",
 				"sound": ""
 			},
 			"line2": {
 				"image": "blank",
-				"text": "Jake: I miss those times. Even though I'm scared, I'm having fun spending time with Roy and Emily again.",
+				"text": "Jake: Even though I'm scared now, I'm having fun spending time with Roy and Emily again.",
 				"sound": ""
 			}
 	}
