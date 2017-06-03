@@ -831,7 +831,7 @@ public class GameMasterFSM : MonoBehaviour
                     if (isVert)
                     {
                         swipeDist = (touchPosition.y - touchStart.y) * scalar;
-                        if (Mathf.Abs(touchTarget.GetComponent<TileFSM>().currentDist.x) < tileSize / 2 && Mathf.Abs(touchTarget.GetComponent<TileFSM>().currentDist.y) < tileSize / 2)
+                        if (Mathf.Abs(touchTarget.GetComponent<TileFSM>().currentDist.y) < tileSize / 2)
                         {
                             validSwipe = false;
                             incompleteTouch = true;
@@ -862,7 +862,7 @@ public class GameMasterFSM : MonoBehaviour
                     else
                     {
                         swipeDist = (touchPosition.x - touchStart.x) * scalar;
-                        if (Mathf.Abs(swipeDist) < tileSize / 2)
+                        if (Mathf.Abs(touchTarget.GetComponent<TileFSM>().currentDist.x) < tileSize / 2)
                         {
                             validSwipe = false;
                             incompleteTouch = true;
