@@ -3,36 +3,41 @@
 		"image": "templeInside",
 	  		"line1": {
 				"image": "EmilyScared",
-				"text": "Hello?!! ROY?! JAKE?! TANK?!",
-				"sound": ""
+				"text": "Emily: Hello?!! ROY?! JAKE?! TANK?!",
+				"sound": "emily_spooked"
 			}, 
 			"line2": {
 				"image": "TankStandard", 
-				"text": "-Loud Roar-",
-				"sound": ""
+				"text": "Tank: -Loud Roar-",
+				"sound": "tank_loudroar"
 			},
 			"line3": {
 				"image": "EmilyCurious",
-				"text" : "Tank!?",
-				"sound": ""
+				"text" : "Emily: Tank!?",
+				"sound": "emily_spooked"
 			}
 	},
 	"scene2": {
 		"image": "emilyandtank",
 			"line1": {
-				"image": "EmilyHappy",
-				"text": "Tank! Thank goodness you're okay...",
-				"sound": ""
+				"image": "blank",
+			    "text": "",
+				"sound": "emily_happylaugh"
 			},
 			"line2": {
-				"image": "TankStandard",
-				"text": "-Happy Growl-",
+				"image": "EmilyHappy",
+				"text": "Emily: Tank! Thank goodness you're okay...",
 				"sound": ""
 			},
 			"line3": {
+				"image": "TankStandard",
+				"text": "Tank: -Happy Growl-",
+				"sound": "tank_happy"
+			},
+			"line4": {
 				"image": "EmilyCurious",
-				"text": "Let's go, Tank. We still need to find Jake and Roy.",
-				"sound": ""
+				"text": "Emily: Let's go, Tank. We still need to find Jake and Roy.",
+				"sound": "emily_determined"
 		}
 	}
 }

@@ -3,18 +3,18 @@
 		"image": "templeInside",
 	  		"line1": {
 				"image": "EmilyCurious",
-				"text": "Roy! There's something over there!",
-				"sound": ""
+				"text": "Emily: Roy! There's something over there!",
+				"sound": "emily_spooked"
 			},
 			"line2": {
 				"image": "RoyScared", 
-				"text": "Roy!? Jake?!",
+				"text": "Is that...?",
 				"sound": ""
 			}, 
 			"line3": {
 				"image": "JakeScared", 
 				"text": "DAD!",
-				"sound": ""
+				"sound": "jake_spooked"
 			}
 	},
 	"scene2": {
@@ -29,48 +29,48 @@
 		"image": "templeInside",
 			"line1": {
 				"image": "DadScared",
-				"text": "Get...Out! ...L-leave... This Temple... urghhhhh.....",
+				"text": "John: Get...Out! ...L-leave... This Temple... urghhhhh.....",
 				"sound": ""
 			},
 			"line2": {
 				"image": "RoyScared",
-				"text": "Dad, it's us! We came to fin...",
-				"sound": ""
+				"text": "Roy: Dad, it's us! We came to fin...",
+				"sound": "roy_unsure"
 			},
 			"line3": {
 				"image": "DadScared",
-				"text": "Who...UGH...My head...I can't...",
+				"text": "John: Who...UGH...My head...I can't...",
 				"sound": ""
 			},
 			"line4": {
 				"image": "JakeScared",
-				"text": "W-What's wrong with him?!",
-				"sound": ""
+				"text": "Jake: W-What's wrong with him?!",
+				"sound": "jake_spooked"
 			}, 
 			"line5": {
 				"image": "TankStandard",
-				"text": "-Concerned whine-",
-				"sound": ""
+				"text": "Tank: -Concerned whine-",
+				"sound": "tank_concerned"
 			},
 			"line6": {
 				"image": "EmilyScared",
-				"text": "He's not recognizing us...Oh no...!",
-				"sound": ""
+				"text": "Emily: He's not recognizing us...Oh no...!",
+				"sound": "emily_spooked"
 			},
 			"line7": {
 				"image": "DadScared",
-				"text": "...Save...save them...My...ughh...",
+				"text": "John: ...Save...save them...My...ughh...",
 				"sound": ""
 			}, 
 			"line8": {
 				"image": "RoyDetermined",
-				"text": "He's been here for too long. This temple...did this to him. We need to get him out!",
-				"sound": ""
+				"text": "Roy: He's been here for too long. This temple...did this to him. We need to get him out!",
+				"sound": "roy_spooked"
 			}, 
 			"line9": {
 				"image": "EmilyCurious",
-				"text": "O-okay! Dad's been keeping track of his steps in his notes! I can navigate us out!",
-				"sound": ""
+				"text": "Emily: O-okay! Dad's been keeping track of his steps in his notes! I can navigate us out!",
+				"sound": "emily_thinking"
 			}
 	},
 	"scene4": {
@@ -78,84 +78,84 @@
 			"line1": {
 				"image": "blank",
 				"text": "",
-				"sound": ""
+				"sound": "temple_rumble"
 			}
 	}, 
 	"scene5": {
 		"image": "templeOutside",
 			"line1": {
 				"image": "EmilyHappy",
-				"text": "Well, that's a relief! We made it!",
+				"text": "Emily: Well, that's a relief! We made it!",
 				"sound": ""
 			},
 			"line2": {
 				"image": "RoyDetermined",
-				"text": "And we're all here...",
-				"sound": ""
+				"text": "Roy: And we're all here...",
+				"sound": "roy_pumped"
 			},
 			"line3": {
 				"image": "JakeCurious",
-				"text": "Is Dad going to be okay?",
-				"sound": ""
+				"text": "Jake: Is Dad going to be okay?",
+				"sound": "jake_spooked"
 			},
 			"line4": {
 				"image": "RoyDetermined",
-				"text": "Dad! ...DAD!!!",
-				"sound": ""
+				"text": "Roy: Dad! ...DAD!!!",
+				"sound": "roy_unsure"
 			}, 
 			"line5": {
 				"image": "DadScared",
-				"text": "..........",
+				"text": "John:..........",
 				"sound": ""
 			},
 			"line6": {
 				"image": "DadScared",
-				"text": "Huh........Where...!",
+				"text": "John: Huh........Where...!",
 				"sound": ""
 			},
 			"line7": {
-				"image": "DadScared",
-				"text": "R-Roy?! Emily, Jake? And Tank?! What are you all doing here?! And where are we? Last thing I remember...I...",
+				"image": "DadHappy",
+				"text": "John: R-Roy?! Emily, Jake? And Tank?! What are you all doing here?! And where are we? Last thing I remember...I...",
 				"sound": ""
 			}, 
 			"line8": {
 				"image": "EmilyCurious",
-				"text": "You went missing, Dad. No one could find you... The only way we were able to find this place was through the notes you left behind back home.",
+				"text": "Emily: You went missing, Dad. No one could find you... The only way we were able to find this place was through the notes you left behind back home.",
 				"sound": ""
 			}, 
 			"line9": {
 				"image": "JakeHappy",
-				"text": "And we found you!",
-				"sound": ""
+				"text": "Jake: And we found you!",
+				"sound": "jake_relief"
 			},
 			"line10": {
 				"image": "DadScared",
-				"text": "Oh my, I was gone for that long?!",
+				"text": "John: Oh my, I was gone for that long?!",
 				"sound": ""
 			},
 			"line11": {
 				"image": "RoyDetermined",
-				"text": "When we found you, you didn't even recognize us...",
+				"text": "Roy: When we found you, you didn't even recognize us...",
 				"sound": ""
 			},
 			"line12": {
 				"image": "EmilyCurious",
-				"text": "With all the monsters and traps, it seems like the temple was guarding some sort of dark energy.",
-				"sound": ""
+				"text": "Emily: With all the monsters and traps, it seems like the temple was guarding some sort of dark energy.",
+				"sound": "emily_thinking"
 			},
 			"line13": {
 				"image": "DadScared",
-				"text": "Yes, I did not intend for the temple to still be active...Such a shame, there was still so much to learn...but it's for the best. That temple should remain hidden.",
+				"text": "John: Yes, I did not intend for the temple to still be active...Such a shame, there was still so much to learn...but it's for the best. That temple should remain hidden.",
 				"sound": ""
 			},
 			"line14": {
 				"image": "DadHappy",
-				"text": "But I am so grateful of you kids for saving me! I'm so proud to see all of you following in your father's footsteps!",
+				"text": "John: But I am so grateful of you kids for saving me! I'm so proud to see all of you following in your father's footsteps!",
 				"sound": ""
 			},
 			"line15": {
 				"image": "DadHappy",
-				"text": "I just wish your Mother was here to see this... Speaking of which, where is your mother? I thought she would be with you...",
+				"text": "John: I just wish your Mother was here to see this... Speaking of which, where is your mother? I thought she would be with you...",
 				"sound": ""
 			},
 			"line16": {
@@ -170,18 +170,18 @@
 			}, 
 			"line18": {
 				"image": "JakeScared",
-				"text": "Umm...Yeah, about that...",
+				"text": "Jake: Umm...Yeah, about that...",
 				"sound": ""
 			}, 
 			"line19": {
 				"image": "DadHappy",
-				"text": "Oh dear... Okay, let's get going then...quickly!",
+				"text": "John: Oh dear... Okay, let's get going then...quickly!",
 				"sound": ""
 			},
 			"line20": {
 				"image": "TankStandard",
-				"text": "-Enthusiastic Roar-",
-				"sound": ""
+				"text": "Tank: !!!",
+				"sound": "tank_loudroar"
 			}
 	
 	}

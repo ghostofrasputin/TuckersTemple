@@ -3,26 +3,26 @@
 		"image": "emilyBegin",
 	  		"line1": {
 				"image": "blank",
-				"text": "While she managed to escape the fall unscathed from any injury, Emily could not stop fearing for her family's safety.",
+				"text": "While she managed to escape the fall unscathed, Emily could not stop fearing for her family's safety.",
 				"sound": ""
 			}
 	},
 	"scene2": {
-		"image": "templeInside",
+		"image": "emilyBegin",
 			"line1": {
 				"image": "EmilyScared",
-				"text": "Hello?! Is anyone there?!",
-				"sound": ""
+				"text": "Emily: Hello?! Is anyone there?!",
+				"sound": "emily_spooked"
 			},
 			"line2": {
 				"image": "EmilyScared",
 				"text": "Emily: It feels like the walls are shifting, and I keep seeing things moving in the shadows.",
-				"sound": ""
+				"sound": "emily_spooked"
 			},
 			"line3": {
 				"image": "EmilyCurious",
-				"text": "I have to keep moving. I need to find them...",
-				"sound": ""
+				"text": "Emily: I have to keep moving. I need to find them...",
+				"sound": "emily_determined"
 		}
 	}
 }

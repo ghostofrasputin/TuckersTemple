@@ -47,6 +47,11 @@ public class LaserScript : MonoBehaviour {
                     {
                         applyOffset = false;
                     }
+
+                    if(i == 2) //if a bot wall don't apply the offset
+                    {
+                        applyOffset = false;
+                    }
                 }
             }
             if (applyOffset)

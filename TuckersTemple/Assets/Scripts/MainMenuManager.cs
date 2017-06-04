@@ -62,7 +62,7 @@ public class MainMenuManager : MonoBehaviour {
 		upperLimit = scalarX*140.0f;
 
 		speed = scalarX*15;
-		Debug.Log (lowerLimit);
+		//Debug.Log (lowerLimit);
 
 	}
 		
@@ -72,7 +72,7 @@ public class MainMenuManager : MonoBehaviour {
 		// it just bugs out and looks bad so this fixes it
 
 		float currentPos = settingsPanel.transform.position.y;
-		Debug.Log (currentPos);
+		//Debug.Log (currentPos);
 
 		// scroll down
 		if (settingsScroll == 1) {

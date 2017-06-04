@@ -80,29 +80,72 @@ public class CutSceneManager : MonoBehaviour {
             {"JakeScared", "CutScenes/jakeSCAREDcutscene_8"},
             {"JakeCurious", "CutScenes/jakeCURIOUScutscene_4"},
             {"JakeHappy", "CutScenes/jakeHAPPYScutscene_2"},
-            {"TankStandard", "CutScenes/tank"}
+            {"TankStandard", "CutScenes/tank"},
+            {"EmilyHappy", "CutScenes/emilyHAPPY"},
+			{"DadScared", "CutScenes/fatherSCARED"},
+			{"DadHappy", "CutScenes/fatherHAPPY"}
         };
 		backgrounds = new Dictionary<string, string> () {
-			{"templeOutside", "CutScenes/temple_outside"},
+			{"templeOutside", "CutScenes/cutscene_Outside"},
             {"templeInfront", "CutScenes/cutscene_1"},
             {"templeStairs", "CutScenes/cutscene_7"},
             {"templeCollapse", "CutScenes/cutscene_9"},
-            {"templeInside", "CutScenes/template_episode_2"},
+            {"templeInside", "CutScenes/cutscene_Inside"},
             {"foundJake", "CutScenes/cutscene_4"}, 
 			{"emilyBegin", "Cutscenes/cutscene_Emily-alone"},
-			{"tankBegin", "Cutscenes/cutscene_Tank-alone"},
-			{"emilyandtank", "Cutscenes/cutscene_EmilyandTank"}
+			{"tankBegin", "Cutscenes/cutscene_TankAlone"},
+			{"emilyandtank", "Cutscenes/cutscene_EmilyandTank"},
+            {"tuckersreunited", "Cutscenes/cutscene_Reunited"},
+            {"tankPup", "Cutscenes/cutscene_TankPup"},
+            {"tankGrownUp", "Cutscenes/cutscene_Family"},
+            {"sadFamily", "Cutscenes/cutscene_SadFamily"},
+            {"kidsReading", "Cutscenes/cutscene_Reading"},
+            {"kidsGrownUp", "Cutscenes/cutscene_GrownUp"},
+            {"familyPictures", "Cutscenes/cutscene_FamilyPictures"},
+            {"blackScreen", "Cutscenes/black-screen"},
+			{"johnTuckerFigure","Cutscenes/johnTuckerFigure"}
         };
 		sounds = new Dictionary<string, string> () {
-			{"roy_hmm", "CutScenes/Andre-Hmm"},
-			{"roy_notsure", "CutScenes/Andre-ImNotSureAboutThis"},
-			{"roy_confused", "CutScenes/Andre-WhatWasThat"}
+			{"roy_hmm", "CutScenes/Roy/Roy - Thinking"},
+		//	{"roy_notsure", "CutScenes/Andre-ImNotSureAboutThis"},
+		//	{"roy_confused", "CutScenes/Andre-WhatWasThat"}, 
+			{"roy_relieved", "CutScenes/Roy/Roy - Relieved"},
+			{"roy_spooked", "CutScenes/Roy/Roy - Shook"},
+			{"roy_unsure", "CutScenes/Roy/Roy - Unsure"},
+			{"roy_determined", "CutScenes/Roy/Roy - Determined"},
+			{"roy_pumped", "CutScenes/Roy/Roy - EndLevel1"},
+			{"emily_determined", "CutScenes/Emily/Emily - Determined"},
+			{"emily_disturbed", "CutScenes/Emily/Emily - Disturbed"},
+			{"emily_happylaugh", "CutScenes/Emily/Emily - HappyLaugh"},
+			{"emily_relief", "CutScenes/Emily/Emily - Relief"},
+			{"emily_spooked", "CutScenes/Emily/Emily - Shook"},
+			{"emily_thinking", "CutScenes/Emily/Emily - Thinking"},
+			{"jake_affirmative", "CutScenes/Jake/Jake - Affirmative"},
+			{"jake_confused", "CutScenes/Jake/Jake - Confused"},
+			{"jake_scared", "CutScenes/Jake/Jake - Really Scared or Death"},
+			{"jake_relief", "CutScenes/Jake/Jake - Relieved"},
+			{"jake_spooked", "CutScenes/Jake/Jake - Shook"},
+			{"jake_unsure", "CutScenes/Jake/Jake - Unsure"},
+			{"tank_cautious", "CutScenes/Tank/Tank - Cautious"},
+			{"tank_concerned", "CutScenes/Tank/Tank - Concerned"},
+			{"tank_distressed", "CutScenes/Tank/Tank - Distressed"},
+			{"tank_happy", "CutScenes/Tank/Tank - Happy2"},
+			{"tank_loudroar", "CutScenes/Tank/Tank - Death"},
+			{"temple_rumble", "CutScenes/templerumbling"},
+			{"temple_collapse", "CutScenes/Temple Falling"}
+
 		};
 
 		cutSceneFiles = new Dictionary<int, string>(){
-			//{1, "CutScene_Opening"}, //these cutscenes play before the level
-			//{15, "CutScene_EmilyAlone"},
-            //{17, "CutScene_AlmostToJake" }
+			{1, "CutScene_Opening"}, //these cutscenes play before the level
+            {11, "CutScene_Flashback1"},
+            {21, "CutScene_JakeFound"},
+			{26, "CutScene_Flashback2"},
+            {31, "CutScene_EmilyAlone"},
+            {35, "CutScene_TankAlone"},
+            {37, "CutScene_EmilyAndTank"},
+            {41, "CutScene_TuckerKidsReunited"},
+            {51, "CutScene_Conclusion"}
         };
 
 		//intialize GameObjects
@@ -205,11 +248,19 @@ public class CutSceneManager : MonoBehaviour {
 		tapPrompt.GetComponent<CanvasGroup> ().alpha = (1 + Mathf.Sin (promptTimer)) / 2;
     }
 
-	//ends the cut scene and loads in the game
-	public void endCutScene(){
-		loadingImage.SetActive (true);
-		SceneManager.LoadScene ("main");
-	}
+    //ends the cut scene and loads in the game
+    public void endCutScene()
+    {
+        loadingImage.SetActive(true);
+        if (GameObject.Find("ZombiePasser").GetComponent<ZombiePasser>().getLevel() > 50)
+        {
+            SceneManager.LoadScene("mainMenu");
+        }
+        else
+        {
+            SceneManager.LoadScene("main");
+        }
+    }
 		
 
 	//goes to the next scene

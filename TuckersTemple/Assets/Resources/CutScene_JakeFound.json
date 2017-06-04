@@ -1,28 +1,33 @@
 {
 	"scene1": {
-	  "image": "foundJake"
+	  "image": "foundJake",
+	  "line1": {
+			"image": "blank",
+			"text": "",
+			"sound": ""
+	  }
 	},
 	"scene2": {
 	  "image": "templeInside", 
 		"line1": {
 			"image": "JakeHappy",
-			"text": "Roy!!!",
-			"sound": ""
+			"text": "Jake: Roy!!!",
+			"sound": "jake_relief"
 		},
 		"line2": {
 			"image": "RoyHappy",
-			"text": "Jake, thank goodness you're okay!",
-			"sound": ""
+			"text": "Roy: Jake, thank goodness you're okay!",
+			"sound": "roy_relieved"
 		},
 		"line3": {
 			"image": "JakeCurious",
-			"text": "I tried to look for you, Emily, and Tank, but there were too many monsters and traps...",
-			"sound": ""
+			"text": "Jake: I tried to look for you, Emily, and Tank, but there were too many scary monsters.",
+			"sound": "jake_spooked"
 		},
 		"line4": {
 			"image": "RoyDetermined",
-			"text": "Don't worry, we'll go look for them together...",
-			"sound": ""
+			"text": "Roy: Don't worry, we'll go look for them together...",
+			"sound": "roy_determined"
 		}
 	}
 }
