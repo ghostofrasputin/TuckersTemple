@@ -17,7 +17,7 @@ public class MainMenuManager : MonoBehaviour {
 	//publics:
 	public GameObject ani;
 	public GameObject panel;
-    public GameObject credits;
+    public GameObject credits; 
 
 	// load screen
 	public GameObject loadingImage;
@@ -53,6 +53,8 @@ public class MainMenuManager : MonoBehaviour {
 		sfx.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getSFXToggle();
 		Toggle vib = GameObject.Find("VibrationToggle").GetComponent<Toggle>();
 		vib.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getVibToggle();
+
+		GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setMenuToggle();
 
 		scalarX = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<RectTransform> ().localScale.x;
 		//scalarY = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<RectTransform> ().localScale.y;

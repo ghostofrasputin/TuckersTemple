@@ -9,6 +9,7 @@ public class InGameMenuManager : MonoBehaviour {
 	//publics:
 	public GameObject ani;
 	public bool pauseFlag;
+	public GameObject credits;
 
 	// Audio
 	public AudioClip InGameMenuSound;
@@ -24,10 +25,15 @@ public class InGameMenuManager : MonoBehaviour {
 		anim = ani.GetComponent<Animator>();
 		anim.enabled = false;
 		try {
-			/*Toggle music = GameObject.Find("MusicToggle").GetComponent<Toggle>();
+			Toggle music = GameObject.Find("MusicToggle").GetComponent<Toggle>();
 			music.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getMusicToggle();
 			Toggle sfx = GameObject.Find("SFXToggle").GetComponent<Toggle>();
-			sfx.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getSFXToggle();*/
+			sfx.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getSFXToggle();
+			Toggle vib = GameObject.Find("VibrationToggle").GetComponent<Toggle>();
+			vib.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getVibToggle();
+
+			GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setMenuToggle();
+
 		} catch(System.Exception){
 			print ("ZombiePasser hasn't been created. Start from mainMenu scene.");
 		}
@@ -52,6 +58,10 @@ public class InGameMenuManager : MonoBehaviour {
 		}
 	}
     
+	public void vibToggle(){
+		GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setVibToggle();
+	}
+
 	// load scene by name
 	public void loadScene(string scene)
 	{
@@ -64,6 +74,18 @@ public class InGameMenuManager : MonoBehaviour {
 		SoundController.instance.PlaySingle (InGameMenuSound);
 		anim.enabled = true;
 		anim.Play (anima);
+	}
+
+	public void settingsMenuOn(){
+		GameObject.FindWithTag ("settingsPan").GetComponent<CanvasGroup> ().alpha = 1;
+		GameObject.FindWithTag ("settingsPan").GetComponent<CanvasGroup> ().interactable = true;
+		GameObject.FindWithTag ("settingsPan").GetComponent<CanvasGroup> ().blocksRaycasts = true;
+	}
+
+	public void settingsMenuOff(){
+		GameObject.FindWithTag ("settingsPan").GetComponent<CanvasGroup> ().alpha = 0;
+		GameObject.FindWithTag ("settingsPan").GetComponent<CanvasGroup> ().interactable = false;
+		GameObject.FindWithTag ("settingsPan").GetComponent<CanvasGroup> ().blocksRaycasts = false;
 	}
 
 	public void pauseAnim(){
@@ -91,4 +113,19 @@ public class InGameMenuManager : MonoBehaviour {
 			}
 		}
 	}
+
+	public void creditsOn()
+	{
+		credits.SetActive(true);
+	}
+
+	public void creditsOff()
+	{
+		credits.SetActive(false);
+	}
+
+	public void Save(){
+		GameObject.FindGameObjectWithTag ("Zombie").GetComponent<ZombiePasser> ().Save ();
+	}
+
 }

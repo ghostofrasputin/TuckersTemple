@@ -26,12 +26,13 @@ public class SoundController : MonoBehaviour {
 	// private:
 	private bool zombieMusicBool;
 	private bool zombieSFXBool;
+	private int menuToggleBool;
 
 	void Update(){
 		try {
 			zombieMusicBool = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getMusicToggle();
 			zombieSFXBool = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getSFXToggle();
-
+			menuToggleBool = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getMenuToggle();
 			// check music
 			if(zombieMusicBool==false){
 				musicSource.mute = true;
@@ -42,11 +43,31 @@ public class SoundController : MonoBehaviour {
 			if(zombieSFXBool==false){
 				sfxSource.mute = true;
 				sfxSourceTiles.mute = true;
+				if(menuToggleBool!=1){
+					flameOn.mute = true;
+					roySounds.mute = true;
+					emilySounds.mute = true;
+					jakeSounds.mute = true;
+					tankSounds.mute = true;
+					shadowSounds.mute = true;
+					wraithSounds.mute = true;
+				}
 			} else{
 				sfxSource.mute = false;
 				sfxSourceTiles.mute = false;
+				if(menuToggleBool!=1){
+					flameOn.mute = false;
+					roySounds.mute = false;
+					emilySounds.mute = false;
+					jakeSounds.mute = false;
+					tankSounds.mute = false;
+					shadowSounds.mute = false;
+					wraithSounds.mute = false;
+				}
 			}
-		} catch(System.Exception){}
+		} catch(System.Exception err){
+			Debug.Log("SoundController error: " +err);
+		}
 	}
 
 	// Use this for initialization
