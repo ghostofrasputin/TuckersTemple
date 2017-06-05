@@ -38,6 +38,7 @@ public class TileFSM : MonoBehaviour
     public Vector2 maxDist;
     public bool touchReleased;
     public bool incompleteMove;
+    public Vector2 netDelta;
 
 
     public void Start()
@@ -59,15 +60,26 @@ public class TileFSM : MonoBehaviour
         touchReleased = false;
 
         setSortingLayer(-(int)Mathf.Floor(transform.position.y / tileSize));
+        netDelta = Vector2.zero;
 
         MakeFSM();
     }
 
     public void Update()
     {
-		Debug.Log (fsm.CurrentStateID);
         fsm.CurrentState.Reason(gm, gameObject);
         fsm.CurrentState.Act(gm, gameObject);
+    }
+
+    public void moveTo(Vector2 goalOffset)
+    {
+        netDelta += goalOffset;
+        Vector2 goalPosition = new Vector2(transform.position.x + goalOffset.x, transform.position.y + goalOffset.y);
+        
+        if (netDelta.x < maxDist.x && netDelta.y < maxDist.y)
+        {
+            transform.position = new Vector2(goalPosition.x, goalPosition.y);
+        }
     }
 
     // The tile has 3 states: idle, wrapping and moving
@@ -279,44 +291,6 @@ public class TileFSM : MonoBehaviour
     }
 }
 
-/*public class MoveState : FSMState
-{
-    public TileFSM controlref;
-    private float speed = .05f;
-
-    public MoveState(TileFSM control)
-    {
-        stateID = StateID.Moving;
-        controlref = control;
-    }
-
-    public override void Reason(GameObject gm, GameObject npc)
-    {
-        if (npc.transform.position.x == controlref.goalPos.x && npc.transform.position.y == controlref.goalPos.y)
-        {
-            if (controlref.offGrid)
-            {
-                //do before leaving
-                controlref.offGrid = false;
-                npc.transform.position = controlref.wrapPos;
-                controlref.goalPos = controlref.wrapGoalPos;
-
-                npc.GetComponent<TileFSM>().SetTransition(Transition.OffGrid);
-            }
-            else
-            {
-                npc.GetComponent<TileFSM>().SetTransition(Transition.ReachedGoal);
-            }
-        }
-    }
-
-    public override void Act(GameObject gm, GameObject npc)
-    {
-        npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed);
-        TileFSM.Instantiate(controlref.dustParticle, npc.transform.position, Quaternion.identity);
-    }
-
-} //MoveState*/
 
 public class IdleState : FSMState
 {
@@ -336,7 +310,6 @@ public class IdleState : FSMState
         controlref.goalPos = controlref.transform.position;
         controlref.startPos.x = controlref.transform.position.x;
         controlref.startPos.y = controlref.transform.position.y;
-        controlref.maxDist = new Vector2(controlref.tileSize, controlref.tileSize);
         controlref.setSortingLayer(-(int)Mathf.Floor(controlref.transform.position.y / controlref.tileSize));
         //Debug.Log (controlref.maxDist);
     }
@@ -382,13 +355,7 @@ public class FollowState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
-        controlref.currentDist.x = Mathf.Abs(controlref.goalPos.x - controlref.startPos.x);
-        controlref.currentDist.y = Mathf.Abs(controlref.goalPos.y - controlref.startPos.y);
-
-        if (controlref.currentDist.x < controlref.maxDist.x && controlref.currentDist.y < controlref.maxDist.y)
-        {
-            npc.transform.position = new Vector2(controlref.goalPos.x, controlref.goalPos.y);
-        }
+        
     }
 
 } // FollowState
