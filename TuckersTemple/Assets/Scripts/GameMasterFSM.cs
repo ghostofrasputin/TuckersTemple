@@ -25,7 +25,7 @@ public class GameMasterFSM : MonoBehaviour
 	public GameObject ItemDark;
     public GameObject shadowPS;
     public FSMSystem fsm;
-    public Vector2 lastPos = new Vector2(0, 0); //holds the last position for mouse input to calculate deltaPosition
+    public Vector2 lastPos; //holds the last position for mouse input to calculate deltaPosition
     public int numRows; //number of tiles to size
     public int numCols;
     public int Column;
@@ -56,14 +56,15 @@ public class GameMasterFSM : MonoBehaviour
 
     public GameObject UIBorder;
     public bool isPaused;
-    public bool foundTile = false;
+    public bool foundTile;
 
     // touch handle
-    public bool latch = false;
-    public bool isVert = false;
+    public bool latch;
+    public bool isVert;
     public Vector2 offset;
     public bool swiped;
-    public bool incompleteTouch = false;
+    public bool moved;
+    public bool incompleteTouch;
     const int N = 0;
     const int E = 1;
     const int S = 2;
@@ -102,7 +103,14 @@ public class GameMasterFSM : MonoBehaviour
     {
         MakeFSM();
         wrapLatch = false;
+        latch = false;
         isPaused = false;
+        foundTile = false;
+        isVert = false;
+        incompleteTouch = false;
+        moved = false;
+        lastPos = Vector2.zero;
+
 
         tileSize = Tile.GetComponent<SpriteRenderer>().bounds.size.x * gridScale;
         RootTile = GameObject.Find("Tiles").gameObject;
@@ -705,6 +713,7 @@ public class GameMasterFSM : MonoBehaviour
         switch (touchPhase)
         {
             case TouchPhase.Began:
+                Debug.Log("Began");
                 Ray ray = Camera.main.ScreenPointToRay(touchPosition);
                 touchTarget = null;
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Tile")))
@@ -730,11 +739,12 @@ public class GameMasterFSM : MonoBehaviour
                 break;
 
             case TouchPhase.Stationary:
-
+                Debug.Log("Stationary");
                 if (foundTile) { spinGear(0); }
                 break;
 
             case TouchPhase.Moved:
+                Debug.Log("Moved");
                 if (foundTile)
                 {
                     spinGear(.3f);
@@ -743,9 +753,11 @@ public class GameMasterFSM : MonoBehaviour
                     {
                         if (latch == false)
                         {
+                            Debug.Log("LATCH********");
                             offset = (Vector2)touchPosition - touchStart;
                             isVert = Mathf.Abs(offset.y) > Mathf.Abs(offset.x);
                             latch = true;
+                            moved = true;
                         }
 
                         /* Debug.Log("spriterenderer" + tileS); */
@@ -817,6 +829,7 @@ public class GameMasterFSM : MonoBehaviour
                 }
                 break;
             case TouchPhase.Ended:
+                Debug.Log("Ended");
                 if (foundTile)
                 {
                     float swipeDist;
@@ -838,14 +851,18 @@ public class GameMasterFSM : MonoBehaviour
                             validSwipe = true;
                             incompleteTouch = false;
                         }
-                        for (int r = 0; r < numRows; r++)
+                        if (moved)
                         {
-                            //Debug.Log(swipeDist);
-                            if (!validSwipe)
+                            Debug.Log("MOVED****************");
+                            for (int r = 0; r < numRows; r++)
                             {
-                                tileGrid[Column][r].GetComponent<TileFSM>().incompleteMove = true;
+                                //Debug.Log(swipeDist);
+                                if (!validSwipe)
+                                {
+                                    tileGrid[Column][r].GetComponent<TileFSM>().incompleteMove = true;
+                                }
+                                tileGrid[Column][r].GetComponent<TileFSM>().touchReleased = true;
                             }
-                            tileGrid[Column][r].GetComponent<TileFSM>().touchReleased = true;
                         }
                         if (swipeDist < 0)
                         {
@@ -869,13 +886,17 @@ public class GameMasterFSM : MonoBehaviour
                             validSwipe = true;
                             incompleteTouch = false;
                         }
-                        for (int c = 0; c < numCols; c++)
+                        if (moved)
                         {
-                            if (!validSwipe)
+                            Debug.Log("MOVED****************");
+                            for (int c = 0; c < numCols; c++)
                             {
-                                tileGrid[c][Row].GetComponent<TileFSM>().incompleteMove = true;
+                                if (!validSwipe)
+                                {
+                                    tileGrid[c][Row].GetComponent<TileFSM>().incompleteMove = true;
+                                }
+                                tileGrid[c][Row].GetComponent<TileFSM>().touchReleased = true;
                             }
-                            tileGrid[c][Row].GetComponent<TileFSM>().touchReleased = true;
                         }
                         if (swipeDist < 0)
                         {
@@ -895,6 +916,7 @@ public class GameMasterFSM : MonoBehaviour
             default:
                 break;
         }
+        //Debug.Log(touchSuccess);
         return touchSuccess;
     }
 
@@ -1319,6 +1341,14 @@ public class InputState : FSMState
         {
             controlref.sameTileOffset();
         }
+        controlref.moved = false;
+        controlref.incompleteTouch = false;
+    }
+
+    public override void DoBeforeLeaving()
+    {
+        controlref.lastPos = Vector2.zero;
+        controlref.isVert = false;
     }
 
     public override void Reason(GameObject gm, GameObject npc)
@@ -1362,7 +1392,6 @@ public class InputState : FSMState
     public override void Act(GameObject gm, GameObject npc)
     {
         controlref.swiped = false;
-
         if (Input.touchCount == 0)
         {
             //Calls when mouse is first pressed(begin)
@@ -1371,9 +1400,10 @@ public class InputState : FSMState
                 controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Began);
                 //store the last position for next tick
                 controlref.lastPos = Input.mousePosition;
+
             }
             //called when mouse his held down(moved)
-            if (Input.GetMouseButton(0))
+            else if (Input.GetMouseButton(0))
             {
                 if (controlref.lastPos == (Vector2)Input.mousePosition)
                 {
@@ -1386,7 +1416,7 @@ public class InputState : FSMState
                 }
             }
             //called when mouse is lifted up(ended)
-            if (Input.GetMouseButtonUp(0))
+            else if (Input.GetMouseButtonUp(0))
             {
                 controlref.swiped = controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Ended);
             }
@@ -1397,7 +1427,6 @@ public class InputState : FSMState
             Touch touch = Input.touches[0];
             controlref.swiped = controlref.HandleTouch(touch.fingerId, touch.position, touch.phase, touch.deltaPosition);
         }
-
     }
 
 } //InputState
@@ -1405,20 +1434,17 @@ public class InputState : FSMState
 public class OrderTilesState : FSMState
 {
     GameMasterFSM controlref;
-    bool hasExecuted;
 
     public OrderTilesState(GameMasterFSM control)
     {
         stateID = StateID.OrderTiles;
         controlref = control;
-        hasExecuted = false;
     }
 
     public override void Reason(GameObject gm, GameObject npc)
     {
-        if (hasExecuted && controlref.doneSliding())
+        if (controlref.doneSliding())
         {
-            hasExecuted = false;
             if (controlref.incompleteTouch)
             {
                 npc.GetComponent<GameMasterFSM>().SetTransition(Transition.Incomplete); //to Input
@@ -1439,12 +1465,13 @@ public class OrderTilesState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
-        if (!hasExecuted) { controlref.moveGrid(controlref.Column, controlref.Row, controlref.Direction); }
-        hasExecuted = true;
+
     }
 
     public override void DoBeforeEntering()
     {
+        //controlref.moved)
+        if (true) { controlref.moveGrid(controlref.Column, controlref.Row, controlref.Direction); }
         foreach (GameObject child in controlref.lasers)
         {
             if (child.tag == "Laser")
@@ -1452,15 +1479,24 @@ public class OrderTilesState : FSMState
                 child.GetComponent<LaserScript>().setEye(false);
             }
         }
-        controlref.spinGear(0.3f);
+        //controlref.spinGear(0.3f);
     }
 
     public override void DoBeforeLeaving()
     {
         SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
         controlref.spinGear(0);
-        MonoBehaviour.Destroy(controlref.wrapCopy1);
-        MonoBehaviour.Destroy(controlref.wrapCopy2);
+        if (controlref.wrapCopy1 != null)
+        {
+            MonoBehaviour.Destroy(controlref.wrapCopy1);
+            controlref.wrapCopy1 = null;
+        }
+        if (controlref.wrapCopy2 != null)
+        {
+            MonoBehaviour.Destroy(controlref.wrapCopy2);
+            controlref.wrapCopy2 = null;
+        }
+        controlref.moved = false;
     }
 
 } // OrderTilesState

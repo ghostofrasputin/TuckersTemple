@@ -74,12 +74,12 @@ public class TileFSM : MonoBehaviour
     public void moveTo(Vector2 goalOffset)
     {
         netDelta += goalOffset;
-        Debug.Log("netDelta: " + netDelta);
+        //Debug.Log("netDelta: " + netDelta + "goalOffset: " + goalOffset);
         
         if (Mathf.Abs(netDelta.x) < maxDist.x && Mathf.Abs(netDelta.y) < maxDist.y)
         {
             Vector2 goalPosition = new Vector2(startPos.x + netDelta.x, startPos.y + netDelta.y);
-            Debug.Log("goalpos: " + netDelta + " < " + maxDist);
+            //Debug.Log("goalpos: " + netDelta + " < " + maxDist);
             transform.position = new Vector2(goalPosition.x, goalPosition.y);
         }
     }
@@ -277,7 +277,6 @@ public class TileFSM : MonoBehaviour
 
     public void setSortingLayer(int layer)
     {
-        Debug.Log(layer);
         for (int i = 0; i < transform.childCount; i++)
         {
             GameObject Go = transform.GetChild(i).gameObject;
