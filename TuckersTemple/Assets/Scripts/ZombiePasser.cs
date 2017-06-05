@@ -32,6 +32,7 @@ public class ZombiePasser : MonoBehaviour {
 
 	// private:
 	private int levelNum = 1;
+	private int menuToggle = 0;
     //private int numLevels = 50;
 	private LevelReader levelData;
 	private List<Level> levelsList;
@@ -118,7 +119,15 @@ public class ZombiePasser : MonoBehaviour {
 	public void setLevel(int newLevelNum){
 		levelNum = newLevelNum;
 	}
-		
+
+	public void setMenuToggle(){
+		if (menuToggle == 1) {
+			menuToggle = 0;
+		} else {
+			menuToggle = 1;
+		}
+	}
+
 	// music toggle:
 	public void setMusicToggle(){
 		try {
@@ -194,6 +203,10 @@ public class ZombiePasser : MonoBehaviour {
 	//------------------------------------------------------------------------------------------------
 	// Get Functions
 	//------------------------------------------------------------------------------------------------
+
+	public int getMenuToggle(){
+		return menuToggle;
+	}
 
 	// return the private level int
 	public int getLevel(){
