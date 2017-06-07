@@ -49,6 +49,7 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject RootTile;
     public float gridScale = 0.25f;
     public GameObject TutorialButton;
+    public GameObject PauseButton;
     public Dictionary<string, bool> starRequirements;
     public string[] starCriteria = { "foundItem", "killAll", "killNone" };
     public List<GameObject> lasers;
@@ -383,6 +384,7 @@ public class GameMasterFSM : MonoBehaviour
         //SoundController.instance.musicSource.Stop ();
         //SoundController.instance.PlaySingle(playerdeathSound);
         turnOffTileColliders();
+        PauseButton.SetActive(false);
         deathScreen.GetComponent<Animator>().Play("DeathFadeIn");
         deathScreen.GetComponent<CanvasGroup>().interactable = true;
         deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
@@ -507,6 +509,7 @@ public class GameMasterFSM : MonoBehaviour
         resetStarRequirements();
         generateLevel(level);
         //Destroy(boundary.gameObject);
+        PauseButton.SetActive(true);
         turnOnTileColliders();
     }
 
