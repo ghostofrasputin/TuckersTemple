@@ -31,6 +31,7 @@ public class TouchHandler : MonoBehaviour {
 	private GameObject canvas;
 	private GameObject levelAnchor;
 	float diff;
+	float scalarX;
 
 
 	void Start () {
@@ -45,16 +46,18 @@ public class TouchHandler : MonoBehaviour {
 		canvas = GameObject.FindWithTag ("mainCanvas");
 		levelAnchor = GameObject.FindWithTag ("LevelAnchor");
 		diff = levelAnchor.GetComponent<RectTransform> ().rect.width;
+		scalarX = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<RectTransform> ().localScale.x;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		Debug.Log (scalarX);
 		// jump to level selection:
 		if (jump) {
 			if (checkCollision (levelAnchor)) {
 				jump = false;
 			} else {
-				panel.transform.position = new Vector3 (panel.transform.position.x, panel.transform.position.y + diff * 2.5f, panel.transform.position.z);
+				panel.transform.position = new Vector3 (panel.transform.position.x, panel.transform.position.y * (scalarX*1.2f), panel.transform.position.z);
 			}
 		} 
 
