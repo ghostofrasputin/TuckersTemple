@@ -287,6 +287,7 @@ public class GameMasterFSM : MonoBehaviour
     //Displays win screen
     public void levelWin()
     {
+        resetWinScreen();
         SoundController.instance.RandomSfxTiles(levelWinSound, levelWinSound);
         ZombiePasser zombie = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>();
         // So enemies aren't heard in Level Win Screen 
@@ -370,6 +371,26 @@ public class GameMasterFSM : MonoBehaviour
 
     }
 
+    private void resetWinScreen()
+    {
+        GameObject temp1 = GameObject.Find("Star1");
+        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
+        GameObject temp2 = GameObject.Find("Star2");
+        temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
+        GameObject temp3 = GameObject.Find("Star3");
+        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
+        temp2.transform.GetChild(0).gameObject.SetActive(true);
+
+        temp1.GetComponent<ParticleSystem>().Stop();
+        temp2.GetComponent<ParticleSystem>().Stop();
+        temp3.GetComponent<ParticleSystem>().Stop();
+
+        GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily_blank");
+        GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy_blank");
+        GameObject.FindWithTag("jakeWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake_blank");
+        GameObject.FindWithTag("tankWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("CutScenes/blank");
+    }
+
     private void setCanvas(Canvas c, bool b)
     {
         //its beautiful don't touch it
@@ -384,7 +405,7 @@ public class GameMasterFSM : MonoBehaviour
         //SoundController.instance.musicSource.Stop ();
         //SoundController.instance.PlaySingle(playerdeathSound);
         turnOffTileColliders();
-        PauseButton.SetActive(false);
+        //PauseButton.SetActive(false); //no longer necessary
         deathScreen.GetComponent<Animator>().Play("DeathFadeIn");
         deathScreen.GetComponent<CanvasGroup>().interactable = true;
         deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
@@ -1300,22 +1321,7 @@ public class LevelJuiceState : FSMState
             }
         }
 
-        GameObject temp1 = GameObject.Find("Star1");
-        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
-        GameObject temp2 = GameObject.Find("Star2");
-        temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
-        GameObject temp3 = GameObject.Find("Star3");
-        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
-        temp2.transform.GetChild(0).gameObject.SetActive(true);
-
-        temp1.GetComponent<ParticleSystem>().Stop();
-        temp2.GetComponent<ParticleSystem>().Stop();
-        temp3.GetComponent<ParticleSystem>().Stop();
-
-        GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily_blank");
-        GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy_blank");
-        GameObject.FindWithTag("jakeWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake_blank");
-        GameObject.FindWithTag("tankWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("CutScenes/blank");
+        
 
         //check if first level, if so show tutorial.
         if (controlref.currentLevel == 1)

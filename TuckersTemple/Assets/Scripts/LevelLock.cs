@@ -44,11 +44,9 @@ public class LevelLock : MonoBehaviour {
 				if(stars[i] == true){
 					numOfStars++;
 				}
-			}
-			//Debug.Log(numOfStars);
-			string target = "UI/" +numOfStars+ "star";
-			Sprite threeStars = Resources.Load(target, typeof(Sprite)) as Sprite;
-			this.gameObject.transform.Find("Stars").GetComponent<Image>().sprite = threeStars;
-		}
+				//Debug.Log(numOfStars);
+				string target = "UI/LevelSelectStars" + numOfStars;
+        Sprite threeStars = Resources.Load(target, typeof(Sprite)) as Sprite;
+        this.gameObject.transform.Find("Stars").GetComponent<Image>().sprite = threeStars;
 	}
 }
