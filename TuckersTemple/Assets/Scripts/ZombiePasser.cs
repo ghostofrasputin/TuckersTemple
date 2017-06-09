@@ -17,8 +17,8 @@ public class ZombiePasser : MonoBehaviour {
 
 	// default string data
 	public const string settingsString = "ttf";
-    public const string lockedLevelsString = "fttttttttttttttttttttttttttttttttttttttttttttttttt";
-	public const string unlockedLevelsString="ffffffffffffffffffffffffffffffffffffffffffffffffff";
+        public const string lockedLevelsString = "fttttttttttttttttttttttttttttttttttttttttttttttttt";
+	//public const string unlockedLevelsString="ffffffffffffffffffffffffffffffffffffffffffffffffff";
 	public const string starRatingsString = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
 
 	// data to save
@@ -29,6 +29,7 @@ public class ZombiePasser : MonoBehaviour {
 	public List<bool> settings = new List<bool> ();
 	public List<bool> lockedLevels = new List<bool>();
 	public List<List<bool>> starRatings = new List<List<bool>>();
+	public List<GameObject> iconRefs = new List<GameObject> ();
 
 	// private:
 	private int levelNum = 1;
@@ -59,6 +60,7 @@ public class ZombiePasser : MonoBehaviour {
 		// Generate Level Icons:
 		GameObject levelSelection = GameObject.FindGameObjectWithTag("LevelSelection");
 		GameObject IconRef = GameObject.FindGameObjectWithTag("LevelIcon");
+		iconRefs.Add (IconRef);
 		MainMenuManager mainMenu = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<MainMenuManager> ();
 		float scalarX = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<RectTransform> ().localScale.x;
 		float scalarY = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<RectTransform> ().localScale.y;
@@ -84,6 +86,7 @@ public class ZombiePasser : MonoBehaviour {
 						mainMenu.updateLevelNum (levelParameter);
 						mainMenu.loadScene("main");
 					});
+					iconRefs.Add (newIconRef);
 				}
 				xOffset += xDiff;
 				counter++;
@@ -260,15 +263,21 @@ public class ZombiePasser : MonoBehaviour {
     }
 
     public void Load() {
-        settings = listFromString(PlayerPrefs.GetString("settings", settingsString));
-		musicToggle = settings [0]; 
-		sfxToggle = settings [1];
-		vibToggle= settings [2];
-		// !!!!!!!!!!
-		// all levels are set to unlocked right now
-		// use the commented out code below to use locked levels again
-		lockedLevels = listFromString(unlockedLevelsString); //listFromString(PlayerPrefs.GetString("locked", lockedLevelsString));
-        starRatings = matrixFromString(PlayerPrefs.GetString("stars", starRatingsString));
+       //PlayerPrefs.DeleteAll ();
+	settings = listFromString(PlayerPrefs.GetString("settings", settingsString));
+
+	// set setting toggles:
+	musicToggle = settings [0]; 
+	sfxToggle = settings [1];
+	vibToggle= settings [2];
+
+	lockedLevels = listFromString(PlayerPrefs.GetString("locked", lockedLevelsString));
+	starRatings = matrixFromString(PlayerPrefs.GetString("stars", starRatingsString));
+	
+	// set icon refs:
+	for(int i = 0; i < iconRefs.Count; i++) {
+		iconRefs [i].GetComponent<LevelLock>().setLock(lockedLevels [i]);	
+	}
     }
 
 	public string listToString(List<bool> dataList){
