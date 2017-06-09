@@ -336,18 +336,18 @@ public class GameMasterFSM : MonoBehaviour
         moveText.text = moves + "/" + numMoves;
         moveText.color = Color.red;
 
+        int numStarsEarned = 1;
+
         if (starRequirements.ContainsKey(levelsList[currentLevel - 1].Star))
         {
             if (starRequirements[levelsList[currentLevel - 1].Star] == true) itemStar = true;
 
         }
-        zombie.setStar(currentLevel - 1, 0);
         Invoke("setWinScreenRoy", 1.5f);
         SoundController.instance.RoyVoice(royWin1, royWin2, royWin3);
         if (moves <= numMoves)
         {
             moveText.color = Color.green;
-            zombie.setStar(currentLevel - 1, 1);
             Invoke("setWinScreenEmily", 2.5f);
             SoundController.instance.EmilyVoice(emilyWin1, emilyWin2, emilyWin3);
             if (itemStar)
@@ -355,12 +355,34 @@ public class GameMasterFSM : MonoBehaviour
                 Invoke("setWinScreenTank", 3f);
 				SoundController.instance.TankVoice (tankWin1, tankWin1);
             }
+            numStarsEarned++;
         }
         if (itemStar)
         {
-            zombie.setStar(currentLevel - 1, 2);
             Invoke("setWinScreenJake", 2f);
             SoundController.instance.JakeVoice(jakeWin1, jakeWin2, jakeWin3);
+            numStarsEarned++;
+        }
+
+        
+
+        for(int i = 0; i < numStarsEarned; i++)
+        {
+            if (!zombie.getStars(currentLevel - 1)[i])
+            {
+                if (PlayGamesPlatform.Instance.localUser.authenticated)
+                {
+                    PlayGamesPlatform.Instance.IncrementAchievement(GPGSIds.achievement_temple_of_doom, 1, (bool success) =>
+                    {
+                        Debug.Log("Achievement Incremented: " + success);
+                    });
+                    PlayGamesPlatform.Instance.IncrementAchievement(GPGSIds.achievement_legend_of_the_hidden_temple, 1, (bool success) =>
+                    {
+                        Debug.Log("Achievement Incremented: " + success);
+                    });
+                }
+            }
+            zombie.setStar(currentLevel - 1, i);
         }
 
         //track achievements

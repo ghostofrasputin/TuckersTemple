@@ -192,6 +192,13 @@ public class CutSceneManager : MonoBehaviour {
                     Debug.Log("Achievement Incremented: " + success);
                 });
             }
+            if (currLevel == 41)
+            {
+                PlayGamesPlatform.Instance.ReportProgress(GPGSIds.achievement_family_reunion, 100.0f, (bool success) =>
+                {
+                    Debug.Log("Achievement Incremented: " + success);
+                });
+            }
             if (currLevel == 51)
             {
                 PlayGamesPlatform.Instance.ReportProgress(GPGSIds.achievement_all_tuckered_out, 100.0f, (bool success) =>
