@@ -89,11 +89,12 @@ public class InGameMenuManager : MonoBehaviour {
 	}
 
 	public void pauseAnim(){
+        Debug.Log(pausePosition.transform.position);
 		if (GameObject.FindGameObjectWithTag ("UI-Border").GetComponent<Animator> ().enabled == false) {
 			GameObject.FindGameObjectWithTag ("UI-Border").GetComponent<Animator> ().enabled = true;
 			GameObject.FindGameObjectWithTag ("UI-Border").GetComponent<Animator> ().Play ("UIBorderPause");
 			pauseFlag = true;
-			pausePosition.transform.position = new Vector3 (1.5f, -1.7f, 90.0f);
+			pausePosition.transform.position = new Vector3 (1.6f, -1.4f, 90.0f);
 			//Debug.Log (pausePosition.transform.position);
 		} else {
 			if (pauseFlag == true) {
@@ -102,14 +103,14 @@ public class InGameMenuManager : MonoBehaviour {
 				GameObject.FindGameObjectWithTag ("UI-Border").GetComponent<Animator> ().enabled = true;
 				GameObject.FindGameObjectWithTag ("UI-Border").GetComponent<Animator> ().Play ("UIBorderPauseW");
 				pauseFlag = false;
-				pausePosition.transform.position = new Vector3 (1.5f, -3.2f, 90.0f);
+				pausePosition.transform.position = new Vector3 (1.6f, -3.0f, 90.0f);
 			} else {
 				anim.enabled = true;
 				anim.Play ("PauseMenuSlideIn");
 				GameObject.FindGameObjectWithTag ("UI-Border").GetComponent<Animator> ().enabled = true;
 				GameObject.FindGameObjectWithTag ("UI-Border").GetComponent<Animator> ().Play ("UIBorderPause");
 				pauseFlag = true;
-				pausePosition.transform.position = new Vector3 (1.5f, -1.7f, 90.0f);
+				pausePosition.transform.position = new Vector3 (1.6f, -1.4f, 90.0f);
 			}
 		}
 	}
