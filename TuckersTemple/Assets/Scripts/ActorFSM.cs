@@ -330,7 +330,7 @@ public class ActorFSM : MonoBehaviour
                 break;
         }
         float speed = multiCharOffset * GetComponent<SpriteRenderer>().sortingOrder * Time.deltaTime;
-        Debug.Log(speed + ", " + multiCharOffset + ", " + GetComponent<SpriteRenderer>().sortingOrder);
+        //Debug.Log(speed + ", " + multiCharOffset + ", " + GetComponent<SpriteRenderer>().sortingOrder);
         transform.position = Vector2.MoveTowards(transform.position, goalPos, speed);
     }
 
