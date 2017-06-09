@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+using GooglePlayGames;
 
 public class GameMasterFSM : MonoBehaviour
 {
@@ -252,6 +253,18 @@ public class GameMasterFSM : MonoBehaviour
 
     }
 
+    public void restartButton()
+    {
+        if (PlayGamesPlatform.Instance.localUser.authenticated)
+        {
+            PlayGamesPlatform.Instance.ReportProgress(GPGSIds.achievement_mulligan, 100.0f, (bool success) =>
+            {
+                Debug.Log("Achievement Incremented: " + success);
+            });
+        }
+        reset();
+    }
+
     public void setWinScreenEmily()
     {
         GameObject temp3 = GameObject.Find("Star3");
@@ -349,6 +362,19 @@ public class GameMasterFSM : MonoBehaviour
             SoundController.instance.JakeVoice(jakeWin1, jakeWin2, jakeWin3);
         }
 
+        //track achievements
+        if (PlayGamesPlatform.Instance.localUser.authenticated)
+        {
+            PlayGamesPlatform.Instance.ReportProgress(GPGSIds.achievement_getting_started, 100.0f, (bool success) => {
+                Debug.Log("Achievement Incremented: " + success);
+            });
+            if(moves <= numMoves && itemStar)
+            {
+                PlayGamesPlatform.Instance.ReportProgress(GPGSIds.achievement_all_star, 100.0f, (bool success) => {
+                    Debug.Log("Achievement Incremented: " + success);
+                });
+            }
+        }
 
         turnOffTileColliders();
         winScreen.GetComponent<InGameMenuManager>().playAnim("winEnter");
@@ -1114,6 +1140,14 @@ public class GameMasterFSM : MonoBehaviour
                         enemies.Remove(enemy.gameObject);
                         GameObject.Destroy(enemy.gameObject);
                         i--;
+
+                        if (PlayGamesPlatform.Instance.localUser.authenticated)
+                        {
+                            PlayGamesPlatform.Instance.IncrementAchievement(GPGSIds.achievement_going_bearzerk, 1, (bool success) =>
+                            {
+                                Debug.Log("Achievement Incremented: " + success);
+                            });
+                        }
                     }
                     else
                     {

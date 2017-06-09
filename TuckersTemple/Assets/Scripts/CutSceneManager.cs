@@ -15,6 +15,7 @@ using UnityEngine;
 using LitJson;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using GooglePlayGames;
 
 /*
  * Class CharacterLine holds information about a single line
@@ -168,8 +169,40 @@ public class CutSceneManager : MonoBehaviour {
             return;
 		}
 
-		//load in the JSON file, the same way as levelReader
-		TextAsset cutSceneFile = Resources.Load(cutSceneFiles[currLevel]) as TextAsset;
+        if (PlayGamesPlatform.Instance.localUser.authenticated)
+        {
+            if (currLevel == 21)
+            {
+                PlayGamesPlatform.Instance.ReportProgress(GPGSIds.achievement_brotherly_love, 100.0f, (bool success) =>
+                {
+                    Debug.Log("Achievement Incremented: " + success);
+                });
+            }
+            if (currLevel == 31)
+            {
+                PlayGamesPlatform.Instance.ReportProgress(GPGSIds.achievement_sister_sister, 100.0f, (bool success) =>
+                {
+                    Debug.Log("Achievement Incremented: " + success);
+                });
+            }
+            if (currLevel == 35)
+            {
+                PlayGamesPlatform.Instance.ReportProgress(GPGSIds.achievement_bear_with_me, 100.0f, (bool success) =>
+                {
+                    Debug.Log("Achievement Incremented: " + success);
+                });
+            }
+            if (currLevel == 51)
+            {
+                PlayGamesPlatform.Instance.ReportProgress(GPGSIds.achievement_all_tuckered_out, 100.0f, (bool success) =>
+                {
+                    Debug.Log("Achievement Incremented: " + success);
+                });
+            }
+        }
+
+            //load in the JSON file, the same way as levelReader
+            TextAsset cutSceneFile = Resources.Load(cutSceneFiles[currLevel]) as TextAsset;
 		jsonString = cutSceneFile.ToString();
 		cutSceneData = JsonMapper.ToObject(jsonString);
 		cutScenes = new List<CutScene> ();

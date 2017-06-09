@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+using GooglePlayGames;
 
 public class ActorFSM : MonoBehaviour
 {
@@ -176,6 +177,13 @@ public class ActorFSM : MonoBehaviour
         Item.GetComponent<ParticleSystem>().Play();
         SoundController.instance.RandomSfx(itemPickupSound, itemPickupSound);
         Destroy(Item, 1f);
+        if (PlayGamesPlatform.Instance.localUser.authenticated)
+        {
+            PlayGamesPlatform.Instance.IncrementAchievement(GPGSIds.achievement_these_belong_in_a_museum, 1, (bool success) =>
+            {
+                Debug.Log("Achievement Incremented: " + success);
+            });
+        }
     }
 
     //This should always be called if the actor gets destroyed
@@ -462,6 +470,13 @@ public class LookAState : FSMState
                         }
                         if (isEnemyDead && npc.GetComponent<ActorFSM>().actorName == "Tank")
                         {
+                            if (PlayGamesPlatform.Instance.localUser.authenticated)
+                            {
+                                PlayGamesPlatform.Instance.IncrementAchievement(GPGSIds.achievement_going_bearzerk, 1, (bool success) =>
+                                {
+                                    Debug.Log("Achievement Incremented: " + success);
+                                });
+                            }
                             if (ray.collider.GetComponent<ActorFSM>().fsm.CurrentStateID == StateID.WalkA)
                             {
                                 ray.collider.GetComponent<ActorFSM>().SetTransition(Transition.CrossTank);
@@ -660,6 +675,14 @@ public class TrapDeadAState : FSMState
             {
                 SoundController.instance.TankVoice(controlref.tankDeath, controlref.tankDeath);
             }
+
+            if (PlayGamesPlatform.Instance.localUser.authenticated)
+            {
+                PlayGamesPlatform.Instance.ReportProgress(GPGSIds.achievement_its_a_trap, 100.0f, (bool success) =>
+                {
+                    Debug.Log("Achievement Incremented: " + success);
+                });
+            }
         }
         else if (controlref.tag == "Enemy")
         {
@@ -670,6 +693,14 @@ public class TrapDeadAState : FSMState
             else if (controlref.actorName == "Wraith")
             {
                 SoundController.instance.WraithVoice(controlref.enemyKilled, controlref.enemyKilled);
+            }
+
+            if (PlayGamesPlatform.Instance.localUser.authenticated)
+            {
+                PlayGamesPlatform.Instance.IncrementAchievement(GPGSIds.achievement_gr8_b8_m8, 1, (bool success) =>
+                {
+                    Debug.Log("Achievement Incremented: " + success);
+                });
             }
         }
     }
@@ -745,6 +776,14 @@ public class EnemyDeadAState : FSMState
             {
                 SoundController.instance.EmilyVoice(controlref.emilyDeath, controlref.emilyDeath);
             }
+
+            if (PlayGamesPlatform.Instance.localUser.authenticated)
+            {
+                PlayGamesPlatform.Instance.ReportProgress(GPGSIds.achievement_hello_darkness, 100.0f, (bool success) =>
+                {
+                    Debug.Log("Achievement Incremented: " + success);
+                });
+            }
         }
     }
 
@@ -798,6 +837,13 @@ public class LaserDeadAState : FSMState
             {
                 SoundController.instance.TankVoice(controlref.tankDeath, controlref.tankDeath);
             }
+            if (PlayGamesPlatform.Instance.localUser.authenticated)
+            {
+                PlayGamesPlatform.Instance.ReportProgress(GPGSIds.achievement_lasers_and_feelings, 100.0f, (bool success) =>
+                {
+                    Debug.Log("Achievement Incremented: " + success);
+                });
+            }
         }
         else if (controlref.tag == "Enemy")
         {
@@ -808,6 +854,13 @@ public class LaserDeadAState : FSMState
             else if (controlref.actorName == "Wraith")
             {
                 SoundController.instance.WraithVoice(controlref.enemyKilled, controlref.enemyKilled);
+            }
+            if (PlayGamesPlatform.Instance.localUser.authenticated)
+            {
+                PlayGamesPlatform.Instance.IncrementAchievement(GPGSIds.achievement_gr8_b8_m8, 1, (bool success) =>
+                {
+                    Debug.Log("Achievement Incremented: " + success);
+                });
             }
         }
     }

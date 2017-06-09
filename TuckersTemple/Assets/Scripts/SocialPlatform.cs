@@ -13,7 +13,6 @@ public class SocialPlatform : MonoBehaviour {
         PlayGamesPlatform.DebugLogEnabled = true;
         PlayGamesPlatform.InitializeInstance(config);
         PlayGamesPlatform.Activate();
-
         PlayGamesPlatform.Instance.Authenticate(SignInCallback, true);
         
     }
