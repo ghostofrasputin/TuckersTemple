@@ -57,7 +57,7 @@ public class TouchHandler : MonoBehaviour {
 			if (checkCollision (levelAnchor)) {
 				jump = false;
 			} else {
-				panel.transform.position = new Vector3 (panel.transform.position.x, panel.transform.position.y * (scalarX*1.2f), panel.transform.position.z);
+                panel.transform.position = Vector3.MoveTowards(panel.transform.position, new Vector3(panel.transform.position.x, panel.transform.position.y * (scalarX * 10), panel.transform.position.z), scalarX* 5f);
 			}
 		} 
 
