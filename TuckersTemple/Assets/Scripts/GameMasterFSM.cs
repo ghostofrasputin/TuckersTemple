@@ -419,6 +419,11 @@ public class GameMasterFSM : MonoBehaviour
 
     }
 
+    public void save()
+    {
+        GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().Save();
+    }
+
     private void resetWinScreen()
     {
         GameObject temp1 = GameObject.Find("Star1");
