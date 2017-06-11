@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
-using GooglePlayGames;
 
 public class GameMasterFSM : MonoBehaviour
 {
@@ -59,6 +58,8 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject UIBorder;
     public bool isPaused;
     public bool foundTile;
+
+    public GameObject zombie;
 
     // touch handle
     public bool latch;
@@ -133,7 +134,8 @@ public class GameMasterFSM : MonoBehaviour
         scalar = .006f;
         setStarRequirements();
 
-        GameObject.FindGameObjectWithTag("Level-Num").GetComponent<Text>().text = "" + GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevel();
+        zombie = GameObject.FindGameObjectWithTag("Zombie");
+        GameObject.FindGameObjectWithTag("Level-Num").GetComponent<Text>().text = "" + zombie.GetComponent<ZombiePasser>().getLevel();
 
     }
 
@@ -255,13 +257,7 @@ public class GameMasterFSM : MonoBehaviour
 
     public void restartButton()
     {
-        if (PlayGamesPlatform.Instance.localUser.authenticated)
-        {
-            PlayGamesPlatform.Instance.ReportProgress(GPGSIds.achievement_mulligan, 100.0f, (bool success) =>
-            {
-                Debug.Log("Achievement Incremented: " + success);
-            });
-        }
+        zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_mulligan, false);
         reset();
     }
 
@@ -302,7 +298,7 @@ public class GameMasterFSM : MonoBehaviour
     {
         resetWinScreen();
         SoundController.instance.RandomSfxTiles(levelWinSound, levelWinSound);
-        ZombiePasser zombie = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>();
+        ZombiePasser zombiePasser = zombie.GetComponent<ZombiePasser>();
         // So enemies aren't heard in Level Win Screen 
 		GameObject[] enemies = GameObject.FindGameObjectsWithTag("Trap");
 		GameObject[] enemies1 = GameObject.FindGameObjectsWithTag("Enemy");
@@ -321,7 +317,7 @@ public class GameMasterFSM : MonoBehaviour
         {
             // unlocks the next level. 
             //note: currentlevel-1 is the real current level for the array, currentlevel is the next level
-            zombie.setLockedLevelBool(currentLevel);
+            zombiePasser.setLockedLevelBool(currentLevel);
         }
         catch (System.Exception error)
         {
@@ -364,40 +360,22 @@ public class GameMasterFSM : MonoBehaviour
             numStarsEarned++;
         }
 
-        
 
-        for(int i = 0; i < numStarsEarned; i++)
+        SocialPlatform zombiePlatform = zombie.GetComponent<SocialPlatform>();
+
+        for (int i = 0; i < numStarsEarned; i++)
         {
-            if (!zombie.getStars(currentLevel - 1)[i])
+            if (!zombiePasser.getStars(currentLevel - 1)[i])
             {
-                if (PlayGamesPlatform.Instance.localUser.authenticated)
-                {
-                    PlayGamesPlatform.Instance.IncrementAchievement(GPGSIds.achievement_temple_of_doom, 1, (bool success) =>
-                    {
-                        Debug.Log("Achievement Incremented: " + success);
-                    });
-                    PlayGamesPlatform.Instance.IncrementAchievement(GPGSIds.achievement_legend_of_the_hidden_temple, 1, (bool success) =>
-                    {
-                        Debug.Log("Achievement Incremented: " + success);
-                    });
-                }
+                zombiePlatform.AchievementProgress(GPGSIds.achievement_temple_of_doom, true, 1);
+                zombiePlatform.AchievementProgress(GPGSIds.achievement_legend_of_the_hidden_temple, true, 1);
             }
-            zombie.setStar(currentLevel - 1, i);
+            zombiePasser.setStar(currentLevel - 1, i);
         }
 
         //track achievements
-        if (PlayGamesPlatform.Instance.localUser.authenticated)
-        {
-            PlayGamesPlatform.Instance.ReportProgress(GPGSIds.achievement_getting_started, 100.0f, (bool success) => {
-                Debug.Log("Achievement Incremented: " + success);
-            });
-            if(moves <= numMoves && itemStar)
-            {
-                PlayGamesPlatform.Instance.ReportProgress(GPGSIds.achievement_all_star, 100.0f, (bool success) => {
-                    Debug.Log("Achievement Incremented: " + success);
-                });
-            }
-        }
+        zombiePlatform.AchievementProgress(GPGSIds.achievement_getting_started, false);
+        zombiePlatform.AchievementProgress(GPGSIds.achievement_all_star, false);
 
         turnOffTileColliders();
         winScreen.GetComponent<InGameMenuManager>().playAnim("winEnter");
@@ -408,20 +386,20 @@ public class GameMasterFSM : MonoBehaviour
             file.WriteLine("\"" + levelsList[currentLevel - 1].Name + "\" beaten in " + moves
             + " moves in " + System.Math.Round(time, 2) + " seconds in " + attempts + " attempts.");
         }
-        //GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setStars(currentLevel - 1, 3);
+        //zombiePasser.setStars(currentLevel - 1, 3);
         moves = 0;
         time = 0;
         attempts = 0;
 
         // save game data:
-        zombie.Save();
+        zombiePasser.Save();
 
 
     }
 
     public void save()
     {
-        GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().Save();
+        zombie.GetComponent<ZombiePasser>().Save();
     }
 
     private void resetWinScreen()
@@ -474,7 +452,7 @@ public class GameMasterFSM : MonoBehaviour
         if (cutscenes.Contains(currentLevel))
         {
             loadingScreen.SetActive(true);
-            GameObject.Find("ZombiePasser").GetComponent<ZombiePasser>().setLevel(currentLevel);
+            zombie.GetComponent<ZombiePasser>().setLevel(currentLevel);
             GameObject.Find("pauseScreen").GetComponent<InGameMenuManager>().loadScene("cutScene");
         }
 
@@ -483,7 +461,7 @@ public class GameMasterFSM : MonoBehaviour
         {
             Debug.Log("End of Demo Screen");
             GameObject.Find("endOfDemo").GetComponent<InGameMenuManager>().playAnim("winEnter");
-            GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setLevel(1);
+            zombie.GetComponent<ZombiePasser>().setLevel(1);
             return;
         }
 
@@ -1189,13 +1167,7 @@ public class GameMasterFSM : MonoBehaviour
                         GameObject.Destroy(enemy.gameObject);
                         i--;
 
-                        if (PlayGamesPlatform.Instance.localUser.authenticated)
-                        {
-                            PlayGamesPlatform.Instance.IncrementAchievement(GPGSIds.achievement_going_bearzerk, 1, (bool success) =>
-                            {
-                                Debug.Log("Achievement Incremented: " + success);
-                            });
-                        }
+                        zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_going_bearzerk, true, 1);
                     }
                     else
                     {
@@ -1326,8 +1298,8 @@ public class InitState : FSMState
         //build level:
         try
         {
-            controlref.levelsList = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevels();
-            controlref.currentLevel = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevel();
+            controlref.levelsList = controlref.zombie.GetComponent<ZombiePasser>().getLevels();
+            controlref.currentLevel = controlref.zombie.GetComponent<ZombiePasser>().getLevel();
             foreach (Level level in controlref.levelsList)
             {
                 //Debug.Log(level.Name + "\n");
@@ -1522,8 +1494,8 @@ public class OrderTilesState : FSMState
             else
             {
                 SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
-                ZombiePasser zombie = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>();
-                if (zombie.getVibToggle() == true)
+                ZombiePasser zombiePasser = controlref.zombie.GetComponent<ZombiePasser>();
+                if (zombiePasser.getVibToggle() == true)
                 {
                     //Handheld.Vibrate();
                 }
