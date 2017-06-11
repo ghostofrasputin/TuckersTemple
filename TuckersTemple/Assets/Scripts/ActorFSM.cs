@@ -176,6 +176,7 @@ public class ActorFSM : MonoBehaviour
         Item.GetComponent<ParticleSystem>().Play();
         SoundController.instance.RandomSfx(itemPickupSound, itemPickupSound);
         Destroy(Item, 1f);
+        gm.GetComponent<GameMasterFSM>().zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_these_belong_in_a_museum, true, 1);
     }
 
     //This should always be called if the actor gets destroyed
@@ -462,6 +463,7 @@ public class LookAState : FSMState
                         }
                         if (isEnemyDead && npc.GetComponent<ActorFSM>().actorName == "Tank")
                         {
+                            controlref.gm.GetComponent<GameMasterFSM>().zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_going_bearzerk, true, 1);
                             if (ray.collider.GetComponent<ActorFSM>().fsm.CurrentStateID == StateID.WalkA)
                             {
                                 ray.collider.GetComponent<ActorFSM>().SetTransition(Transition.CrossTank);
@@ -660,6 +662,8 @@ public class TrapDeadAState : FSMState
             {
                 SoundController.instance.TankVoice(controlref.tankDeath, controlref.tankDeath);
             }
+
+            controlref.gm.GetComponent<GameMasterFSM>().zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_its_a_trap, false);
         }
         else if (controlref.tag == "Enemy")
         {
@@ -671,6 +675,8 @@ public class TrapDeadAState : FSMState
             {
                 SoundController.instance.WraithVoice(controlref.enemyKilled, controlref.enemyKilled);
             }
+
+            controlref.gm.GetComponent<GameMasterFSM>().zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_gr8_b8_m8, true, 1);
         }
     }
 
@@ -745,6 +751,8 @@ public class EnemyDeadAState : FSMState
             {
                 SoundController.instance.EmilyVoice(controlref.emilyDeath, controlref.emilyDeath);
             }
+
+            controlref.gm.GetComponent<GameMasterFSM>().zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_hello_darkness, false);
         }
     }
 
@@ -798,6 +806,7 @@ public class LaserDeadAState : FSMState
             {
                 SoundController.instance.TankVoice(controlref.tankDeath, controlref.tankDeath);
             }
+            controlref.gm.GetComponent<GameMasterFSM>().zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_lasers_and_feelings, false);
         }
         else if (controlref.tag == "Enemy")
         {
@@ -809,6 +818,7 @@ public class LaserDeadAState : FSMState
             {
                 SoundController.instance.WraithVoice(controlref.enemyKilled, controlref.enemyKilled);
             }
+            controlref.gm.GetComponent<GameMasterFSM>().zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_gr8_b8_m8, true, 1);
         }
     }
 

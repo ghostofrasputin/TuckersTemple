@@ -59,6 +59,8 @@ public class GameMasterFSM : MonoBehaviour
     public bool isPaused;
     public bool foundTile;
 
+    public GameObject zombie;
+
     // touch handle
     public bool latch;
     public bool isVert;
@@ -132,7 +134,8 @@ public class GameMasterFSM : MonoBehaviour
         scalar = .006f;
         setStarRequirements();
 
-        GameObject.FindGameObjectWithTag("Level-Num").GetComponent<Text>().text = "" + GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevel();
+        zombie = GameObject.FindGameObjectWithTag("Zombie");
+        GameObject.FindGameObjectWithTag("Level-Num").GetComponent<Text>().text = "" + zombie.GetComponent<ZombiePasser>().getLevel();
 
     }
 
@@ -252,6 +255,12 @@ public class GameMasterFSM : MonoBehaviour
 
     }
 
+    public void restartButton()
+    {
+        zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_mulligan, false);
+        reset();
+    }
+
     public void setWinScreenEmily()
     {
         GameObject temp3 = GameObject.Find("Star3");
@@ -289,7 +298,7 @@ public class GameMasterFSM : MonoBehaviour
     {
         resetWinScreen();
         SoundController.instance.RandomSfxTiles(levelWinSound, levelWinSound);
-        ZombiePasser zombie = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>();
+        ZombiePasser zombiePasser = zombie.GetComponent<ZombiePasser>();
         // So enemies aren't heard in Level Win Screen 
 		GameObject[] enemies = GameObject.FindGameObjectsWithTag("Trap");
 		GameObject[] enemies1 = GameObject.FindGameObjectsWithTag("Enemy");
@@ -308,7 +317,7 @@ public class GameMasterFSM : MonoBehaviour
         {
             // unlocks the next level. 
             //note: currentlevel-1 is the real current level for the array, currentlevel is the next level
-            zombie.setLockedLevelBool(currentLevel);
+            zombiePasser.setLockedLevelBool(currentLevel);
         }
         catch (System.Exception error)
         {
@@ -323,18 +332,18 @@ public class GameMasterFSM : MonoBehaviour
         moveText.text = moves + "/" + numMoves;
         moveText.color = Color.red;
 
+        int numStarsEarned = 1;
+
         if (starRequirements.ContainsKey(levelsList[currentLevel - 1].Star))
         {
             if (starRequirements[levelsList[currentLevel - 1].Star] == true) itemStar = true;
 
         }
-        zombie.setStar(currentLevel - 1, 0);
         Invoke("setWinScreenRoy", 1.5f);
         SoundController.instance.RoyVoice(royWin1, royWin2, royWin3);
         if (moves <= numMoves)
         {
             moveText.color = Color.green;
-            zombie.setStar(currentLevel - 1, 1);
             Invoke("setWinScreenEmily", 2.5f);
             SoundController.instance.EmilyVoice(emilyWin1, emilyWin2, emilyWin3);
             if (itemStar)
@@ -342,14 +351,31 @@ public class GameMasterFSM : MonoBehaviour
                 Invoke("setWinScreenTank", 3f);
 				SoundController.instance.TankVoice (tankWin1, tankWin1);
             }
+            numStarsEarned++;
         }
         if (itemStar)
         {
-            zombie.setStar(currentLevel - 1, 2);
             Invoke("setWinScreenJake", 2f);
             SoundController.instance.JakeVoice(jakeWin1, jakeWin2, jakeWin3);
+            numStarsEarned++;
         }
 
+
+        SocialPlatform zombiePlatform = zombie.GetComponent<SocialPlatform>();
+
+        for (int i = 0; i < numStarsEarned; i++)
+        {
+            if (!zombiePasser.getStars(currentLevel - 1)[i])
+            {
+                zombiePlatform.AchievementProgress(GPGSIds.achievement_temple_of_doom, true, 1);
+                zombiePlatform.AchievementProgress(GPGSIds.achievement_legend_of_the_hidden_temple, true, 1);
+            }
+            zombiePasser.setStar(currentLevel - 1, i);
+        }
+
+        //track achievements
+        zombiePlatform.AchievementProgress(GPGSIds.achievement_getting_started, false);
+        zombiePlatform.AchievementProgress(GPGSIds.achievement_all_star, false);
 
         turnOffTileColliders();
         winScreen.GetComponent<InGameMenuManager>().playAnim("winEnter");
@@ -360,15 +386,20 @@ public class GameMasterFSM : MonoBehaviour
             file.WriteLine("\"" + levelsList[currentLevel - 1].Name + "\" beaten in " + moves
             + " moves in " + System.Math.Round(time, 2) + " seconds in " + attempts + " attempts.");
         }
-        //GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setStars(currentLevel - 1, 3);
+        //zombiePasser.setStars(currentLevel - 1, 3);
         moves = 0;
         time = 0;
         attempts = 0;
 
         // save game data:
-        zombie.Save();
+        zombiePasser.Save();
 
 
+    }
+
+    public void save()
+    {
+        zombie.GetComponent<ZombiePasser>().Save();
     }
 
     private void resetWinScreen()
@@ -421,7 +452,7 @@ public class GameMasterFSM : MonoBehaviour
         if (cutscenes.Contains(currentLevel))
         {
             loadingScreen.SetActive(true);
-            GameObject.Find("ZombiePasser").GetComponent<ZombiePasser>().setLevel(currentLevel);
+            zombie.GetComponent<ZombiePasser>().setLevel(currentLevel);
             GameObject.Find("pauseScreen").GetComponent<InGameMenuManager>().loadScene("cutScene");
         }
 
@@ -430,7 +461,7 @@ public class GameMasterFSM : MonoBehaviour
         {
             Debug.Log("End of Demo Screen");
             GameObject.Find("endOfDemo").GetComponent<InGameMenuManager>().playAnim("winEnter");
-            GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setLevel(1);
+            zombie.GetComponent<ZombiePasser>().setLevel(1);
             return;
         }
 
@@ -1135,6 +1166,8 @@ public class GameMasterFSM : MonoBehaviour
                         enemies.Remove(enemy.gameObject);
                         GameObject.Destroy(enemy.gameObject);
                         i--;
+
+                        zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_going_bearzerk, true, 1);
                     }
                     else
                     {
@@ -1265,8 +1298,8 @@ public class InitState : FSMState
         //build level:
         try
         {
-            controlref.levelsList = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevels();
-            controlref.currentLevel = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevel();
+            controlref.levelsList = controlref.zombie.GetComponent<ZombiePasser>().getLevels();
+            controlref.currentLevel = controlref.zombie.GetComponent<ZombiePasser>().getLevel();
             foreach (Level level in controlref.levelsList)
             {
                 //Debug.Log(level.Name + "\n");
@@ -1461,8 +1494,8 @@ public class OrderTilesState : FSMState
             else
             {
                 SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
-                ZombiePasser zombie = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>();
-                if (zombie.getVibToggle() == true)
+                ZombiePasser zombiePasser = controlref.zombie.GetComponent<ZombiePasser>();
+                if (zombiePasser.getVibToggle() == true)
                 {
                     //Handheld.Vibrate();
                 }

@@ -103,7 +103,7 @@ public class ZombiePasser : MonoBehaviour {
 
 		}
 
-		Load();
+        Load();
 
 		// keep zombie awake:
 		DontDestroyOnLoad(this);
