@@ -61,7 +61,7 @@ public class ZombiePasser : MonoBehaviour {
 		GameObject levelSelection = GameObject.FindGameObjectWithTag("LevelSelection");
 		GameObject IconRef = GameObject.FindGameObjectWithTag("LevelIcon");
 		iconRefs.Add (IconRef);
-		MainMenuManager mainMenu = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<MainMenuManager> ();
+        MainMenuManager mainMenu = GameObject.FindGameObjectWithTag("mainCanvas").GetComponent<MainMenuManager>();
 		float scalarX = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<RectTransform> ().localScale.x;
 		float scalarY = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<RectTransform> ().localScale.y;
 		float iconWidth = IconRef.GetComponent<RectTransform> ().rect.width;

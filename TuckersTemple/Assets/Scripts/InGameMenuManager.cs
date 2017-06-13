@@ -89,7 +89,7 @@ public class InGameMenuManager : MonoBehaviour {
 	}
 
 	public void pauseAnim(){
-        Debug.Log(pausePosition.transform.position);
+        //Debug.Log(pausePosition.transform.position);
 		if (GameObject.FindGameObjectWithTag ("UI-Border").GetComponent<Animator> ().enabled == false) {
 			GameObject.FindGameObjectWithTag ("UI-Border").GetComponent<Animator> ().enabled = true;
 			GameObject.FindGameObjectWithTag ("UI-Border").GetComponent<Animator> ().Play ("UIBorderPause");

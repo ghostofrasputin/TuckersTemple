@@ -35,6 +35,13 @@ public class SocialPlatform : MonoBehaviour {
         }
     }
 
+    public void SignIn()
+    {
+#if (UNITY_ANDROID)
+        PlayGamesPlatform.Instance.Authenticate(SignInCallback, false);
+#endif
+    }
+
     public void ShowAchievements()
     {
 #if (UNITY_ANDROID)

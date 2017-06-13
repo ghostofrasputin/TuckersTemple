@@ -768,7 +768,7 @@ public class GameMasterFSM : MonoBehaviour
         switch (touchPhase)
         {
             case TouchPhase.Began:
-                Debug.Log("Began");
+                //Debug.Log("Began");
                 Ray ray = Camera.main.ScreenPointToRay(touchPosition);
                 touchTarget = null;
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Tile")))
@@ -794,12 +794,12 @@ public class GameMasterFSM : MonoBehaviour
                 break;
 
             case TouchPhase.Stationary:
-                Debug.Log("Stationary");
+                //Debug.Log("Stationary");
                 if (foundTile) { spinGear(0); }
                 break;
 
             case TouchPhase.Moved:
-                Debug.Log("Moved");
+               // Debug.Log("Moved");
                 if (foundTile)
                 {
                     spinGear(.3f);
@@ -808,7 +808,7 @@ public class GameMasterFSM : MonoBehaviour
                     {
                         if (latch == false)
                         {
-                            Debug.Log("LATCH********");
+                            //Debug.Log("LATCH********");
                             offset = (Vector2)touchPosition - touchStart;
                             isVert = Mathf.Abs(offset.y) > Mathf.Abs(offset.x);
                             latch = true;
@@ -884,7 +884,7 @@ public class GameMasterFSM : MonoBehaviour
                 }
                 break;
             case TouchPhase.Ended:
-                Debug.Log("Ended");
+                //Debug.Log("Ended");
                 if (foundTile)
                 {
                     float swipeDist;
@@ -908,7 +908,7 @@ public class GameMasterFSM : MonoBehaviour
                         }
                         if (moved)
                         {
-                            Debug.Log("MOVED****************");
+                            //Debug.Log("MOVED****************");
                             for (int r = 0; r < numRows; r++)
                             {
                                 //Debug.Log(swipeDist);
@@ -943,7 +943,7 @@ public class GameMasterFSM : MonoBehaviour
                         }
                         if (moved)
                         {
-                            Debug.Log("MOVED****************");
+                            //Debug.Log("MOVED****************");
                             for (int c = 0; c < numCols; c++)
                             {
                                 if (!validSwipe)

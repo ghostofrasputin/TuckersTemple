@@ -51,7 +51,6 @@ public class TouchHandler : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		Debug.Log (scalarX);
 		// jump to level selection:
 		if (jump) {
 			if (checkCollision (levelAnchor)) {
