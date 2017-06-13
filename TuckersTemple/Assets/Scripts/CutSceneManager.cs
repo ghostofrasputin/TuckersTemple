@@ -15,7 +15,7 @@ using UnityEngine;
 using LitJson;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using GooglePlayGames;
+//using GooglePlayGames;
 
 /*
  * Class CharacterLine holds information about a single line

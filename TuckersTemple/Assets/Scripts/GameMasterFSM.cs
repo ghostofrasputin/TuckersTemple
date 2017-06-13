@@ -377,6 +377,8 @@ public class GameMasterFSM : MonoBehaviour
         zombiePlatform.AchievementProgress(GPGSIds.achievement_getting_started, false);
         zombiePlatform.AchievementProgress(GPGSIds.achievement_all_star, false);
 
+
+
         turnOffTileColliders();
         winScreen.GetComponent<InGameMenuManager>().playAnim("winEnter");
         ticking = false;
