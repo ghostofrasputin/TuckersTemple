@@ -26,7 +26,7 @@ public static class GPGSIds
 {
         public const string achievement_mulligan = "CgkIoMnq07EKEAIQDw"; // <GPGSID>
         public const string achievement_getting_started = "CgkIoMnq07EKEAIQBw"; // <GPGSID>
-        public const string achievement_temple_of_doom = "CgkIoMnq07EKEAIQDA"; // <GPGSID>
+        public const string achievement_temple_of_doom = "CgkIoMnq07EKEAIQEA"; // <GPGSID>
         public const string achievement_its_a_trap = "CgkIoMnq07EKEAIQCg"; // <GPGSID>
         public const string achievement_brotherly_love = "CgkIoMnq07EKEAIQAw"; // <GPGSID>
         public const string achievement_gr8_b8_m8 = "CgkIoMnq07EKEAIQDg"; // <GPGSID>
