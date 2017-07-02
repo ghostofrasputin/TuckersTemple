@@ -243,7 +243,6 @@ public class ActorFSM : MonoBehaviour
     {
         List<string> texts = deathTexts[cause];
         int msg = UnityEngine.Random.Range(0, texts.Count);
-        Debug.Log(msg + "/" + texts.Count);
         gm.GetComponent<GameMasterFSM>().deathText.text = actorName + texts[msg];
 
         //change background
@@ -392,15 +391,7 @@ public class IdleAState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
-        // Idle Behavior similar to IMBROGLIO !!!
-        if (controlref.tag == "Player")
-        {
-            npc.GetComponent<ActorFSM>().wiggle(0.0005f, 0.075f);
-        }
-        if (controlref.tag == "Enemy")
-        {
-            npc.GetComponent<ActorFSM>().wiggle(0.0005f, 0.1f, 1.5f, 1.6f);
-        }
+
     }
 
 } //IdleState
@@ -581,17 +572,7 @@ public class WalkAState : FSMState
     {
         // SoundController.instance.PlaySingleDelay(controlref.playerfootsteps1);
 
-        // walk behavior
-        if (controlref.tag == "Player")
-        {
-            npc.GetComponent<ActorFSM>().wiggle(0.001f, 0.5f, 0.9f, 1.1f, 0.2f, 0.6f);
-        }
-        if (controlref.tag == "Enemy")
-        {
-            npc.GetComponent<ActorFSM>().wiggle(0.001f, 0.5f, 1.1f, 1.3f, 0.2f, 0.6f);
-        }
-
-        npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, controlref.speed * Time.deltaTime);
+        npc.transform.position = new Vector2(controlref.goalPos.x, controlref.goalPos.y);
     }
 
 } // WalkAState
@@ -625,7 +606,7 @@ public class WinAState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
-        npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, controlref.speed * 2f * Time.deltaTime);
+        npc.transform.position = new Vector2(controlref.goalPos.x, controlref.goalPos.y);
     }
 
 } // WinState
@@ -712,7 +693,7 @@ public class TrapDeadAState : FSMState
             npc.GetComponent<ActorFSM>().wiggle(0.001f, 0.5f, 1.1f, 1.3f, 0.2f, 0.6f);
         }
 
-        npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, controlref.speed * Time.deltaTime);
+        npc.transform.position = new Vector2(controlref.goalPos.x, controlref.goalPos.y);
     }
 
 } // TrapDeadState
@@ -867,7 +848,7 @@ public class EnterState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
-        npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, controlref.speed * Time.deltaTime);
+        npc.transform.position = new Vector2(controlref.goalPos.x, controlref.goalPos.y);
     }
 
 } // EnterState

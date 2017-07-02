@@ -78,6 +78,10 @@ public class GameMasterFSM : MonoBehaviour
     public bool wrapLatch;
     public float scalar;
 
+    public int maxDepth;
+    public int currDepth;
+    public List<int> moveHistory = new List<int>();
+
     // audio:
     public AudioClip TileSlide1;
     public AudioClip TileSlide2;
@@ -113,6 +117,9 @@ public class GameMasterFSM : MonoBehaviour
         incompleteTouch = false;
         moved = false;
         lastPos = Vector2.zero;
+
+        maxDepth = 12;
+        currDepth = 0;
 
 
         tileSize = Tile.GetComponent<SpriteRenderer>().bounds.size.x * gridScale;
@@ -297,21 +304,7 @@ public class GameMasterFSM : MonoBehaviour
     public void levelWin()
     {
         resetWinScreen();
-        SoundController.instance.RandomSfxTiles(levelWinSound, levelWinSound);
         ZombiePasser zombiePasser = zombie.GetComponent<ZombiePasser>();
-        // So enemies aren't heard in Level Win Screen 
-		GameObject[] enemies = GameObject.FindGameObjectsWithTag("Trap");
-		GameObject[] enemies1 = GameObject.FindGameObjectsWithTag("Enemy");
-		GameObject[] enemies2 = GameObject.FindGameObjectsWithTag("Laser");
-		foreach (GameObject enemy in enemies) {
-			GameObject.Destroy (enemy);
-		}
-		foreach (GameObject enemy in enemies1) {
-			GameObject.Destroy (enemy);
-		}
-		foreach (GameObject enemy in enemies2) {
-			GameObject.Destroy (enemy);
-		}
 			
         try
         {
@@ -323,78 +316,13 @@ public class GameMasterFSM : MonoBehaviour
         {
             Debug.Log(error);
         }
-
-        bool itemStar = false;
-        //check what the string requirement for this level is and check if it is satisfied
-
-        int numMoves = levelsList[currentLevel - 1].Moves;
-        Text moveText = GameObject.Find("NumMoves").GetComponent<Text>();
-        moveText.text = moves + "/" + numMoves;
-        moveText.color = Color.red;
-
-        int numStarsEarned = 1;
-
-        if (starRequirements.ContainsKey(levelsList[currentLevel - 1].Star))
-        {
-            if (starRequirements[levelsList[currentLevel - 1].Star] == true) itemStar = true;
-
-        }
-        Invoke("setWinScreenRoy", 1.5f);
-        SoundController.instance.RoyVoice(royWin1, royWin2, royWin3);
-        if (moves <= numMoves)
-        {
-            moveText.color = Color.green;
-            Invoke("setWinScreenEmily", 2.5f);
-            SoundController.instance.EmilyVoice(emilyWin1, emilyWin2, emilyWin3);
-            if (itemStar)
-            {
-                Invoke("setWinScreenTank", 3f);
-				SoundController.instance.TankVoice (tankWin1, tankWin1);
-            }
-            numStarsEarned++;
-        }
-        if (itemStar)
-        {
-            Invoke("setWinScreenJake", 2f);
-            SoundController.instance.JakeVoice(jakeWin1, jakeWin2, jakeWin3);
-            numStarsEarned++;
-        }
-
-
-        SocialPlatform zombiePlatform = zombie.GetComponent<SocialPlatform>();
-
-        for (int i = 0; i < numStarsEarned; i++)
-        {
-            if (!zombiePasser.getStars(currentLevel - 1)[i])
-            {
-                zombiePlatform.AchievementProgress(GPGSIds.achievement_temple_of_doom, true, 1);
-                zombiePlatform.AchievementProgress(GPGSIds.achievement_legend_of_the_hidden_temple, true, 1);
-            }
-            zombiePasser.setStar(currentLevel - 1, i);
-        }
-
-        //track achievements
-        zombiePlatform.AchievementProgress(GPGSIds.achievement_getting_started, false);
-        zombiePlatform.AchievementProgress(GPGSIds.achievement_all_star, false);
-
-        turnOffTileColliders();
-        winScreen.GetComponent<InGameMenuManager>().playAnim("winEnter");
-        ticking = false;
-        using (System.IO.StreamWriter file =
-            new System.IO.StreamWriter("playtest.txt", true))
-        {
-            file.WriteLine("\"" + levelsList[currentLevel - 1].Name + "\" beaten in " + moves
-            + " moves in " + System.Math.Round(time, 2) + " seconds in " + attempts + " attempts.");
-        }
-        //zombiePasser.setStars(currentLevel - 1, 3);
+      
         moves = 0;
         time = 0;
         attempts = 0;
 
         // save game data:
         zombiePasser.Save();
-
-
     }
 
     public void save()
@@ -404,22 +332,7 @@ public class GameMasterFSM : MonoBehaviour
 
     private void resetWinScreen()
     {
-        GameObject temp1 = GameObject.Find("Star1");
-        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
-        GameObject temp2 = GameObject.Find("Star2");
-        temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
-        GameObject temp3 = GameObject.Find("Star3");
-        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
-        temp2.transform.GetChild(0).gameObject.SetActive(true);
 
-        temp1.GetComponent<ParticleSystem>().Stop();
-        temp2.GetComponent<ParticleSystem>().Stop();
-        temp3.GetComponent<ParticleSystem>().Stop();
-
-        GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily_blank");
-        GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy_blank");
-        GameObject.FindWithTag("jakeWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake_blank");
-        GameObject.FindWithTag("tankWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("CutScenes/blank");
     }
 
     private void setCanvas(Canvas c, bool b)
@@ -433,14 +346,9 @@ public class GameMasterFSM : MonoBehaviour
     // displays death screen:
     public void levelDeath()
     {
-        //SoundController.instance.musicSource.Stop ();
-        //SoundController.instance.PlaySingle(playerdeathSound);
-        turnOffTileColliders();
-        //PauseButton.SetActive(false); //no longer necessary
-        deathScreen.GetComponent<Animator>().Play("DeathFadeIn");
-        deathScreen.GetComponent<CanvasGroup>().interactable = true;
-        deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
-        //SoundController.instance.PlaySingleGameOver (gameOverSound);
+        currDepth = 0;
+        moveHistory = new List<int>();
+        reset();
     }
 
     public void nextLevel()
@@ -764,214 +672,109 @@ public class GameMasterFSM : MonoBehaviour
 
     public bool HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase, Vector3 touchDelta = default(Vector3))
     {
+        foundTile = true;
         bool touchSuccess = false;
-        switch (touchPhase)
+
+
+        Row = 0;
+        Column = 0;
+        isVert = true;
+        bool flip = true;
+
+        int move = Mathf.FloorToInt(UnityEngine.Random.Range(0, 11));
+        switch (move)
         {
-            case TouchPhase.Began:
-                Debug.Log("Began");
-                Ray ray = Camera.main.ScreenPointToRay(touchPosition);
-                touchTarget = null;
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Tile")))
-                {
-                    touchTarget = hit.collider.gameObject;
-                    for (int c = 0; c < numCols; c++)
-                    {
-                        for (int r = 0; r < numRows; r++)
-                        {
-                            if (tileGrid[c][r].Equals(touchTarget))
-                            {
-                                Row = r;
-                                Column = c;
-                                foundTile = true;
-                                touchStart = new Vector2(touchPosition.x, touchPosition.y);
-                                break;
-                            }
-                        }
-                        if (foundTile) { break; }
-                    }
-                }
-                //Debug.Log(Row + ", " + Column);
+            case 0:
                 break;
 
-            case TouchPhase.Stationary:
-                Debug.Log("Stationary");
-                if (foundTile) { spinGear(0); }
+            case 1:
+                Column = 1;
                 break;
 
-            case TouchPhase.Moved:
-                Debug.Log("Moved");
-                if (foundTile)
-                {
-                    spinGear(.3f);
-                    Vector2 offsetLocal = (Vector2)touchPosition - touchStart;
-                    if (latch || Math.Abs(offsetLocal.x) > 10 || Math.Abs(offsetLocal.y) > 10)
-                    {
-                        if (latch == false)
-                        {
-                            Debug.Log("LATCH********");
-                            offset = (Vector2)touchPosition - touchStart;
-                            isVert = Mathf.Abs(offset.y) > Mathf.Abs(offset.x);
-                            latch = true;
-                            moved = true;
-                        }
-
-                        /* Debug.Log("spriterenderer" + tileS); */
-                        Vector3 origScale;
-                        if (isVert)
-                        {
-                            if (!wrapLatch)
-                            {
-                                //Spawn a tile below
-                                wrapTile = tileGrid[Column][numRows - 1];
-                                origScale = wrapTile.transform.localScale;
-                                wrapTile.transform.localScale = Vector3.one;
-                                wrapCopy1 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, -tileSize, 0), Quaternion.identity, wrapTile.transform);
-                                wrapCopy1.GetComponent<TileFSM>().setSortingLayer(1);
-                                Destroy(wrapCopy1.GetComponent<TileFSM>());
-                                wrapTile.transform.localScale = origScale;
-                                SoundController.instance.RandomSfxTiles(tileSlideOnly, tileSlideOnly);
-
-                                //spawn a tile above
-                                wrapTile = tileGrid[Column][0];
-                                origScale = wrapTile.transform.localScale;
-                                wrapTile.transform.localScale = Vector3.one;
-                                wrapCopy2 = Instantiate(wrapTile, new Vector3(wrapTile.transform.position.x, tileSize * numRows, 0), Quaternion.identity, wrapTile.transform);
-                                wrapCopy2.GetComponent<TileFSM>().setSortingLayer(-5);
-                                Destroy(wrapCopy2.GetComponent<TileFSM>());
-                                wrapTile.transform.localScale = origScale;
-
-                                wrapLatch = true;
-                            }
-                        }
-                        else
-                        {
-                            if (!wrapLatch)
-                            {
-                                wrapTile = tileGrid[numCols - 1][Row];
-                                origScale = wrapTile.transform.localScale;
-                                wrapTile.transform.localScale = Vector3.one;
-                                wrapCopy1 = Instantiate(wrapTile, new Vector3(-tileSize, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
-                                Destroy(wrapCopy1.GetComponent<TileFSM>());
-                                wrapTile.transform.localScale = origScale;
-                                SoundController.instance.RandomSfxTiles(tileSlideOnly, tileSlideOnly);
-                                wrapTile = tileGrid[0][Row];
-                                origScale = wrapTile.transform.localScale;
-                                wrapTile.transform.localScale = Vector3.one;
-                                wrapCopy2 = Instantiate(wrapTile, new Vector3(tileSize * numCols, wrapTile.transform.position.y, 0), Quaternion.identity, wrapTile.transform);
-                                Destroy(wrapCopy2.GetComponent<TileFSM>());
-                                wrapTile.transform.localScale = origScale;
-
-                                wrapLatch = true;
-                            }
-                        }
-                        // moving horizontal rows:
-                        if (!isVert)
-                        {
-                            for (int c = 0; c < numCols; c++)
-                            {
-                                tileGrid[c][Row].GetComponent<TileFSM>().moveTo(new Vector2(touchDelta.x * scalar, 0));
-                            }
-                        }
-                        // moving vertical cols:
-                        else
-                        {
-                            for (int r = 0; r < numRows; r++)
-                            {
-                                tileGrid[Column][r].GetComponent<TileFSM>().moveTo(new Vector2(0, touchDelta.y * scalar));
-                            }
-                        }
-                    }
-                }
+            case 2:
+                Column = 2;
                 break;
-            case TouchPhase.Ended:
-                Debug.Log("Ended");
-                if (foundTile)
-                {
-                    float swipeDist;
-                    //float tileSize = tileGrid [0] [0].GetComponent<Renderer> ().bounds.size.x * gridScale;
-                    bool validSwipe;
-                    wrapLatch = false;
 
-                    //Debug.Log (isVert);
-                    if (isVert)
-                    {
-                        swipeDist = (touchPosition.y - touchStart.y) * scalar;
-                        if (Mathf.Abs(touchTarget.GetComponent<TileFSM>().netDelta.y) < tileSize / 2)
-                        {
-                            validSwipe = false;
-                            incompleteTouch = true;
-                        }
-                        else
-                        {
-                            validSwipe = true;
-                            incompleteTouch = false;
-                        }
-                        if (moved)
-                        {
-                            Debug.Log("MOVED****************");
-                            for (int r = 0; r < numRows; r++)
-                            {
-                                //Debug.Log(swipeDist);
-                                if (!validSwipe)
-                                {
-                                    tileGrid[Column][r].GetComponent<TileFSM>().incompleteMove = true;
-                                }
-                                tileGrid[Column][r].GetComponent<TileFSM>().touchReleased = true;
-                            }
-                        }
-                        if (swipeDist < 0)
-                        {
-                            Direction = S;
-                        }
-                        else
-                        {
-                            Direction = N;
-                        }
-                    }
-                    else
-                    {
-                        swipeDist = (touchPosition.x - touchStart.x) * scalar;
-                        if (Mathf.Abs(touchTarget.GetComponent<TileFSM>().netDelta.x) < tileSize / 2)
-                        {
-                            validSwipe = false;
-                            incompleteTouch = true;
-                        }
-                        else
-                        {
-                            validSwipe = true;
-                            incompleteTouch = false;
-                        }
-                        if (moved)
-                        {
-                            Debug.Log("MOVED****************");
-                            for (int c = 0; c < numCols; c++)
-                            {
-                                if (!validSwipe)
-                                {
-                                    tileGrid[c][Row].GetComponent<TileFSM>().incompleteMove = true;
-                                }
-                                tileGrid[c][Row].GetComponent<TileFSM>().touchReleased = true;
-                            }
-                        }
-                        if (swipeDist < 0)
-                        {
-                            Direction = W;
-                        }
-                        else
-                        {
-                            Direction = E;
-                        }
-                    }
-                    latch = false;
-                    touchSuccess = true;
-                    foundTile = false;
-                }
+            case 3:
+                flip = false;
+                break;
+
+            case 4:
+                Column = 1;
+                flip = false;
+                break;
+
+            case 5:
+                Column = 2;
+                flip = false;
+                break;
+
+            case 6:
+                isVert = false;
+                break;
+
+            case 7:
+                Row = 1;
+                isVert = false;
+                break;
+
+            case 8:
+                Row = 2;
+                isVert = false;
+                break;
+
+            case 9:
+                flip = false;
+                isVert = false;
+                break;
+
+            case 10:
+                Row = 1;
+                flip = false;
+                isVert = false;
+                break;
+
+            case 11:
+                Row = 2;
+                flip = false;
+                isVert = false;
                 break;
 
             default:
+                Debug.Log("LOGIC ERROR");
                 break;
         }
-        //Debug.Log(touchSuccess);
+
+        incompleteTouch = false;
+
+        if (isVert)
+        {
+            for (int r = 0; r < numRows; r++)
+            {
+                tileGrid[Column][r].GetComponent<TileFSM>().touchReleased = true;
+            }
+
+            Direction = flip ? S : N;
+        }
+        else
+        {
+            for (int c = 0; c < numCols; c++)
+            {
+
+                tileGrid[c][Row].GetComponent<TileFSM>().touchReleased = true;
+            }
+
+            Direction = flip ? W : E;
+
+        }
+
+        latch = false;
+        touchSuccess = true;
+        foundTile = false;
+
+        ++currDepth;
+        moveHistory.Add(move);
+
         return touchSuccess;
     }
 
@@ -1329,10 +1132,6 @@ public class LevelJuiceState : FSMState
 
     public override void Reason(GameObject gm, GameObject npc)
     {
-        if (Input.touchCount > 0 || Input.GetMouseButtonDown(0))
-        {
-            controlref.skipAnimation();
-        }
         if (controlref.doneSliding())
         {
             npc.GetComponent<GameMasterFSM>().SetTransition(Transition.DoneJuicing);
@@ -1352,15 +1151,6 @@ public class LevelJuiceState : FSMState
             {
                 child.GetComponent<LaserScript>().setEye(true);
             }
-        }
-
-        
-
-        //check if first level, if so show tutorial.
-        if (controlref.currentLevel == 1)
-        {
-            GameObject.FindWithTag("pauseButton").GetComponent<Button>().onClick.Invoke();
-            controlref.tutorial.SetActive(true);
         }
     }
 
@@ -1434,40 +1224,12 @@ public class InputState : FSMState
     public override void Act(GameObject gm, GameObject npc)
     {
         controlref.swiped = false;
-        if (Input.touchCount == 0)
-        {
-            //Calls when mouse is first pressed(begin)
-            if (Input.GetMouseButtonDown(0))
-            {
-                controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Began);
-                //store the last position for next tick
-                controlref.lastPos = Input.mousePosition;
-
-            }
-            //called when mouse his held down(moved)
-            else if (Input.GetMouseButton(0))
-            {
-                if (controlref.lastPos == (Vector2)Input.mousePosition)
-                {
-                    controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Stationary, Input.mousePosition - (Vector3)controlref.lastPos);
-                }
-                else
-                {
-                    controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Moved, Input.mousePosition - (Vector3)controlref.lastPos);
-                    controlref.lastPos = Input.mousePosition;
-                }
-            }
-            //called when mouse is lifted up(ended)
-            else if (Input.GetMouseButtonUp(0))
-            {
-                controlref.swiped = controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Ended);
-            }
-        }
+        if (controlref.currDepth < controlref.maxDepth) { controlref.swiped = controlref.HandleTouch(0, Vector2.zero, TouchPhase.Ended, Vector2.zero); } 
         else
         {
-            //use the first touch registered
-            Touch touch = Input.touches[0];
-            controlref.swiped = controlref.HandleTouch(touch.fingerId, touch.position, touch.phase, touch.deltaPosition);
+            controlref.moveHistory = new List<int>();
+            controlref.currDepth = 0;
+            controlref.reset();
         }
     }
 
@@ -1493,13 +1255,6 @@ public class OrderTilesState : FSMState
             }
             else
             {
-                SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
-                ZombiePasser zombiePasser = controlref.zombie.GetComponent<ZombiePasser>();
-                if (zombiePasser.getVibToggle() == true)
-                {
-                    //Handheld.Vibrate();
-                }
-                GameObject.Find("Main Camera").GetComponent<ScreenShake>().startShaking();
                 npc.GetComponent<GameMasterFSM>().SetTransition(Transition.TilesDone); //to orderactors
             }
         }
@@ -1512,8 +1267,7 @@ public class OrderTilesState : FSMState
 
     public override void DoBeforeEntering()
     {
-        //controlref.moved)
-        if (true) { controlref.moveGrid(controlref.Column, controlref.Row, controlref.Direction); }
+        controlref.moveGrid(controlref.Column, controlref.Row, controlref.Direction);
         foreach (GameObject child in controlref.lasers)
         {
             if (child.tag == "Laser")
@@ -1521,13 +1275,10 @@ public class OrderTilesState : FSMState
                 child.GetComponent<LaserScript>().setEye(false);
             }
         }
-        //controlref.spinGear(0.3f);
     }
 
     public override void DoBeforeLeaving()
     {
-        SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
-        controlref.spinGear(0);
         if (controlref.wrapCopy1 != null)
         {
             MonoBehaviour.Destroy(controlref.wrapCopy1);
@@ -1614,7 +1365,6 @@ public class LevelWonState : FSMState
 
     public override void DoBeforeEntering()
     {
-        controlref.levelWin();
     }
 
     public override void Reason(GameObject gm, GameObject npc)
@@ -1624,7 +1374,18 @@ public class LevelWonState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
-
+        Debug.Log("CurrDepth: " + controlref.currDepth + ", Max Depth: " + controlref.maxDepth + ", \nMoves made: ");
+        string movesString = "";
+        Debug.Log("History length: " + controlref.moveHistory.Count);
+        foreach(int move in controlref.moveHistory)
+        {
+            movesString += move;
+            movesString += ", ";
+        }
+        Debug.Log(movesString);
+        controlref.maxDepth = controlref.currDepth;
+        controlref.moveHistory = new List<int>();
+        controlref.reset();
     }
 
 } // LevelWonState

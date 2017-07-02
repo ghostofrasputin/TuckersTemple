@@ -47,13 +47,6 @@ public class MainMenuManager : MonoBehaviour {
 		anim = ani.GetComponent<Animator>();
 		anim.enabled = false;
 
-		Toggle music = GameObject.Find("MusicToggle").GetComponent<Toggle>();
-		music.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getMusicToggle();
-		Toggle sfx = GameObject.Find("SFXToggle").GetComponent<Toggle>();
-		sfx.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getSFXToggle();
-		Toggle vib = GameObject.Find("VibrationToggle").GetComponent<Toggle>();
-		vib.isOn = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getVibToggle();
-
 		GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setMenuToggle();
 
 		scalarX = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<RectTransform> ().localScale.x;
@@ -119,7 +112,6 @@ public class MainMenuManager : MonoBehaviour {
 	public void loadScene(string scene)
 	{
 		loadingImage.SetActive (true);
-		SoundController.instance.PlaySingle (PlayStart);
 		SceneManager.LoadScene(scene);
 	}
 
@@ -194,6 +186,3 @@ public class MainMenuManager : MonoBehaviour {
         credits.SetActive(false);
     }
 }
-
-
-

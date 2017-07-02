@@ -409,7 +409,7 @@ public class SnappingState : FSMState
         {
             controlref.goalPos = new Vector2(controlref.startPos.x, controlref.startPos.y);
         }
-        npc.transform.position = Vector2.MoveTowards(npc.transform.position, controlref.goalPos, speed * Time.deltaTime);
+        npc.transform.position = new Vector2(controlref.goalPos.x, controlref.goalPos.y);
     }
 
 } // SnappingState
@@ -471,7 +471,8 @@ public class SetupState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
-        controlref.transform.position = Vector2.MoveTowards(controlref.transform.position, controlref.goalPos, speed * Time.deltaTime);
+        controlref.transform.position = new Vector2(controlref.goalPos.x, controlref.goalPos.y);
+
     }
 
 } //SetupState
