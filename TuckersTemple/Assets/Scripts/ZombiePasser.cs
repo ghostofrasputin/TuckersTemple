@@ -17,8 +17,8 @@ public class ZombiePasser : MonoBehaviour {
 
 	// default string data
 	public const string settingsString = "ttf";
-        public const string lockedLevelsString = "fttttttttttttttttttttttttttttttttttttttttttttttttt";
-	//public const string unlockedLevelsString="ffffffffffffffffffffffffffffffffffffffffffffffffff";
+    //public const string lockedLevelsString = "fttttttttttttttttttttttttttttttttttttttttttttttttt";
+	public const string lockedLevelsString="ffffffffffffffffffffffffffffffffffffffffffffffffff";
 	public const string starRatingsString = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
 
 	// data to save

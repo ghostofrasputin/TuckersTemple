@@ -680,8 +680,34 @@ public class GameMasterFSM : MonoBehaviour
         Column = 0;
         isVert = true;
         bool flip = true;
+        //********
+        // 0,0 is BOTTOM LEFT CORNER
 
-        int move = Mathf.FloorToInt(UnityEngine.Random.Range(0, 11));
+        //3x3
+        // 0 - 0D
+        // 1 - 1D
+        // 2 - 2D
+
+        // 3 - 0U
+        // 4 - 1U
+        // 5 - 2U
+
+        // 6 - 0L
+        // 7 - 1L
+        // 8 - 2L
+
+        //  9 - 0R
+        // 10 - 1R
+        // 11 - 2R
+
+        //********
+        //4x4
+        // 12 - 3D
+        // 13 - 3U
+        // 14 - 3L
+        // 15 - 3R
+
+        int move = Mathf.FloorToInt(UnityEngine.Random.Range(0, numCols*4));
         switch (move)
         {
             case 0:
@@ -736,6 +762,25 @@ public class GameMasterFSM : MonoBehaviour
 
             case 11:
                 Row = 2;
+                flip = false;
+                isVert = false;
+                break;
+
+            case 12:
+                Column = 3;
+                break;
+            case 13:
+                Column = 3;
+                flip = false;
+                break;
+
+            case 14:
+                Row = 3;
+                isVert = false;
+                break;
+
+            case 15:
+                Row = 3;
                 flip = false;
                 isVert = false;
                 break;
@@ -1188,10 +1233,12 @@ public class InputState : FSMState
         if (controlref.characterDied())
         {
             npc.GetComponent<GameMasterFSM>().SetTransition(Transition.ActorDiedInInput); //to leveldeath
+            return;
         }
         if (controlref.swiped)
         {
             npc.GetComponent<GameMasterFSM>().SetTransition(Transition.InputReceived); //to Look
+            return;
         }
         if (controlref.doneSliding())
         {
@@ -1374,16 +1421,14 @@ public class LevelWonState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
-        Debug.Log("CurrDepth: " + controlref.currDepth + ", Max Depth: " + controlref.maxDepth + ", \nMoves made: ");
-        string movesString = "";
-        Debug.Log("History length: " + controlref.moveHistory.Count);
+        string movesString = "Max Depth: " + controlref.maxDepth + ", Current Depth: " + controlref.currDepth + ", \nMoves made: ";
         foreach(int move in controlref.moveHistory)
         {
             movesString += move;
             movesString += ", ";
         }
         Debug.Log(movesString);
-        controlref.maxDepth = controlref.currDepth;
+        controlref.maxDepth = controlref.currDepth - 1;
         controlref.moveHistory = new List<int>();
         controlref.reset();
     }
