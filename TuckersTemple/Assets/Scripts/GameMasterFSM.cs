@@ -81,6 +81,7 @@ public class GameMasterFSM : MonoBehaviour
     public int maxDepth;
     public int currDepth;
     public List<int> moveHistory = new List<int>();
+    public List<int> tree        = new List<int>();
 
     // audio:
     public AudioClip TileSlide1;
@@ -120,6 +121,7 @@ public class GameMasterFSM : MonoBehaviour
 
         maxDepth = 12;
         currDepth = 0;
+        tree = new List<int>(){0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 
         tileSize = Tile.GetComponent<SpriteRenderer>().bounds.size.x * gridScale;
@@ -346,6 +348,9 @@ public class GameMasterFSM : MonoBehaviour
     // displays death screen:
     public void levelDeath()
     {
+        Debug.Log("Died");
+        //Debug.Log("Update tree: " + (currDepth - 1));
+        updateTree(currDepth-1);
         currDepth = 0;
         moveHistory = new List<int>();
         reset();
@@ -670,6 +675,29 @@ public class GameMasterFSM : MonoBehaviour
         UIBorder.GetComponent<Animator>().speed = 1.5f;
     }
 
+    private int selectMove(int depth)
+    {
+        return tree[depth];
+    }
+
+    public void updateTree(int depth)
+    {
+        ++tree[depth];
+        if(numRows == 3 && tree[depth] == 12)
+        {
+            tree[depth] = 0;
+            ++tree[depth - 1];
+        } else if(numRows == 4 && tree[depth] == 16)
+        {
+            tree[depth] = 0;
+            ++tree[depth - 1];
+        }
+        for(int i = depth + 1; i < tree.Count; ++i)
+        {
+            tree[i] = 0;
+        }
+    }
+
     public bool HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase, Vector3 touchDelta = default(Vector3))
     {
         foundTile = true;
@@ -707,7 +735,9 @@ public class GameMasterFSM : MonoBehaviour
         // 14 - 3L
         // 15 - 3R
 
-        int move = Mathf.FloorToInt(UnityEngine.Random.Range(0, numCols*4));
+        //int move = Mathf.FloorToInt(UnityEngine.Random.Range(0, numCols*4));
+        int move = selectMove(currDepth);
+        Debug.Log(move);
         switch (move)
         {
             case 0:
@@ -1274,6 +1304,9 @@ public class InputState : FSMState
         if (controlref.currDepth < controlref.maxDepth) { controlref.swiped = controlref.HandleTouch(0, Vector2.zero, TouchPhase.Ended, Vector2.zero); } 
         else
         {
+            //Debug.Log("Update tree: " + (controlref.currDepth - 1));
+            Debug.Log("HitMaxDepth");
+            controlref.updateTree(controlref.currDepth-1);
             controlref.moveHistory = new List<int>();
             controlref.currDepth = 0;
             controlref.reset();
@@ -1428,6 +1461,8 @@ public class LevelWonState : FSMState
             movesString += ", ";
         }
         Debug.Log(movesString);
+
+        controlref.updateTree(controlref.currDepth - 1);
         controlref.maxDepth = controlref.currDepth - 1;
         controlref.moveHistory = new List<int>();
         controlref.reset();
