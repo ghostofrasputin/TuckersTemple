@@ -16,6 +16,7 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject Jake;
     public GameObject Tank;
     public GameObject Trap;
+    public GameObject Glyph;
     public GameObject Enemy;
     public GameObject Wraith;
     public GameObject Goal;
@@ -37,6 +38,8 @@ public class GameMasterFSM : MonoBehaviour
     public List<GameObject> actors;
     public List<GameObject> characters;
     public List<GameObject> enemies;
+    public List<GameObject> glyphs;
+    public GameObject goal;
     public int currentLevel = 1; // progress this every time there's a win
     public List<Level> levelsList;
     public float tileSize;
@@ -557,6 +560,7 @@ public class GameMasterFSM : MonoBehaviour
         characters.Clear();
         tiles.Clear();
         lasers.Clear();
+        glyphs.Clear();
         tileGrid = new GameObject[numCols][];
         resetStarRequirements();
         generateLevel(level);
@@ -688,10 +692,10 @@ public class GameMasterFSM : MonoBehaviour
                 int x = value[0];
                 int y = value[1];
 				if (currentLevel >= darkLevel) {
-					Instantiate (GoalDark, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y,
+					goal = Instantiate (GoalDark, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y,
 						tileGrid [x] [y].transform.position.z), Quaternion.identity, tileGrid [x] [y].transform);
 					} else {
-					Instantiate (Goal, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y,
+					goal = Instantiate (Goal, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y,
 						tileGrid [x] [y].transform.position.z), Quaternion.identity, tileGrid [x] [y].transform);
 				}
             }
@@ -701,6 +705,30 @@ public class GameMasterFSM : MonoBehaviour
                 int y = value[1];
                 Instantiate(Trap, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y,
                     tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
+            }
+            if (key.Contains("glyph"))
+            {
+                int x = value[0];
+                int y = value[1];
+                Vector2 direction = new Vector2(value[2], value[3]);
+                GameObject glyph = Instantiate(Glyph, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y,
+                    tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
+
+                glyph.GetComponent<Glyph>().direction = direction;
+                if (direction == Vector2.right)
+                {
+                    glyph.transform.Rotate(0,0,180);
+                }
+                else if (direction == Vector2.up)
+                {
+                    glyph.transform.Rotate(0,0,-90);
+                }
+                else if (direction == Vector2.down)
+                {
+                    glyph.transform.Rotate(0,0,90);
+                }
+                glyphs.Add(glyph);
+                
             }
             if (key.Contains("laser"))
             {
@@ -1539,6 +1567,29 @@ public class OrderTilesState : FSMState
             controlref.wrapCopy2 = null;
         }
         controlref.moved = false;
+
+        //Handle Glyphs before actors check for glyph-affected objects
+        foreach(GameObject glyph in controlref.glyphs)
+        {
+            glyph.GetComponent<Glyph>().checkConnected();
+        }
+        bool allPaired = true;
+        foreach (GameObject glyph in controlref.glyphs)
+        {
+            if (!glyph.GetComponent<Glyph>().getIsPaired())
+            {
+                allPaired = false;
+                break;
+            }
+        }
+        if (allPaired)
+        {
+            controlref.goal.SetActive(true);
+        }
+        else
+        {
+            controlref.goal.SetActive(false);
+        }
     }
 
 } // OrderTilesState
