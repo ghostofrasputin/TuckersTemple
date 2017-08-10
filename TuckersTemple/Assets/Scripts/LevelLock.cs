@@ -18,6 +18,18 @@ public class LevelLock : MonoBehaviour
     private string target;
     private Button lockButton;
 
+	private bool hasMoved;
+	private MainMenuManager mainMenu;
+
+	void Start(){
+		hasMoved = false;
+		mainMenu = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<MainMenuManager> ();
+	}
+
+	void Update(){
+		hasMoved = Camera.main.GetComponent<TouchHandler>().hasMoved;
+	}
+
     public void setLock(bool isLocked)
     {
         levelNum = System.Convert.ToInt32(gameObject.name);
@@ -57,4 +69,11 @@ public class LevelLock : MonoBehaviour
             }
         }
     }
+
+	public void loadLevel(){
+		if (!hasMoved) {
+			mainMenu.updateLevelNum (levelNum);
+			mainMenu.loadScene ("main");
+		}
+	}
 }
