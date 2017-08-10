@@ -11,7 +11,7 @@ public class LaserScript : MonoBehaviour {
 	private Vector3 drawPoint;
 	public GameObject laserHit;
 	private GameObject currLaserHit;
-    private float promptTimer;
+    //private float promptTimer;
 
     // Use this for initialization
     void Start () {
@@ -20,7 +20,7 @@ public class LaserScript : MonoBehaviour {
         line.endWidth = 0.07f;
         line.sortingLayerName = "Actor";
 		setEye (false);
-        promptTimer = 0;
+        //promptTimer = 0;
     }
 	
 	// Update is called once per frame
