@@ -357,4 +357,14 @@ public class ZombiePasser : MonoBehaviour {
 		return data;
 	}
 
+    void OnApplicationQuit()
+    {
+        Save();
+    }
+
+    void OnApplicationPause(bool pause)
+    {
+        Save();
+    }
+
 }
