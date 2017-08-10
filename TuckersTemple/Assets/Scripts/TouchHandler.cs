@@ -17,6 +17,8 @@ public class TouchHandler : MonoBehaviour {
 
 	// public:
 	public Vector3 lastPos;
+	public bool hasMoved;
+	public float startPosition;
 
 	// private:
 	private RectTransform panel;
@@ -33,7 +35,6 @@ public class TouchHandler : MonoBehaviour {
 	//float diff;
 	float scalarX;
 
-
 	void Start () {
 		panel = GameObject.FindWithTag("controlPan").GetComponent<RectTransform>();
 		//heightOfMainImage = GameObject.FindWithTag ("MainImage").GetComponent<RectTransform> ().rect.height;
@@ -47,6 +48,8 @@ public class TouchHandler : MonoBehaviour {
 		levelAnchor = GameObject.FindWithTag ("LevelAnchor");
 		//diff = levelAnchor.GetComponent<RectTransform> ().rect.width;
 		scalarX = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<RectTransform> ().localScale.x;
+
+		hasMoved = false;
 	}
 	
 	// Update is called once per frame
@@ -96,10 +99,10 @@ public class TouchHandler : MonoBehaviour {
 	{
 		switch (touchPhase) {
 		case TouchPhase.Began:
+			startPosition = panel.transform.position.y;
 			break;
 		case TouchPhase.Moved:
 			float currentPos = panel.transform.position.y + touchDelta.y;
-
 			if (panel.transform.position.y < currentPos && !checkCollision (bottom)) {
 				panel.transform.position = new Vector3 (panel.transform.position.x, currentPos, panel.transform.position.z);
 				return;
@@ -111,6 +114,7 @@ public class TouchHandler : MonoBehaviour {
 
 			break;
 		case TouchPhase.Ended:
+			hasMoved = (Mathf.Abs (startPosition - panel.transform.position.y) < 15) ? false : true;
 			break;
 		default:
 			break;
