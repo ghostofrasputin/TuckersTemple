@@ -15,6 +15,7 @@ using UnityEngine;
 using LitJson;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using GooglePlayGames;
 
 /*
  * Class CharacterLine holds information about a single line
@@ -59,6 +60,7 @@ public class CutSceneManager : MonoBehaviour {
 	private int sceneIndex;
 	private int lineIndex;
 	private float promptTimer;
+    private GameObject zombie;
 
 	Dictionary<int, string> cutSceneFiles; //holds the list of cutscene jsons
 
@@ -158,8 +160,10 @@ public class CutSceneManager : MonoBehaviour {
 		lineIndex = -1; //line index gets set to -1 since there is currently no line displayed at all
 		promptTimer = 0;
 
-		//get the current level
-		int currLevel = GameObject.Find("ZombiePasser").GetComponent<ZombiePasser>().getLevel();
+        //get the current level
+        zombie = GameObject.Find("ZombiePasser");
+
+        int currLevel = zombie.GetComponent<ZombiePasser>().getLevel();
 
 		//check if the current level has a cutscene
 		if (!cutSceneFiles.ContainsKey (currLevel)) {
@@ -168,8 +172,29 @@ public class CutSceneManager : MonoBehaviour {
             return;
 		}
 
-		//load in the JSON file, the same way as levelReader
-		TextAsset cutSceneFile = Resources.Load(cutSceneFiles[currLevel]) as TextAsset;
+        if (currLevel == 21)
+        {
+            zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_brotherly_love, false);
+        }
+        if (currLevel == 31)
+        {
+            zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_sister_sister, false);
+        }
+        if (currLevel == 35)
+        {
+            zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_bear_with_me, false);
+        }
+        if (currLevel == 41)
+        {
+            zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_family_reunion, false);
+        }
+        if (currLevel == 51)
+        {
+            zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_all_tuckered_out, false);
+        }
+
+        //load in the JSON file, the same way as levelReader
+        TextAsset cutSceneFile = Resources.Load(cutSceneFiles[currLevel]) as TextAsset;
 		jsonString = cutSceneFile.ToString();
 		cutSceneData = JsonMapper.ToObject(jsonString);
 		cutScenes = new List<CutScene> ();

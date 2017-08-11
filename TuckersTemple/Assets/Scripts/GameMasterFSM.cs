@@ -16,6 +16,9 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject Jake;
     public GameObject Tank;
     public GameObject Trap;
+    public GameObject Glyph;
+    public GameObject Teleporter;
+    public GameObject TeleporterTarget;
     public GameObject Enemy;
     public GameObject Wraith;
     public GameObject Goal;
@@ -25,7 +28,7 @@ public class GameMasterFSM : MonoBehaviour
 	public GameObject ItemDark;
     public GameObject shadowPS;
     public FSMSystem fsm;
-    public Vector2 lastPos = new Vector2(0, 0); //holds the last position for mouse input to calculate deltaPosition
+    public Vector2 lastPos; //holds the last position for mouse input to calculate deltaPosition
     public int numRows; //number of tiles to size
     public int numCols;
     public int Column;
@@ -37,6 +40,8 @@ public class GameMasterFSM : MonoBehaviour
     public List<GameObject> actors;
     public List<GameObject> characters;
     public List<GameObject> enemies;
+    public List<GameObject> glyphs;
+    public GameObject goal;
     public int currentLevel = 1; // progress this every time there's a win
     public List<Level> levelsList;
     public float tileSize;
@@ -49,6 +54,7 @@ public class GameMasterFSM : MonoBehaviour
     public GameObject RootTile;
     public float gridScale = 0.25f;
     public GameObject TutorialButton;
+    public GameObject PauseButton;
     public Dictionary<string, bool> starRequirements;
     public string[] starCriteria = { "foundItem", "killAll", "killNone" };
     public List<GameObject> lasers;
@@ -56,14 +62,17 @@ public class GameMasterFSM : MonoBehaviour
 
     public GameObject UIBorder;
     public bool isPaused;
-    public bool foundTile = false;
+    public bool foundTile;
+
+    public GameObject zombie;
 
     // touch handle
-    public bool latch = false;
-    public bool isVert = false;
+    public bool latch;
+    public bool isVert;
     public Vector2 offset;
     public bool swiped;
-    public bool incompleteTouch = false;
+    public bool moved;
+    public bool incompleteTouch;
     const int N = 0;
     const int E = 1;
     const int S = 2;
@@ -102,7 +111,14 @@ public class GameMasterFSM : MonoBehaviour
     {
         MakeFSM();
         wrapLatch = false;
+        latch = false;
         isPaused = false;
+        foundTile = false;
+        isVert = false;
+        incompleteTouch = false;
+        moved = false;
+        lastPos = Vector2.zero;
+
 
         tileSize = Tile.GetComponent<SpriteRenderer>().bounds.size.x * gridScale;
         RootTile = GameObject.Find("Tiles").gameObject;
@@ -123,7 +139,8 @@ public class GameMasterFSM : MonoBehaviour
         scalar = .006f;
         setStarRequirements();
 
-        GameObject.FindGameObjectWithTag("Level-Num").GetComponent<Text>().text = "" + GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevel();
+        zombie = GameObject.FindGameObjectWithTag("Zombie");
+        GameObject.FindGameObjectWithTag("Level-Num").GetComponent<Text>().text = "" + zombie.GetComponent<ZombiePasser>().getLevel();
 
     }
 
@@ -243,6 +260,12 @@ public class GameMasterFSM : MonoBehaviour
 
     }
 
+    public void restartButton()
+    {
+        zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_mulligan, false);
+        reset();
+    }
+
     public void setWinScreenEmily()
     {
         GameObject temp3 = GameObject.Find("Star3");
@@ -278,8 +301,9 @@ public class GameMasterFSM : MonoBehaviour
     //Displays win screen
     public void levelWin()
     {
+        resetWinScreen();
         SoundController.instance.RandomSfxTiles(levelWinSound, levelWinSound);
-        ZombiePasser zombie = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>();
+        ZombiePasser zombiePasser = zombie.GetComponent<ZombiePasser>();
         // So enemies aren't heard in Level Win Screen 
 		GameObject[] enemies = GameObject.FindGameObjectsWithTag("Trap");
 		GameObject[] enemies1 = GameObject.FindGameObjectsWithTag("Enemy");
@@ -298,7 +322,7 @@ public class GameMasterFSM : MonoBehaviour
         {
             // unlocks the next level. 
             //note: currentlevel-1 is the real current level for the array, currentlevel is the next level
-            zombie.setLockedLevelBool(currentLevel);
+            zombiePasser.setLockedLevelBool(currentLevel);
         }
         catch (System.Exception error)
         {
@@ -313,18 +337,18 @@ public class GameMasterFSM : MonoBehaviour
         moveText.text = moves + "/" + numMoves;
         moveText.color = Color.red;
 
+        int numStarsEarned = 1;
+
         if (starRequirements.ContainsKey(levelsList[currentLevel - 1].Star))
         {
             if (starRequirements[levelsList[currentLevel - 1].Star] == true) itemStar = true;
 
         }
-        zombie.setStar(currentLevel - 1, 0);
         Invoke("setWinScreenRoy", 1.5f);
         SoundController.instance.RoyVoice(royWin1, royWin2, royWin3);
         if (moves <= numMoves)
         {
             moveText.color = Color.green;
-            zombie.setStar(currentLevel - 1, 1);
             Invoke("setWinScreenEmily", 2.5f);
             SoundController.instance.EmilyVoice(emilyWin1, emilyWin2, emilyWin3);
             if (itemStar)
@@ -332,14 +356,31 @@ public class GameMasterFSM : MonoBehaviour
                 Invoke("setWinScreenTank", 3f);
 				SoundController.instance.TankVoice (tankWin1, tankWin1);
             }
+            numStarsEarned++;
         }
         if (itemStar)
         {
-            zombie.setStar(currentLevel - 1, 2);
             Invoke("setWinScreenJake", 2f);
             SoundController.instance.JakeVoice(jakeWin1, jakeWin2, jakeWin3);
+            numStarsEarned++;
         }
 
+
+        SocialPlatform zombiePlatform = zombie.GetComponent<SocialPlatform>();
+
+        for (int i = 0; i < numStarsEarned; i++)
+        {
+            if (!zombiePasser.getStars(currentLevel - 1)[i])
+            {
+                zombiePlatform.AchievementProgress(GPGSIds.achievement_temple_of_doom, true, 1);
+                zombiePlatform.AchievementProgress(GPGSIds.achievement_legend_of_the_hidden_temple, true, 1);
+            }
+            zombiePasser.setStar(currentLevel - 1, i);
+        }
+
+        //track achievements
+        zombiePlatform.AchievementProgress(GPGSIds.achievement_getting_started, false);
+        zombiePlatform.AchievementProgress(GPGSIds.achievement_all_star, false);
 
         turnOffTileColliders();
         winScreen.GetComponent<InGameMenuManager>().playAnim("winEnter");
@@ -350,15 +391,40 @@ public class GameMasterFSM : MonoBehaviour
             file.WriteLine("\"" + levelsList[currentLevel - 1].Name + "\" beaten in " + moves
             + " moves in " + System.Math.Round(time, 2) + " seconds in " + attempts + " attempts.");
         }
-        //GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setStars(currentLevel - 1, 3);
+        //zombiePasser.setStars(currentLevel - 1, 3);
         moves = 0;
         time = 0;
         attempts = 0;
 
         // save game data:
-        zombie.Save();
+        zombiePasser.Save();
 
 
+    }
+
+    public void save()
+    {
+        zombie.GetComponent<ZombiePasser>().Save();
+    }
+
+    private void resetWinScreen()
+    {
+        GameObject temp1 = GameObject.Find("Star1");
+        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
+        GameObject temp2 = GameObject.Find("Star2");
+        temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
+        GameObject temp3 = GameObject.Find("Star3");
+        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
+        temp2.transform.GetChild(0).gameObject.SetActive(true);
+
+        temp1.GetComponent<ParticleSystem>().Stop();
+        temp2.GetComponent<ParticleSystem>().Stop();
+        temp3.GetComponent<ParticleSystem>().Stop();
+
+        GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily_blank");
+        GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy_blank");
+        GameObject.FindWithTag("jakeWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake_blank");
+        GameObject.FindWithTag("tankWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("CutScenes/blank");
     }
 
     private void setCanvas(Canvas c, bool b)
@@ -375,6 +441,7 @@ public class GameMasterFSM : MonoBehaviour
         //SoundController.instance.musicSource.Stop ();
         //SoundController.instance.PlaySingle(playerdeathSound);
         turnOffTileColliders();
+        //PauseButton.SetActive(false); //no longer necessary
         deathScreen.GetComponent<Animator>().Play("DeathFadeIn");
         deathScreen.GetComponent<CanvasGroup>().interactable = true;
         deathScreen.GetComponent<CanvasGroup>().blocksRaycasts = true;
@@ -390,7 +457,7 @@ public class GameMasterFSM : MonoBehaviour
         if (cutscenes.Contains(currentLevel))
         {
             loadingScreen.SetActive(true);
-            GameObject.Find("ZombiePasser").GetComponent<ZombiePasser>().setLevel(currentLevel);
+            zombie.GetComponent<ZombiePasser>().setLevel(currentLevel);
             GameObject.Find("pauseScreen").GetComponent<InGameMenuManager>().loadScene("cutScene");
         }
 
@@ -399,7 +466,7 @@ public class GameMasterFSM : MonoBehaviour
         {
             Debug.Log("End of Demo Screen");
             GameObject.Find("endOfDemo").GetComponent<InGameMenuManager>().playAnim("winEnter");
-            GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().setLevel(1);
+            zombie.GetComponent<ZombiePasser>().setLevel(1);
             return;
         }
 
@@ -495,10 +562,12 @@ public class GameMasterFSM : MonoBehaviour
         characters.Clear();
         tiles.Clear();
         lasers.Clear();
+        glyphs.Clear();
         tileGrid = new GameObject[numCols][];
         resetStarRequirements();
         generateLevel(level);
         //Destroy(boundary.gameObject);
+        PauseButton.SetActive(true);
         turnOnTileColliders();
     }
 
@@ -625,10 +694,10 @@ public class GameMasterFSM : MonoBehaviour
                 int x = value[0];
                 int y = value[1];
 				if (currentLevel >= darkLevel) {
-					Instantiate (GoalDark, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y,
+					goal = Instantiate (GoalDark, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y,
 						tileGrid [x] [y].transform.position.z), Quaternion.identity, tileGrid [x] [y].transform);
 					} else {
-					Instantiate (Goal, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y,
+					goal = Instantiate (Goal, new Vector3 (tileGrid [x] [y].transform.position.x, tileGrid [x] [y].transform.position.y,
 						tileGrid [x] [y].transform.position.z), Quaternion.identity, tileGrid [x] [y].transform);
 				}
             }
@@ -638,6 +707,44 @@ public class GameMasterFSM : MonoBehaviour
                 int y = value[1];
                 Instantiate(Trap, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y,
                     tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
+            }
+            if (key.Contains("teleporter"))
+            {
+                int x = value[0];
+                int y = value[1];
+                Instantiate(Teleporter, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y,
+                    tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
+            }
+            if (key.Contains("teleTarget"))
+            {
+                int x = value[0];
+                int y = value[1];
+                Instantiate(TeleporterTarget, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y,
+                    tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
+            }
+            if (key.Contains("glyph"))
+            {
+                int x = value[0];
+                int y = value[1];
+                Vector2 direction = new Vector2(value[2], value[3]);
+                GameObject glyph = Instantiate(Glyph, new Vector3(tileGrid[x][y].transform.position.x, tileGrid[x][y].transform.position.y,
+                    tileGrid[x][y].transform.position.z), Quaternion.identity, tileGrid[x][y].transform);
+
+                glyph.GetComponent<Glyph>().direction = direction;
+                if (direction == Vector2.right)
+                {
+                    glyph.transform.Rotate(0,0,180);
+                }
+                else if (direction == Vector2.up)
+                {
+                    glyph.transform.Rotate(0,0,-90);
+                }
+                else if (direction == Vector2.down)
+                {
+                    glyph.transform.Rotate(0,0,90);
+                }
+                glyphs.Add(glyph);
+                
             }
             if (key.Contains("laser"))
             {
@@ -705,6 +812,7 @@ public class GameMasterFSM : MonoBehaviour
         switch (touchPhase)
         {
             case TouchPhase.Began:
+                //Debug.Log("Began");
                 Ray ray = Camera.main.ScreenPointToRay(touchPosition);
                 touchTarget = null;
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Tile")))
@@ -730,11 +838,12 @@ public class GameMasterFSM : MonoBehaviour
                 break;
 
             case TouchPhase.Stationary:
-
+                //Debug.Log("Stationary");
                 if (foundTile) { spinGear(0); }
                 break;
 
             case TouchPhase.Moved:
+                //Debug.Log("Moved");
                 if (foundTile)
                 {
                     spinGear(.3f);
@@ -743,9 +852,11 @@ public class GameMasterFSM : MonoBehaviour
                     {
                         if (latch == false)
                         {
+                            //Debug.Log("LATCH********");
                             offset = (Vector2)touchPosition - touchStart;
                             isVert = Mathf.Abs(offset.y) > Mathf.Abs(offset.x);
                             latch = true;
+                            moved = true;
                         }
 
                         /* Debug.Log("spriterenderer" + tileS); */
@@ -802,9 +913,7 @@ public class GameMasterFSM : MonoBehaviour
                         {
                             for (int c = 0; c < numCols; c++)
                             {
-                                tileGrid[c][Row].GetComponent<TileFSM>().goalPos = new Vector2(tileGrid[c][Row].transform.position.x + touchDelta.x * scalar,
-                                                                                        tileGrid[c][Row].transform.position.y);
-                                //Debug.Log (tileGrid [c] [row].GetComponent<TileFSM> ().goalPos);
+                                tileGrid[c][Row].GetComponent<TileFSM>().moveTo(new Vector2(touchDelta.x * scalar, 0));
                             }
                         }
                         // moving vertical cols:
@@ -812,14 +921,14 @@ public class GameMasterFSM : MonoBehaviour
                         {
                             for (int r = 0; r < numRows; r++)
                             {
-                                tileGrid[Column][r].GetComponent<TileFSM>().goalPos = new Vector2(tileGrid[Column][r].transform.position.x,
-                                                                                        tileGrid[Column][r].transform.position.y + touchDelta.y * scalar);
+                                tileGrid[Column][r].GetComponent<TileFSM>().moveTo(new Vector2(0, touchDelta.y * scalar));
                             }
                         }
                     }
                 }
                 break;
             case TouchPhase.Ended:
+                //Debug.Log("Ended");
                 if (foundTile)
                 {
                     float swipeDist;
@@ -831,7 +940,7 @@ public class GameMasterFSM : MonoBehaviour
                     if (isVert)
                     {
                         swipeDist = (touchPosition.y - touchStart.y) * scalar;
-                        if (Mathf.Abs(touchTarget.GetComponent<TileFSM>().currentDist.y) < tileSize / 2)
+                        if (Mathf.Abs(touchTarget.GetComponent<TileFSM>().netDelta.y) < tileSize / 2)
                         {
                             validSwipe = false;
                             incompleteTouch = true;
@@ -841,14 +950,18 @@ public class GameMasterFSM : MonoBehaviour
                             validSwipe = true;
                             incompleteTouch = false;
                         }
-                        for (int r = 0; r < numRows; r++)
+                        if (moved)
                         {
-                            //Debug.Log(swipeDist);
-                            if (!validSwipe)
+                            //Debug.Log("MOVED****************");
+                            for (int r = 0; r < numRows; r++)
                             {
-                                tileGrid[Column][r].GetComponent<TileFSM>().incompleteMove = true;
+                                //Debug.Log(swipeDist);
+                                if (!validSwipe)
+                                {
+                                    tileGrid[Column][r].GetComponent<TileFSM>().incompleteMove = true;
+                                }
+                                tileGrid[Column][r].GetComponent<TileFSM>().touchReleased = true;
                             }
-                            tileGrid[Column][r].GetComponent<TileFSM>().touchReleased = true;
                         }
                         if (swipeDist < 0)
                         {
@@ -862,7 +975,7 @@ public class GameMasterFSM : MonoBehaviour
                     else
                     {
                         swipeDist = (touchPosition.x - touchStart.x) * scalar;
-                        if (Mathf.Abs(touchTarget.GetComponent<TileFSM>().currentDist.x) < tileSize / 2)
+                        if (Mathf.Abs(touchTarget.GetComponent<TileFSM>().netDelta.x) < tileSize / 2)
                         {
                             validSwipe = false;
                             incompleteTouch = true;
@@ -872,13 +985,17 @@ public class GameMasterFSM : MonoBehaviour
                             validSwipe = true;
                             incompleteTouch = false;
                         }
-                        for (int c = 0; c < numCols; c++)
+                        if (moved)
                         {
-                            if (!validSwipe)
+                            //Debug.Log("MOVED****************");
+                            for (int c = 0; c < numCols; c++)
                             {
-                                tileGrid[c][Row].GetComponent<TileFSM>().incompleteMove = true;
+                                if (!validSwipe)
+                                {
+                                    tileGrid[c][Row].GetComponent<TileFSM>().incompleteMove = true;
+                                }
+                                tileGrid[c][Row].GetComponent<TileFSM>().touchReleased = true;
                             }
-                            tileGrid[c][Row].GetComponent<TileFSM>().touchReleased = true;
                         }
                         if (swipeDist < 0)
                         {
@@ -898,6 +1015,7 @@ public class GameMasterFSM : MonoBehaviour
             default:
                 break;
         }
+        //Debug.Log(touchSuccess);
         return touchSuccess;
     }
 
@@ -1092,6 +1210,8 @@ public class GameMasterFSM : MonoBehaviour
                         enemies.Remove(enemy.gameObject);
                         GameObject.Destroy(enemy.gameObject);
                         i--;
+
+                        zombie.GetComponent<SocialPlatform>().AchievementProgress(GPGSIds.achievement_going_bearzerk, true, 1);
                     }
                     else
                     {
@@ -1222,8 +1342,8 @@ public class InitState : FSMState
         //build level:
         try
         {
-            controlref.levelsList = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevels();
-            controlref.currentLevel = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>().getLevel();
+            controlref.levelsList = controlref.zombie.GetComponent<ZombiePasser>().getLevels();
+            controlref.currentLevel = controlref.zombie.GetComponent<ZombiePasser>().getLevel();
             foreach (Level level in controlref.levelsList)
             {
                 //Debug.Log(level.Name + "\n");
@@ -1278,22 +1398,7 @@ public class LevelJuiceState : FSMState
             }
         }
 
-        GameObject temp1 = GameObject.Find("Star1");
-        temp1.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
-        GameObject temp2 = GameObject.Find("Star2");
-        temp2.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
-        GameObject temp3 = GameObject.Find("Star3");
-        temp3.GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/TT-Stars-Black");
-        temp2.transform.GetChild(0).gameObject.SetActive(true);
-
-        temp1.GetComponent<ParticleSystem>().Stop();
-        temp2.GetComponent<ParticleSystem>().Stop();
-        temp3.GetComponent<ParticleSystem>().Stop();
-
-        GameObject.FindWithTag("emilyWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_emily_blank");
-        GameObject.FindWithTag("royWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_roy_blank");
-        GameObject.FindWithTag("jakeWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/endscreen_jake_blank");
-        GameObject.FindWithTag("tankWin").GetComponent<Image>().sprite = Resources.Load<Sprite>("CutScenes/blank");
+        
 
         //check if first level, if so show tutorial.
         if (controlref.currentLevel == 1)
@@ -1322,6 +1427,14 @@ public class InputState : FSMState
         {
             controlref.sameTileOffset();
         }
+        controlref.moved = false;
+        controlref.incompleteTouch = false;
+    }
+
+    public override void DoBeforeLeaving()
+    {
+        controlref.lastPos = Vector2.zero;
+        controlref.isVert = false;
     }
 
     public override void Reason(GameObject gm, GameObject npc)
@@ -1365,7 +1478,6 @@ public class InputState : FSMState
     public override void Act(GameObject gm, GameObject npc)
     {
         controlref.swiped = false;
-
         if (Input.touchCount == 0)
         {
             //Calls when mouse is first pressed(begin)
@@ -1374,9 +1486,10 @@ public class InputState : FSMState
                 controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Began);
                 //store the last position for next tick
                 controlref.lastPos = Input.mousePosition;
+
             }
             //called when mouse his held down(moved)
-            if (Input.GetMouseButton(0))
+            else if (Input.GetMouseButton(0))
             {
                 if (controlref.lastPos == (Vector2)Input.mousePosition)
                 {
@@ -1389,7 +1502,7 @@ public class InputState : FSMState
                 }
             }
             //called when mouse is lifted up(ended)
-            if (Input.GetMouseButtonUp(0))
+            else if (Input.GetMouseButtonUp(0))
             {
                 controlref.swiped = controlref.HandleTouch(10, Input.mousePosition, TouchPhase.Ended);
             }
@@ -1400,7 +1513,6 @@ public class InputState : FSMState
             Touch touch = Input.touches[0];
             controlref.swiped = controlref.HandleTouch(touch.fingerId, touch.position, touch.phase, touch.deltaPosition);
         }
-
     }
 
 } //InputState
@@ -1408,20 +1520,17 @@ public class InputState : FSMState
 public class OrderTilesState : FSMState
 {
     GameMasterFSM controlref;
-    bool hasExecuted;
 
     public OrderTilesState(GameMasterFSM control)
     {
         stateID = StateID.OrderTiles;
         controlref = control;
-        hasExecuted = false;
     }
 
     public override void Reason(GameObject gm, GameObject npc)
     {
-        if (hasExecuted && controlref.doneSliding())
+        if (controlref.doneSliding())
         {
-            hasExecuted = false;
             if (controlref.incompleteTouch)
             {
                 npc.GetComponent<GameMasterFSM>().SetTransition(Transition.Incomplete); //to Input
@@ -1429,8 +1538,8 @@ public class OrderTilesState : FSMState
             else
             {
                 SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
-                ZombiePasser zombie = GameObject.FindGameObjectWithTag("Zombie").GetComponent<ZombiePasser>();
-                if (zombie.getVibToggle() == true)
+                ZombiePasser zombiePasser = controlref.zombie.GetComponent<ZombiePasser>();
+                if (zombiePasser.getVibToggle() == true)
                 {
                     //Handheld.Vibrate();
                 }
@@ -1442,12 +1551,13 @@ public class OrderTilesState : FSMState
 
     public override void Act(GameObject gm, GameObject npc)
     {
-        if (!hasExecuted) { controlref.moveGrid(controlref.Column, controlref.Row, controlref.Direction); }
-        hasExecuted = true;
+
     }
 
     public override void DoBeforeEntering()
     {
+        //controlref.moved)
+        if (true) { controlref.moveGrid(controlref.Column, controlref.Row, controlref.Direction); }
         foreach (GameObject child in controlref.lasers)
         {
             if (child.tag == "Laser")
@@ -1455,17 +1565,49 @@ public class OrderTilesState : FSMState
                 child.GetComponent<LaserScript>().setEye(false);
             }
         }
-        controlref.spinGear(0.3f);
+        //controlref.spinGear(0.3f);
     }
 
     public override void DoBeforeLeaving()
     {
         SoundController.instance.RandomSfxTiles(controlref.TileSlide1, controlref.TileSlide2);
         controlref.spinGear(0);
-        MonoBehaviour.Destroy(controlref.wrapCopy1);
-        MonoBehaviour.Destroy(controlref.wrapCopy2);
-    }
+        if (controlref.wrapCopy1 != null)
+        {
+            MonoBehaviour.Destroy(controlref.wrapCopy1);
+            controlref.wrapCopy1 = null;
+        }
+        if (controlref.wrapCopy2 != null)
+        {
+            MonoBehaviour.Destroy(controlref.wrapCopy2);
+            controlref.wrapCopy2 = null;
+        }
+        controlref.moved = false;
 
+        //Handle Glyphs before actors check for glyph-affected objects
+        foreach(GameObject glyph in controlref.glyphs)
+        {
+            glyph.GetComponent<Glyph>().checkConnected();
+        }
+        bool allPaired = true;
+        foreach (GameObject glyph in controlref.glyphs)
+        {
+            if (!glyph.GetComponent<Glyph>().getIsPaired())
+            {
+                allPaired = false;
+                break;
+            }
+        }
+        if (allPaired)
+        {
+            controlref.goal.SetActive(true);
+        }
+        else
+        {
+            controlref.goal.SetActive(false);
+        }
+    }
+    
 } // OrderTilesState
 
 public class OrderActorsState : FSMState

@@ -17,44 +17,50 @@ public class TouchHandler : MonoBehaviour {
 
 	// public:
 	public Vector3 lastPos;
+	public bool hasMoved;
+	public float startPosition;
 
 	// private:
 	private RectTransform panel;
 
-	private float startPos;
-	private float endPos;
-	private float heightOfMainImage;
+	//private float startPos;
+	//private float endPos;
+	//private float heightOfMainImage;
 	private float levelScrollLimit;
 	private bool jump = false;
 	private GameObject top;
 	private GameObject bottom;
 	private GameObject canvas;
 	private GameObject levelAnchor;
-	float diff;
-
+	//float diff;
+	float scalarX;
 
 	void Start () {
 		panel = GameObject.FindWithTag("controlPan").GetComponent<RectTransform>();
-		heightOfMainImage = GameObject.FindWithTag ("MainImage").GetComponent<RectTransform> ().rect.height;
-		startPos = panel.transform.position.y;
-		endPos = panel.transform.position.y + heightOfMainImage*2;
+		//heightOfMainImage = GameObject.FindWithTag ("MainImage").GetComponent<RectTransform> ().rect.height;
+		//startPos = panel.transform.position.y;
+		//endPos = panel.transform.position.y + heightOfMainImage*2;
 		//levelScrollLimit = startPos + heightOfMainImage - 25; // 25 is the offset
 
 		top = GameObject.FindWithTag ("TopAnchor");
 		bottom = GameObject.FindWithTag ("BottomAnchor");
 		canvas = GameObject.FindWithTag ("mainCanvas");
 		levelAnchor = GameObject.FindWithTag ("LevelAnchor");
-		diff = levelAnchor.GetComponent<RectTransform> ().rect.width;
+		//diff = levelAnchor.GetComponent<RectTransform> ().rect.width;
+		scalarX = GameObject.FindGameObjectWithTag ("mainCanvas").GetComponent<RectTransform> ().localScale.x;
+
+		hasMoved = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		//Debug.Log (scalarX);
 		// jump to level selection:
 		if (jump) {
 			if (checkCollision (levelAnchor)) {
 				jump = false;
 			} else {
-				panel.transform.position = new Vector3 (panel.transform.position.x, panel.transform.position.y + diff * 2.5f, panel.transform.position.z);
+                panel.transform.position = Vector3.MoveTowards(panel.transform.position, new Vector3(panel.transform.position.x, panel.transform.position.y * (scalarX * 10), panel.transform.position.z), scalarX* 5f);
 			}
 		} 
 
@@ -93,10 +99,10 @@ public class TouchHandler : MonoBehaviour {
 	{
 		switch (touchPhase) {
 		case TouchPhase.Began:
+			startPosition = panel.transform.position.y;
 			break;
 		case TouchPhase.Moved:
 			float currentPos = panel.transform.position.y + touchDelta.y;
-
 			if (panel.transform.position.y < currentPos && !checkCollision (bottom)) {
 				panel.transform.position = new Vector3 (panel.transform.position.x, currentPos, panel.transform.position.z);
 				return;
@@ -108,6 +114,7 @@ public class TouchHandler : MonoBehaviour {
 
 			break;
 		case TouchPhase.Ended:
+			hasMoved = (Mathf.Abs (startPosition - panel.transform.position.y) < 15) ? false : true;
 			break;
 		default:
 			break;
